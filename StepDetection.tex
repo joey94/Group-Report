@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{cite}
+\usepackage{textcomp}
 \usepackage{url}
 
 \usepackage{caption}
@@ -109,6 +110,45 @@ The primary issue with this approach is that step detection is dependent on the 
 
 From the plot it can be seen that using magnitude still preserves the 10 peak/valley pairs corresponding to steps that were identified in the previous graph. Thus step detection can now be carried out on the basis of a single measure that accounts for changes in orientation. 
 
+\section*{Peak/valley detection}
+
+Figures~\ref{fig:straightWalkRaw} and~\ref{fig:straightWalkRawMagnitude} show a clear association between steps taken and peak/valley pairs in the graph. Thus individual steps can be identified by detecting the formation of such pairs in real-time. Mathematically, peaks are defined as points in the graph where the slope transitions from positive to negative. Equation~\ref{eq:peakDetection} shows how it can be determined whether a point is a peak. 
+
+\begin{equation}\label{eq:peakDetection}
+\begin{split}
+previousSlope = a(n) - a(n-1) \\
+newSlope = a(n+1) - a(n) \\
+a(n) = peak\ if\ previousSlope > 0\ \&\ newSlope < 0
+\end{split}
+\end{equation}
+where $a(n)$ is the $n$th reading from the accelerometer. Similarly, valleys are defined as points where the slope transitions from negative to positive. Equation~\ref{eq:valleyDetection} gives the criteria for a point to be classified as a valley. 
+
+\begin{equation}\label{eq:valleyDetection}
+a(n) = valley\ if\ previousSlope < 0\ \&\ newSlope > 0
+\end{equation}
+In the application, each new reading from the accelerometer is checked to see whether it is a peak or valley. This is done by maintaining a small sliding window of the three most recent accelerometer values. The middle value in this window is the one which is subject to the peak/valley check as the required slopes can be computed from the adjacent values. A step event is thus fired whenever a valley and peak are detected in succession.  
+
+On applying this step detection approach to the graph in Figure~\ref{fig:straightWalkRawMagnitude} it is found that the number steps returned by the algorithm is significantly greater than the actual number of steps that were taken. This is due to the jagged nature of the graph, which is a consequence of the phone's accelerometer having high sensitivity. Even very slight movements cause non-negligible acceleration to be recorded, which leads to the introduction of a considerable amount of noise arising from the jitters and vibrations experienced by the phone while walking. These jitters result in a number of small kinks in the accelerometer graph that are interpreted as peaks/valleys by the step detector, triggering false positives. There is thus a need to remove these kinks by applying some smoothing so that only large changes in acceleration cause peaks and valleys to be formed.  
+
+\section*{Low-pass filtering}
+
+A low-pass filter is a filter which allows low frequency signals to pass through while attenuating signals that are above a defined `cut-off frequency'. In essence, it smooths the signal by eliminating small, momentary fluctuations while preserving any significant changes in the signal that occur gradually over a longer period. Hence a low-pass filter is applied to the accelerometer readings in order to counteract the effects of the added noise and remove the kinks in the graph which contribute to false positives, while resulting in the peaks and valleys corresponding to steps taken to be more well defined. 
+
+\subsection*{Exponential smoothing}
+
+The simplest type of low-pass filter is a first order one. The order of a filter refers to how sharply it reduces the amplitude of a signal whenever its frequency doubles. For instance, a first order filter halves the signal's amplitude while higher orders cause greater reductions~\cite[p.2528]{casiez20121}. A simple digital implementation of a first order low-pass filter is given in Equation~\ref{eq:lowPass}.   
+
+\begin{equation}\label{eq:lowPass}
+\hat{a}(n) = \alpha \times a(n) + (1 - \alpha) \times \hat{a}(n-1)
+\end{equation}
+where $\hat{a}(n)$ is the $n$th filtered accelerometer value, and $\alpha$ is a constant, known as the smoothing factor, between 0 and 1. Lower values of $\alpha$ (say 0.25) mean that each new filtered value is computed by taking a large proportion of the previous filter output and providing a slight update to it using the most recent raw accelerometer reading. This is represented diagrammatically in Figure~\ref{fig:complementaryFilter}.  
+
+\begin{center}
+\includegraphics[scale=0.3]{images/complementaryFilter.png}
+\captionof{figure}{First order low-pass filter for accelerometer readings}
+\label{fig:complementaryFilter}
+\end{center}
+Thus any variations in the raw input values must occur consistently over a sustained time period for it to be reflected in the filtered output. This process is known as `exponential smoothing' since ``the contribution of the older values exponentially decreases'' over time~\cite[p.2528]{casiez20121}. 
 
 \nocite{*}
 
