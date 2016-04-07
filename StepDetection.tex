@@ -148,7 +148,64 @@ where $\hat{a}(n)$ is the $n$th filtered accelerometer value, and $\alpha$ is a 
 \captionof{figure}{First order low-pass filter for accelerometer readings}
 \label{fig:complementaryFilter}
 \end{center}
-Thus any variations in the raw input values must occur consistently over a sustained time period for it to be reflected in the filtered output. This process is known as `exponential smoothing' since ``the contribution of the older values exponentially decreases'' over time~\cite[p.2528]{casiez20121}. 
+Thus any variations in the raw input values must occur consistently over a sustained time period for it to be reflected in the filtered output. This process is known as `exponential smoothing' since ``the contribution of the older values exponentially decreases'' over time~\cite[p.2528]{casiez20121}. The result of applying this filter on the magnitude values in Figure~\ref{fig:straightWalkRawMagnitude} is shown in Figure~\ref{fig:complementaryFilterMagnitude}. 
+
+\begin{center}
+\includegraphics[scale=0.9]{images/complementaryFilterMagnitude.png}
+\captionof{figure}{Result of applying exponential smoothing to the unfiltered magnitude}
+\label{fig:complementaryFilterMagnitude}
+\end{center}
+
+The filtered graph obtained is far smoother than its unfiltered counterpart and removes most of its kinks, thus reducing the number of false positives with regards to step detection.   
+
+On initial tests using this approach the step counting was found to be fairly accurate during standard walking motion, with each individual step being detected almost immediately after it was actually taken. However, step events were also often found to fire when the user was stationary and performing other activities while having the phone in their hand. For instance, it was observed that modest hand motions of the user while standing and talking to someone resulted in steps being recorded. This suggests that the accelerometer magnitude patterns produced by such motions are similar to those obtained while walking. In order to investigate this the logging application was used to record accelerometer values while the phone was kept in hand and moved up and down slightly in a periodic manner without taking any steps. The filtered output from this recording is shown in Figure~\ref{fig:complementaryFilterHandMotionMagnitude}. 
+
+\begin{center}
+\includegraphics[scale=0.9]{images/complementaryFilterHandMotionMagnitude.png}
+\captionof{figure}{Filtered magnitude of hand motion}
+\label{fig:complementaryFilterHandMotionMagnitude}
+\end{center}
+The plot confirms that using the exponential smoothing method to filter these hand motions produces peak/valley combinations that are almost indistinguishable from normal walking motion and results in steps being detected falsely. This first-order filter is thus deemed to be too sensitive for the purpose of navigation. 
+
+\subsection*{Butterworth Filter}
+
+A `Butterworth' low-pass filter is one that is mathematically designed to provide as flat a frequency response as possible in the passband while dropping off towards zero in the stopband~\cite[p.17]{bianchi2007electronic}. This means that in the ideal scenario, components of the signal below the cut-off frequency are passed through at maximum amplitude without any ripples while high frequency components are eliminated through attenuation. This is depicted in Figure~\ref{fig:butterworthResponse}.   
+
+\begin{center}
+\includegraphics[scale=0.9]{images/butterworthResponse.png}
+\captionof{figure}{Plot of gain vs normalised frequency for various Butterworth filter orders~\cite{butterworthResponse}}
+\label{fig:butterworthResponse}
+\end{center}
+The 'brick wall' response represents the ideal case with the steepest possible 90 degree corner passband, where the amplitude of any signal greater than the cut-off frequency immediately drops to zero. For practical purposes however, it is only possible to obtain approximations for this ideal Butterworth response as maximal steepness produces significant passband ripple~\cite{butterworthResponse}. 
+
+Using an approximation of this ideal response means that a flat passband can be achieved only by introducing a `transition band', the range of frequencies between the passband and stopband for which the amplitude is neither maximum nor zero. From the figure it can be seen that first-order filters have a very wide transition band, meaning that only signals that have considerably greater frequency than the cut-off are fully attenuated. Filters of greater order cause more aggressive attenuation, which is why increasing the order of the Butterworth filter leads to a better approximation of the ideal response as shown in the diagram. Thus using a high order Butterworth filter provides good separation between the passband and stopband while minimising the interference caused to the signal in the passband due to ripples.    
+
+Mathie, M. analysed the manner in which readings from a triaxial accelerometer could be used to detect and classify a wide variety of human movements and actions. As part of this research, they found that the frequency range of 0.7-3 Hz encompasses most people's normal walking motions~\cite[p.248]{walkingFrequency}. This is derived from the total number of steps usually taken per minute while walking. Hence using a low-pass Butterworth filter would allow isolation of the accelerometer signals associated with walking motion while removing any potential higher frequency components introduced by noise and other external factors. For instance, Susi, M., et al. employ a tenth-order Butterworth filter for pre-processing the accelerometer readings to make their step detection algorithm robust to such high frequency signals~\cite[p.1552]{susi2013motion}.  
+
+With this in mind we too tried using the same tenth-order Butterworth filter in order to see whether it would improve step detection performance in comparison to the first-order exponential smoothing approach. This filter was implemented by using an online tool provided by Fisher, T., a professor at the University of York~\cite{filterTool}, which takes user-specified input parameters such as the desired cut-off frequency and filter order to generate the corresponding recursive Butterworth filter equation. The 3 Hz, tenth-order filter obtained computes each new filtered value on the basis of the 11 latest raw input values and 10 previous filter output values. The results of applying this filter on the normal walking and hand motion accelerometer readings are depicted in Figure~\ref{fig:butterworth10thOrderFilter}. 
+\begin{center}
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[scale=0.2]{images/butterworth10thOrderFilterWalkingMagnitude.png}
+  \end{minipage}%
+  \begin{minipage}[b]{0.5\textwidth}
+    \includegraphics[scale=0.2]{images/butterworth10thOrderFilterHandMotionMagnitude.png}
+\end{minipage}
+\captionof{figure}{Results of applying the tenth-order Butterworth filter}
+\label{fig:butterworth10thOrderFilter}
+\end{center}
+On initial inspection it seems that the filtered graphs obtained for both walking and hand motion are once again similar, just like they were for the first-order filter. However, there exists a significant difference between the two filters with regards to the magnitudes of the peaks/valleys obtained. In both the plots in Figure~\ref{fig:butterworth10thOrderFilter} the first peak is formed due to the initial adjustment of the filter as it shifts from its initial value of zero to the new magnitude values coming in, and hence this peak can be ignored for the purpose of step detection. The following two peaks in each plot, denoted by the numbers 1/2 and 3/4 respectively, have magnitude values that are noticeably lower than those of the subsequent peaks. Furthermore, the magnitude values of these subsequent peaks and valleys are largely consistent, that is, the peaks and valleys occur at almost the same magnitude values in all cases. Thus there is a clear differentiation between the first two peaks and the following ones. This is in contrast to the plots obtained when using the first-order filter (Figures~\ref{fig:complementaryFilterMagnitude} and~\ref{fig:complementaryFilterHandMotionMagnitude}) where all the peaks, including the first two, have similar magnitude values. 
+
+The variation in behaviour between the two filters occurs due to them having different orders. As shown in Equation~\ref{eq:lowPass}, the first-order filter computes new filtered values only on the basis of the single latest raw input and the single previous filter output. In comparison, the tenth-order Butterworth filter makes use of a much larger `history' of values (11 input and 10 output values). This means that any changes in the raw input values are initially reflected more prominently in the first-order filter since the history of previous values before the change in case of the tenth-order filter result in a relatively smaller change in its output. This is the reason why the first two peaks in the accelerometer outputs of the tenth-order filter have relatively lower magnitudes as the history of values `catch up' to the variation in acceleration during walking after the preceding constant acceleration when starting from a stationary position. These variations are fully reflected in the output for the subsequent peaks as the change in input occurs periodically over a sustained interval. 
+
+It is this difference in the magnitudes of the initial peaks between the exponential smoothing and Butterworth filter approaches which enables the latter to detect false step positives arising from the user's hand motions. Not accounting for the case where the user attempts to `cheat' the step detector by moving the phone up and down periodically in a contrived manner so as to match the frequency at which steps are taken, the occasional user hand motions encountered during navigation are expected to be short, momentary jerks rather than sustained actions. In contrast, regular walking is a motion that occurs consistently over a larger interval. Thus the filtered acceleration peaks produced by the hand motions will be few in number and have relatively small magnitudes whereas walking motion will eventually produce peaks of higher magnitudes consistently. Thus by imposing a minimum threshold $t_{min}$ for the magnitude difference between a valley and a peak for that pair to be counted as a step, hand motion false positives can be avoided. An example of applying this process on the filtered walking motion graph is shown in Figure~\ref{fig:butterworth10thOrderFilterWalkingMagnitudeThreshold}. 
+
+\begin{center}
+\includegraphics[scale=0.2]{images/butterworth10thOrderFilterWalkingMagnitudeThreshold.png}
+\captionof{figure}{Applying minimum magnitude thresholding to avoid false positives}
+\label{fig:butterworth10thOrderFilterWalkingMagnitudeThreshold}
+\end{center}
+In this case the magnitude difference between the second valley and second peak (not counting the first actual pair formed due to initial filter adjustment), represented by $\mathit{diff}_1$ in the graph, is below the minimum threshold $t_{min}$ and thus this pair does not trigger a step event. The magnitude difference $\mathit{diff}_2$ between the next valley and peak however is greater than $t_{min}$ and this counts as a step. For sudden hand motions, only the first 1-2 peaks will be produced in the filtered output and since both will ideally be below $t_{min}$ no false positives will be recorded. For standard walking, the first step will be recorded on the 3rd valley/peak combination in this instance. This approach also accounts for the previous `missed' pairs, which are actual legitimate steps in such cases, by keeping a record of valley/peak combinations that would have triggered a step but were below the threshold. Once the first step above $t_{min}$ has been detected the algorithm then knows that the previous peaks were not formed due to hand motions and counts those towards the step total as well. 
+
 
 \nocite{*}
 
