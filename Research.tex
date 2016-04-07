@@ -1,0 +1,43 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Research}
+
+In this section, we will be presenting the research carried out over the course of the project. We will be looking into the technology available within modern smartphones and also the tools that are provided to create applications for these phones. We shall also be analysing various solutions that have been developed within the field of indoor navigation.\\
+
+\subsection{Smartphones}
+
+As can be seen by figure(FILL THIS), the smartphone market is heavily dominated by devices operating the Android operating system. iOS devices produced by Apple come in second, and together both Android and iOS devices comprise about 95\% of the world smartphone market. With this in mind, we analysed the hardware makeup of the smartphones that run both operating systems. \\
+
+Amongst the team, there was an even 50/50 split between owners of Android devices and owners of iOS devices. Considering the fact that development would occur around our own personal devices, we decided to highlight the most advanced device from each operating system that we had access to as the target of our research. These were the iPhone 6 and Motorolla Moto G (2nd Generation).
+
+\subsubsection{iPhone 6 Hardware}
+
+The iPhone 6 contains all of the sensors one would need for the production of an indoor navigation system that relies primarily on inertial sensors. The iPhone 6 comes equiped with an accelerometer, three-axis gyroscope, barometer and digital compass, amongst other sensors. These relay data to the iPhone's built in M8 coprocessor chip, a chip designed to offload the collection of sensor data from the cpu. The M8 coprocessor collects, processes and stores the sensor data when the phone is powered down, allowing this to be accessed upon powering up, helping to conserve battery life. The coprocessor is able to be accessed using the Apple provided Core Motion API. We would make extensive use of this API in order to produce our indoor navigation application. The screen offerings are large, with the iPhone 6's 4.7 inch and iPhone 6 Plus's 5.5 inch screen both offering a sufficient screen area within which to display the application.
+
+\subsubsection{Motorolla Moto G (2nd Gen) Hardware}
+
+The Motorolla Moto G also contains an accelerometer, gyroscope and compass, but lacks the barometer offered by the iPhone. This phone also does not contain a dedicated coprocessor that handles sensor data. A major distinction between Android and iOS operating systems is that the iOS systems and the devices that operate them are developed concurrently. This means that both the hardware and software is optimisied for each other, allowing for speciailised features such as the M8 processor to be produced. Android must contend with a wide variety of hardware platforms and specifications, meaning it's features are typically more limited. The 5 inch screen however offers a large area within which to display the floorplans and user interface of the application.\\
+
+\subsubsection{Choice of platform}
+
+As can be seen, the sensors offered in both smartphones mean that an indoor navigation application is theoreitcally possible on both platforms. This coupled with the fact that our project team each only had access to either one operating system or the other, not both concurrently nor all the same platform, we decided that the best course of action would to be pursue a joint iOS and Android application. This would also reflect the real world distribution of hardware amongst people, allowing a final application to be used by the largest cross section of users possible. This naturally led us to investigate how this could be best achieved.\\
+
+\subsection{Development Platforms}
+
+Both Android and iOS devices have their own development kits that run on their own unique programming languages.
+
+\subsubsection{iOS Development Platform}
+Development for iOS is limited to Apple produced computers (Macbooks, Macs etc.). The integrated development platform (IDE) offered by Apple is Xcode. At the time of writing, Xcode is offered free on the Mac application store for users of the `El Capitan' mac operating system. iOS development can occur in both the Objective-C and Swift programming languages. Both are object oriented languages, with Swift being a newly created language by Apple, introduced at Apple's 2014 Worldwide Developer Conference (WWDC), offering several benefits over the older Objective-C, amongst these added brevity and a greater resilience to erroneous code. No team members were familiar with either of these programming languages, with only one member having used Xcode previously but for a project written in C++. A further restriction existed in the fact that only half the group team mebers owned any kind of Apple computer, meaning they would be unable to develop anything within Xcode.
+
+\subsubsection{Android Development Platform}
+
+Android also provides it's own IDE called Android studio. This is available across all computer operating systems (Windows, Mac and Linux) and can be downloaded from their website. Applications for android are written in Java, with the IDE also providing a wide range of supplementary profiling and debugging software. All team members were familiar with Java, with it having been a major part of the computer science course to date, a major .
+
+\subsubsection{Shared Development Environment}
+
+Xamarin is a company owned by Microsoft that develops the Xamarin Studio IDE. Xamarin offers the ability to code applications for Andoird, iOS and Windows Phone with a C\# shared codebase, with code able to be shared across the various platforms. Xamarin.Forms, intorduced in 2014, goes as far as to allow implementations of shared user interfaces.\\
+With their website citing the ability to share up to 90\% of code across applications on multiple platforms, we were attracted by the prospect of being able to have a singular application work on both iOS and Android. Furthermore, two team members were already profficient in C\#, with one also having worked previously with Xamarin.
+ 
+
+ \end{document}
