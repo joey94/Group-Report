@@ -206,6 +206,54 @@ It is this difference in the magnitudes of the initial peaks between the exponen
 \end{center}
 In this case the magnitude difference between the second valley and second peak (not counting the first actual pair formed due to initial filter adjustment), represented by $\mathit{diff}_1$ in the graph, is below the minimum threshold $t_{min}$ and thus this pair does not trigger a step event. The magnitude difference $\mathit{diff}_2$ between the next valley and peak however is greater than $t_{min}$ and this counts as a step. For sudden hand motions, only the first 1-2 peaks will be produced in the filtered output and since both will ideally be below $t_{min}$ no false positives will be recorded. For standard walking, the first step will be recorded on the 3rd valley/peak combination in this instance. This approach also accounts for the previous `missed' pairs, which are actual legitimate steps in such cases, by keeping a record of valley/peak combinations that would have triggered a step but were below the threshold. Once the first step above $t_{min}$ has been detected the algorithm then knows that the previous peaks were not formed due to hand motions and counts those towards the step total as well. 
 
+Initial tests with this approach showed that it was more robust with regards to false positives as compared to the first-order filter, with steps being recorded far less frequently for slight hand motions. However, with step detection during normal walking itself it was found that there was a noticeable lag between when steps were recorded and actually taken. This can once again be attributed to filter output computation being based on the large history of values, which results in any changes to the input being reflected a short while after they actually occur. As the first-order filter was deemed to be too sensitive and the tenth-order filter is too laggy, a fifth-order Butterworth filter, which uses 6 input and 5 filter output values, is used to attain the middle ground in the compromise between robustness and reactivity. The results of applying the fifth and tenth-order filters on the accelerometer readings for normal walking motion are compared in Figure~\ref{fig:butterworth5thVs10thOrderWalkingMagnitude}.  
+
+\begin{center}
+\includegraphics[scale=0.9]{images/butterworth5thVs10thOrderWalkingMagnitude.png}
+\captionof{figure}{Comparing 5th and 10th order Butterworth Filters}
+\label{fig:butterworth5thVs10thOrderWalkingMagnitude}
+\end{center}
+
+The shape of the 5th-order filter plot is almost identical to that of the 10th-order one, and all its peaks occur beforehand in tandem with when the steps are actually taken. Thus this 5th-order low-pass Butterworth filter is selected as the final one to use. 
+
+\section*{Vertical acceleration}
+
+The magnitude of the 3-axis accelerometer readings was chosen as the measure for the step detection algorithm as it is a scalar quantity and thus independent of direction. This allowed step detection to be performed in the same manner regardless of the orientation of the phone. However, it is this directional independence that also poses a problem. The vertical acceleration of the user caused during their up and down movement while walking is the basis on which steps are identified; the horizontal acceleration does not provide any meaningful information in this regard. A scalar quantity like magnitude however is unable to differentiate between vertical and horizontal accelerations. Thus periodic movement of the phone in any direction, including purely sideways, can cause steps to be fired and contribute to false positives. The filtered accelerometer magnitude output when periodically moving the phone sideways from left to right is shown in Figure~\ref{fig:butterworth5thOrderFilterSidewaysMotionMagnitude}. 
+
+\begin{center}
+\includegraphics[scale=0.9]{images/butterworth5thOrderFilterSidewaysMotionMagnitude.png}
+\captionof{figure}{Sideways motion magnitude}
+\label{fig:butterworth5thOrderFilterSidewaysMotionMagnitude}
+\end{center}
+Thus it can be seen that it is difficult to determine on the basis of magnitude whether the variation in acceleration is due to the vertical component corresponding to walking motion or the horizontal component associated with other random motions. 
+
+This problem is overcome by specifically tracking just the vertical component of the user's acceleration and using that as the measure for step detection. This is done by transforming the accelerometer readings from the device's local co-ordinate system to the world `East-North-Up (ENU)' co-ordinate system. The ENU system is depicted in Figure~\ref{fig:ENU}. 
+
+\begin{center}
+\includegraphics[scale=0.5]{images/ENU.png}
+\captionof{figure}{The 3 axes in the ENU world co-ordinate system defined with respect to the Earth~\cite{ENU}}
+\label{fig:ENU}
+\end{center}
+The Z-axis in the ENU system is defined to be pointing towards the sky and perpendicular to the surface, along the direction of the Earth's gravity vector. The Y-axis points towards the magnetic North Pole while the X-axis is defined to be the cross product of Y and Z, meaning that it roughly points East and is perpendicular to both the other axes~\cite{ENU}. From this definition it is evident that the vertical component of the user's acceleration in this system will be along the Z-axis, and thus exclusively using these readings would allow for any horizontal acceleration to be excluded from step detection. 
+
+The mapping from the device to world ENU co-ordinates is achieved through use of a rotation matrix. This rotation matrix is obtained from a combination of the phone's gravity and magnetometer sensor readings, which provide the necessary orientation information to compute the matrix. The accelerometer readings in device co-ordinates are then multiplied by the inverse of this rotation matrix to convert them to the ENU system. Figure~\ref{fig:straightWalkVerticalAcceleration} provides an example of the filtered accelerometer readings for normal walking motion after mapping them to the ENU system. 
+
+\begin{center}
+\includegraphics[scale=0.9]{images/straightWalkVerticalAcceleration.png}
+\captionof{figure}{Accelerometer readings in ENU system for normal walking}
+\label{fig:straightWalkVerticalAcceleration}
+\end{center}
+As seen in the plot, the Z-axis readings represent the user's vertical acceleration and thus fully defines the walking motion through peak/valley formation for the purpose of step detection. The Y-axis readings largely remain around 0 as the forward acceleration during walking is negligible, while the X-axis readings exhibit some variation due to the slight sidewards sway of the body while taking steps. Thus step detection can be carried out solely on the basis of the ENU Z-axis accelerometer readings.  
+
+The robustness of this approach with respect to the magnitude readings is demonstrated by Figure~\ref{fig:sidewaysMotionVerticalAcceleration}, which depicts the filtered accelerometer output when moving the phone in a sideways manner.  
+
+\begin{center}
+\includegraphics[scale=0.9]{images/sidewaysMotionVerticalAcceleration.png}
+\captionof{figure}{Accelerometer readings in ENU system for sideways motion}
+\label{fig:sidewaysMotionVerticalAcceleration}
+\end{center}
+In this case the variations are along the X and Y axes. The Z-axis readings however remain largely flat since sideways motion does not produce vertical acceleration. Thus it is far more unlikely for such movements to result in false positives in the ENU system as compared to using the magnitude of the acceleration for step detection. 
+
 
 \nocite{*}
 
