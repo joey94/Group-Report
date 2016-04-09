@@ -1,0 +1,93 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+    \section{Implementation of Android User Interface}
+        In order to develop an acceptable user interface for the Android version of the application, a variety of packages and custom made
+        components were implemented. This section aims to explain the implementation of the user interface in detail, discussing each component
+        individually.
+        \subsection{Defining Interface Layout}
+	        In Android applications, the layout of the user interface is defined by writing code into an AXML file. This code is similar to
+            XML, but here tags are used to place elements into the layout and specify the values of various options e.g. colour.
+            In our case, each tab in the interface displays its own layout.
+            These layouts are linear (elements are placed one after the other), and contain various built-in Android components, as well
+            as several components of our own design, all of which will be discussed in this section. Thankfully, Xamarin Studio contains a 
+            User Interface Designer which grants the ability to create interfaces by dragging and dropping desired components from a menu
+            of options. Once this process is complete, the designer then generates the equivalent AXML code, making the development process
+            much easier as one can see the end result without having to compile and deploy the whole application. In some edge cases it was necessary
+            to hand modify certain parts of the AXML, but this was a fairly trivial task.
+        \subsection{Managing Separate Interface Pages}
+            The main method of separating disjoint pages of the user interface was achieved through the use of a tab based system. This was chosen due
+            to both intuitive usability and ease of implementation. In order to make the addition of new tabs easier to code, an extension class,
+            \texttt{ActionBarExtensions}, was developed which contained a function that automates the process of adding a new tab to the
+            interface. This function takes the tab name as its first argument. Its other argument is an anonymous function that handles any behaviour
+            that must be executed upon accessing the tab. For example, selecting the `debug' tab changes the value of the variable \texttt{inDebug} to
+            true. Note that the final release version of the application will contain less tabs due to the lack of need for the end user to be able to access
+            such a page. The setup of all of the tabs is handled by a call to \texttt{setUpUITabs}, which creates tabs for the main screen, settings, and 
+            debugging information relating to the step counter in order to facilitate testing.
+        \subsection{Destination Selection Menu}
+            In order to improve the user experience, a drop down menu (in Android development terms this is known as a \texttt{Spinner}) that contains
+            all possible destinations was added to the interface. Items in the menu consist of a destination name and some of the following items,
+            where applicable:
+            \begin{itemize}
+                \item Occupier of the room.
+                \item Type of the room e.g. office.
+                \item Floor number.
+            \end{itemize}
+            The spinner is set up by passing it an object of type \texttt{Adapter}. Specifically, in our case, we pass in an \texttt{ArrayAdapter}, a sub-class of \texttt{Adapter}.
+            This contains the elements
+            that are used to populate the list. For us, this is a list of \texttt{Room} objects that were read in as input from an XML file as detailed in [reference relevant section of report].
+            This adapter is then set to a specific type of layout (currently this is set to simple). Once this has been done, the adapter is then bound to the spinner in order to display
+            the correct values to the user. Finally, a callback function, \texttt{spinnerItemSelected}, was added to the spinner to specify the results of a user selecting a given item.
+            This allows the user to select a destination from the menu, as when an item is selected, the correct destination coordinates are set within the application.
+        \subsection{Displaying the Floor Plan}
+            The vast majority of screen real estate on the main tab of the application is occupied by the image of the floor plan being displayed. Therefore, it was crucial to 
+            implement this part of the interface in such a way that it is as simple and intuitive as possible, as the user will spend most of their time using this part of
+            the application. By implementing standard features that make use of the touch screen functionality of smart phones (dragging the image around, pinch-to-zoom,
+            pressing and holding etc.)
+            the learning curve of the interface is greatly reduced as features such as these are extremely common in mobile applications. Therefore, this takes advantage of 
+            what can be assumed to be pre-existing knowledge for most end users, reducing the need for excessive tutorials or instructions.
+            
+            One of the first key issues to handle was the problem that, due to the large size of the floor plan images being displayed (especially when zoomed in), it would need
+            to be possible for the for the user to `scroll' through the image. Initially the Android frame \texttt{ScrollView} was used to contain the image. However, it was quickly
+            discovered that this only allowed for scrolling in a single direction specified in the AXML code - horizontally or vertically.
+            This was clearly insufficient for our purposes, so other methods
+            were considered. The first potential fix was that of nesting another \texttt{ScrollView} inside the first, set to scroll in the direction that its parent did not.
+            This did allow for scrolling in multiple directions to function, but only one at a time i.e. diagonal scrolling was not possible. In order to solve this problem,
+            the Android development team examined various packages, but failed to find one that exactly suited our requirements. Therefore, a custom class
+            (\texttt{CustomImageView}) was written to implement all of the desired functionality. This class is described in the section below.
+            \subsubsection{CustomImageView Functionality}
+                This part of the application is made up of two key classes, one simple, the other more complex. The first of these is the \texttt{CustomImageViewGestureDetector},
+                which extends the basic \texttt{SimpleGestureListener} to work with our custom image view and handles the detection of common smartphone gestures. For our purposes,
+                we implemented custom detection for touching the screen (known as a `down' gesture), double tapping on the screen, and pressing and holding down on the screen
+                (from now on referred to as a `long press').
+                
+                The main bulk of the new functionality is contained within the \texttt{CustomImageView} class itself. As with all programs that handle image translation and scaling,
+                the class contains a matrix that can be applied to carry out translations and zooms on the displayed image (rotations were not required). The class contains functionality
+                that allows this matrix to be accessed and applied. Section [here] shows this matrix in action when points are translated into correct positions. There is also functionality
+                to set the image to be displayed as either a specific bitmap or an Android resource.
+                
+                The custom behaviours were implemented by monitoring for touch events on the device
+                screen. When a touch is detected its coordinates are stored as the position of the `last move'.
+                If the `touch count' is at least two (more than one finger is being used, therefore the user is performing either
+                a pinch or its inverse), the action was judged to be a scale and the relevant flag was set in the class. If this flag is set, the distance between the two points of contact
+                is used to calculate the value by which to scale the image being displayed. This scale is then posted to the image matrix, which is then applied to the image in
+                order to carry out the zoom action. Note that if the action would scale the image outside of the bounds specified by the minimum or maximum allowed zoom,
+                the scale would stop at these boundary values. Therefore continuing to `pinch' at this point has no effect on the interface. The double tap motion could also be
+                used to zoom to the maximum or minimum amount instantly, however this was handled slightly differently. In this case there is no need to calculate a scale
+                factor based on movements as the minimum/maximum values are already known. Therefore, the zoom was executed using this known value and the
+                (\textit{x, y}) coordinates of the double tap action.
+                If the motion was not deemed to be a scale (only one finger is used by the user to perform the motion), the start and end points
+                of the movement were used to determine the distance to translate the image in both the \textit{x} and \textit{y} directions. Similar to zooming action, these changes are
+                then posted to the matrix and applied to the image in order to scroll in accordance with the user's action. As this took changes in both axes into account, this
+                solved the problem of being unable to scroll the view in both directions simultaneously. After any translations/scales were applied to the image, a call was made to
+                the \texttt{PostTransitionCutting} function. This applies the transitions to the local version of the image matrix and handles edge cases where the image may overflow
+                or underflow the view. Once this process is complete, the local image matrix is then updated. The final custom behaviour handled was that of the long press. When a 
+                long press is detected, a \texttt{LongPressHandler} is executed. In our case, a long press creates a menu that allows the user to specify a start or end location
+                directly on the floor plan image, should they not wish to use the drop down menu.
+        \subsection{Managing Points and Paths}
+            Once the image was being displayed correctly and could be interacted with as required, the next step was to facilitate the drawing of start points, end points, the user location,
+            and the path to follow on the screen. There were two approaches considered for this, the advantages and disadvantages of which are discussed below.
+                \subsubsection{Overlay Based Implementation}
+                    a
+                \subsubsection{Directly Editing the Bitmap}
+                    a
+\end{document}
