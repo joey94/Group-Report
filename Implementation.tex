@@ -1,0 +1,40 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\section{Implementation}
+
+This section will detail the process of turning our designs into a working application. It will mostly read chronologically, with tasks and components completed earlier into the project also appearing earlier within this section. This will also aid in demonstrating our thought process behind changes to the application design that arose through development, be it through complications or the realisation of superior design choices.
+
+\subsection{Phase One}
+
+Actual application development on this project began with our creation of a data logging application. This would be used to gather principally accelerometer data about steps during walking cycles that would inform the development of the step detection algorithm.\\
+
+Work around this data logging and initial step detection algorithm implementation comprised phase one of our implementation, with phase two encompassing the development of our main, final application.
+
+\subsubsection{Obtaining Xamarin License}
+
+We initially experienced many problems obtaining a licensed version of Xamarin, even before proper work began on the actual application. All team members were required to register as a developer on the Xamarin website and request a student developer license, a conveniant alternative to the costly traditional license offered to non-students. This involved a prolonged series of exchanges with the company via email, which after 2-3 weeks proved to be a useless endevour, as we were then instructed to procure the license through alternative means via a third party distributor. Ultimately, it took a few weeks before any of the team were able to obtain a development license, during which time we were able to develop, but not deploy an application to device. Considering this stage of the project was mainly about gathering data through smartphones, this was a disappointing early delay for which Xamarin apologised, citing their newly formed integration with Microsoft Dreamspark as having caused the delays in license distribution.\\
+
+\subsubsection{Setting Up The Project}
+
+We began by setting up a Xamarin Forms project, which would enable the creation of a shared user interface across iOS and Android. Within a Xamarin Forms project, the user interface is created via scripting in Extensible Markup Language (XML), which allows for the quick creation of text based displays. Here we followed our initial designs, and established a display page that saw a compass image sit at the top of the screen, with gyroscope and accelerometer readings appearing below it. Below those readings lay buttons that allowed for the data being read to be saved to a file. Buttons were also placed so that this file could be labelled in accordance with the movement being performed, for example `Slow Walk' or `Turning a Corner Left`.  These would help identify what each file related to when it came to analysing the data. The compass image was made to rotate with changing compass readings in order to mimic a real world compass.\\
+
+This interface was developed within the shared code section of the Xamarin Forms project. In order for data values to be recorded, the sensors needed to be individually set up within the iOS and Android code sections. Within iOS, the sensors are accessed via the CMMotion API, whilst in Android, the SensorManager class form the Android.Hardware library is used. These values are passed to the shared code where the XML is updated in order to update the screen display.\\
+
+Data logging was made a threaded process for the benefit of application performance. Recorded data was placed within an text file comprising of seven columns, time and the x, y and z values from both the accelerometer and gyroscope data. In the case of iOS, accelerometer values are given in terms of units of gravity (G) rather than the rate of acceleration (m/s\^2) given within Android. For the sake of consistency, these were then converted to values of acceleration by multiplying these values by 9.8.\\
+
+\subsubsection{Android Compass Setup}
+
+\subsubsection{Data Recording}
+
+With the logging application set up, focus shifted towards the recording of step data. For this, we decided to record data relating to walking, turning corners and gradual circular turns. Each action was also recorded at three different speeds, slow, medium and fast and recorded five times for each speed classification. Multiple team members with varying heights and therefore stride lengths were involved in the data collection. The created text files could then be accessed by connecting the smartphones to a computer. For iOS devices, the files can be obtained through iTunes by accessing the application within iTunes application page. For Android it is a slightly simpler process, with users being able to access the phone's memory card directly and not requiring any intermediate program.\\
+
+Whilst we were quite confident of obtaining distinguishable patterns for the step data related to normal walking, we opted to collect data for the turn whilst walking to see whether we were able to identify a way to include accelerometer or gyroscopic data to inform the values obtained for user heading. Although we theorised the compass would prove to be the most accurate means of obtaining user heading, we were nevertheless open to the idea of designing our own heading inference engine if our data analysis pointed to a custom made engine being more accurate.\\
+
+\subsubsection{Data Analysis}
+
+Data analysis primarily involved the plotting of the data values in graph form. For this we made use of R studio. RStudio is a free, open-source IDE designed for statistical computing and graphics. Through our own personal experiences after previously working with RStudio and it's programming language R, we felt that it would facilitate the most painless and comprehensive data analysis for the step data.\\
+
+
+
+\end{document}
