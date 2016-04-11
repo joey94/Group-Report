@@ -54,7 +54,7 @@
             This did allow for scrolling in multiple directions to function, but only one at a time i.e. diagonal scrolling was not possible. In order to solve this problem,
             the Android development team examined various packages, but failed to find one that exactly suited our requirements. Therefore, a custom class
             (\texttt{CustomImageView}) was written to implement all of the desired functionality. This class is described in the section below.
-            \subsubsection{CustomImageView Functionality}
+            \subsubsection{CustomImageView Implementation}
                 This part of the application is made up of two key classes, one simple, the other more complex. The first of these is the \texttt{CustomImageViewGestureDetector},
                 which extends the basic \texttt{SimpleGestureListener} to work with our custom image view and handles the detection of common smartphone gestures. For our purposes,
                 we implemented custom detection for touching the screen (known as a `down' gesture), double tapping on the screen, and pressing and holding down on the screen
@@ -86,8 +86,65 @@
         \subsection{Managing Points and Paths}
             Once the image was being displayed correctly and could be interacted with as required, the next step was to facilitate the drawing of start points, end points, the user location,
             and the path to follow on the screen. There were two approaches considered for this, the advantages and disadvantages of which are discussed below.
-                \subsubsection{Overlay Based Implementation}
-                    a
-                \subsubsection{Directly Editing the Bitmap}
-                    a
+                \subsubsection{Overlay Based Approach}
+                    This was the first of the approaches to be considered and involves the creation of a separate view to display the start/end points, user arrow, and path on top
+                    of the floor plan image. Initially, this was an attractive solution as it allows the program to be constructed in a more modular way, keeping the management of the
+                    floor plan apart from that of the drawing. However, it also introduces the additional task of managing the overlay itself. This becomes particularly challenging
+                    when the user is scrolling around the floor plan or zooming in and out, due to the necessity of ensuring that the overlay view is also adjusted accordingly.
+                    The other downside is that translating point coordinates from the overlay may also be tricky, perhaps requiring the use of another transformation matrix.
+                    In the end, this method was deemed unsuitable for our purposes, so another solution was considered: directly editing the bitmap being displayed in the
+                    \texttt{CustomImageView}.
+                \subsubsection{Direct Bitmap Editing Approach}
+                    This method involves editing the actual image being held in the image view. This approach addresses the primary issues found with the overlay based solution:
+                    handling situations where the user wishes to either move or scale the floor plan by drawing the additional shapes into the bitmap image.
+                     In this case, as the points and/or lines are part of the image itself, any translations
+                    or scalings applied to the image as a whole will also, by extension, affect the points and lines. The downside to this approach is that it requires the image to be reset
+                    to the default resource any time that a previously drawn point must be removed (such as moving a start point to a different location, or any movement of the
+                    user arrow). It was thought initially that this may be a significant issue that could introduce a noticeable delay into interface updates, something that is clearly
+                    unacceptable when a pleasant user experience is a key objective. Fortunately, some brief testing (on both emulators and physical Android devices)
+                    revealed that this was not the case; there was no noticeable delay in interface updates. Following this discovery, it was decided to adopt this strategy instead of the
+                    overlay system. The following section details how our custom helper class, \texttt{MapMaker}, handled the drawing of the required graphics.
+                \subsubsection{MapMaker Helper Implementation}
+                    The \texttt{MapMaker} class was created in order to keep the implementation of this part of the program separate from the rest of the application, in keeping
+                    with the modular structure of most object-oriented programs. This meant that this module could be tested, maintained, and developed independently without 
+                    adversely affecting the main activity -provided that changes to internal code did not alter the external behaviour of the class beyond what was intended.
+                    
+                    The first key component of this class was specifying the bitmap options that were applied to all of the decoded bitmaps (these being the plain floor plan,
+                    the floor plan with the graph grid shown, and the user arrow).
+                    The dither option is set to true in order to reduce noise in the image, in an attempt to prevent issues such as colour
+                    banding. The bitmaps are also set to be purgeable i.e. the system can reclaim the memory used if absolutely necessary. In later versions of Android, this flag
+                    is ignored, but enabling it allows a greater degree of backwards compatibility. Also note that enabling this did not prevent all memory issues, which will be discussed
+                    later. The final key option was ensuring that the image is mutable. This is important as only mutable bitmaps can be used with Android
+                    \texttt{Canvas} functionality, which enables the editing of the image i.e. only mutable images may be drawn into. In older versions, images could only be
+                    made mutable by copying them, however this is inefficient in terms of both computation and memory, and is no longer the case for these very reasons.
+                    
+                    Upon initialising the instance of \texttt{MapMaker}, the class decodes and stores three android resources, all of which are bitmap images. These are the plain
+                    floor plan, the floor plan with pathfinding grid, and the arrow used to display the current position of the user. The class provides functionality to clone
+                    all of these bitmaps, which prevents the need to re-decode the images should a new blank copy of the image be required (such as when re-drawing the map
+                    when erasing a point). This is beneficial performance-wise as decoding can be a slow process. As this redrawing has the potential to occur very frequently,
+                    achieving good performance was of the utmost importance.
+                    
+                    Resetting the map was a simple process. When a call to \texttt{ResetMap} is made, a check is made to see if the grid is currently being drawn or not. Depending
+                    on the result of this check, the correct bitmap can be cloned, edited, and then finally set as the current image being displayed by the view.
+                    This function also makes sure to to call \texttt{Recycle} on the old bitmap image in order to ensure that the memory that it occupied is properly freed and
+                    returned to the system at the next execution of garbage collection.
+                    
+                    Drawing into the bitmap was more complex, however. The bitmap is redrawn in the following situations:
+                    \begin{itemize}
+                        \item New start/end point selected.
+                        \item User has taken a step, therefore the arrow must be moved.
+                        \item The path must be (re-)drawn for some reason.
+                    \end{itemize}
+                    When a new start/end point is selected, the coordinates of this point are translated to coordinates in the bitmap via a transformation matrix
+                    (discussed later in this section) and then stored within the \texttt{MapMaker}. Following this, a call is made to \texttt{DrawMap}, which first resets the
+                    image (using \texttt{ResetMap}). Following this, the application forms a \texttt{Canvas} from the fresh image in order to facilitate the drawing of the
+                    required shapes. Once this has been done, some simple checks are carried out in order to determine whether any start/end points are currently set.
+                    If this is the case, the points are drawn at the previously stored coordinates using the \texttt{DrawCircle} function within \texttt{Canvas}. A similar check
+                    is used to see whether the user arrow must also be drawn, if it must, the user arrow bitmap is also drawn into the \texttt{Canvas} by making use of
+                    \texttt{DrawBitmap}. If both start and end points have been set, then the user path must also be drawn. Firstly, the correct nodes in the graph are obtained
+                    by using the \texttt{FindClosestNode} function implemented within the \texttt{PathfindingGraph} object. These points are then passed to
+                    \texttt{FindPath} in order to determine theh path to draw. Once the sequence of points has been calculated, the program iterates over this list, drawing lines
+                    between adjacent points within the list using \texttt{DrawLine} until the end of the path is reached. Once all of the drawing has been completed, the
+                    \texttt{Canvas} is disposed of in order to free memory. Finally, the image being displayed by the custom image view is updated to the newly edited
+                    version.
 \end{document}
