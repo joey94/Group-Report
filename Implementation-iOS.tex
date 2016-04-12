@@ -1,0 +1,88 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+One of our obvious target platforms for creating a mobile application would of course have to be Apples iOS. iOS is a UNIX based operating system used by Apple inc in all of their mobile devices such as iPhone, iPad and iPod. On January 26th 2016, Apple stated that there are now over a staggering 1 Billion iOS devices in use \cite{1billios}. This represents an absolutely enormous market share of the mobile industry and as such, an iOS application would have exposure to each of these 1 Billion devices. Xamarin has a lot of support for iOS development and is well suited for developing advanced iOS applications. All of the latest iOS API libraries have been ported over into C# and Xamarin Studio even has its own interface designer, however users are still able to use the Xcode storyboard designer if they so wish.
+
+\subsection{Building an iOS application}
+
+There are several things that are needed to build a working iOS application. iOS applications work using the Model View Controller (MVC) design pattern. This attempts to separate the interface of the application (views) from the inner workings and data stored (model) with communication between these two components being moderated by a separate class (controller). Each class created in an MVC application should ideally fall under one of these categories. 
+
+\subsubsection{Model}
+
+In an MVC application, the model is designed to encapsulate the problem-domain and internal logic of the application. That is, it is responsible for generating, storing and processing the information that is related to the application. It is also responsible for any data access including web access and communicating with an external storage system such as a database. The application logic and data access sections of the model should not be aware of the inner working of each other in order to provide flexibility when changing the type of data storage or the application logic. 
+
+\subsubsection{View}
+
+The view is the part of the application that shows the various components and data on the screen for the user to see. It is also responsible for providing the necessary components that can allow the user to interact with the application. The view is additionally responsible for presenting any data given to it in a human readable way, (such as presenting it in a graph or pie chart or in a listed table). In iOS, views are created with the use of the storyboard feature that is described in more detail below.
+
+\subsubsection{Controller}
+
+The controller is the final piece of the application that links the views to the model. The controller is primarily what the user interacts with whenever they interact with the application. While the view is responsible for showing any inputs such as buttons, text fields, etc. It is the view controller that converts these into commands which are passed down to the model. Similarly, any information returned by the model is converted into the proper format by the controller and given to proper view in order to show. In a way, the controller is the glue that binds both the views and the models together and there should be no communication between the two that doesn’t go through the controller at some point.
+
+[image of MVC]
+
+\subsection{Storyboards}
+One of the other most important concepts in iOS development is storyboards. Storyboards work as a view designer and transitioning controller between different views. They provide the hooks through which a controller can process inputs and tell the views what and how to interact with the user. Storyboards as an iOS specific feature and typically require the use of Apples Xcode development platform to view and edit. However Xamarin has their own version of the storyboard editor that provides some support for C# based coding and is easier to use to hook visual components into the C# code in the view controller.
+
+\subsection{APIs}
+iOS provides a vast host of APIs that are ideal for a large number of tasks such as displaying information and resources as well as accessing on-device data such as accelerometer and gyroscope data. Apple’s original iOS APIs are available as C# libraries under the Xamarin framework and are very similar in structure and usage to the original Objective-C and Swift versions. These API’s are designed to be as easy to implement as possible and this was really seen during development when compared to android development as certain functionality and sensor readings was seen to be much more easily accessible in iOS. Additionally, many of the functionality follow a very strict hierarchical inheritance structure which lends its hand to many scenarios such as creating a complex view. All iOS visual components inherit from the UIView class, of which a component of this is a collection of UIView named subviews which are rendered within relation to the parent UIView. This effectively allows a hierarchical structure of UIViews which can be rendered and set dynamically. UIView classes also have the added functionality to automatically redraw whenever a change is made with them, (as long as this call is made on the main UI thread). This structuring, alongside the simplistic nature of the components and their ease of creation, modification and rendering, leaves it incredibly easy to create complex applications some just a few simple boiler plate components.
+
+\subsection{Development}
+
+Our development for an iOS application started with creating a simple blank Xamarin cross platform solution for android and iOS. This provides 3 separate projects in which we can work with. There is 1 project each for the different mobile platforms and a 3rd project that acts as the standalone shared code that can be access by both iOS and android. Due to the nature of this, the shared code project must be written independently from any specific platform and cannot use or rely on libraries or functionality that are specific to a single platform.
+
+\subsubsection{Storyboard}
+We start off with a single storyboard for iOS simply titled main.storyboard. From here, we built the visual end of the iOS application and determined how many, if any, different screens (views) we were going to have and how to transition between them. [much more needed]
+
+\subsubsection{View Controller}
+The ViewController.cs file is where the majority of the iOS specific code is kept. It is responsible for delegating all communication between the view components and the model of the application which was kept in the shared code project. It was also responsible for assigning many of the dynamic variables and properties of the view components that could not be simply created using the storyboard editor. Because of this, the view controller class is one of the longest, most feature heavy classes that is present in the application. One of the primary goals at the beginning of the project was to be able to get a simple view of a map on the screen that could be panned and zoomed by the user. We achieved this primarily with the use of a UIScrollView class. The initial scroll view component was placed using the storyboard editor, however since we wanted the image displayed to be able to be loaded dynamically to facilitate changing maps, we could not set the contents or any derived properties, (such as content width and height) from the storyboard editor and instead had to elicit the use of the view controller class. An object hook was placed so that we could refer to the scroll view from inside the view controller and the following code was used to import and display the map.
+\begin{lstlisting}
+floorplanImageNoGrid = UIImage.FromBundle("Images/FinalDcsFloor1.png");
+floorplanImageView.Image = floorplanImageNoGrid
+
+floorplanScrollView.AddSubview(floorplanImageView);
+floorplanScrollView.ContentSize = floorplanImageNoGrid.Size;
+floorplanScrollView.ViewForZoomingInScrollView += (UIScrollView sv) => { return floorplanImageView; };
+\end{lstlisting}
+The first 2 lines of this code segment simple loads the proper map image from the applications resources and assigns it to a UIImageView class in order to be able to interact with other UIView classes. The 3rd line then adds this subview to the scroll view which is already set to display on the screen. The 4th and 5th lines are included in order for panning and zooming to work correctly. This simply set the contained size of the scroll view to be equal to that of the image view and the scroll view is told to zoom the image view when pinch-to-zoom gestures are registered. This code segment was included as a simple example to show how easy it is to include and manipulate visual components with ease in iOS. While this is a simple example, the main concepts of a hierarchical architecture of UIViews will remain for the remainder of this section. It is important to note that a UIView can contain more that one subview
+
+The next step in creating a usable navigation app is to be able to draw things on the map such as the users location and the path to their destination. Here we can utilise the structuring of UIViews by creating a container view. This is an effectively invisible view that essentially encapsulates 2 or more subviews into one container that can be acted upon and changed as a single entity. By creating a container view with the map image and a users location arrow image as subviews, we can instruct the scroll view to act upon the container view instead of either of the subviews. This results in the scrollview being able to pan and zoom both views simultaneously to create seemingly one picture. 
+\begin{lstlisting}
+container.AddSubview(floorplanImageView);
+container.AddSubview(userLocationArrow);
+container.SizeToFit();
+
+floorplanScrollView.ContentSize = container.Size;
+floorplanScrollView.ViewForZoomingInScrollView += (UIScrollView sv) => { return container; };
+\end{lstlisting}
+While this works nicely, we noticed that on many existing mapping applications such as Google and Apple Maps, the user location arrow didn’t scale with the map when zooming. Instead it stayed an a constant size and simple stayed to reflect the correct location. This was unfortunately not as simple a change as you might expect. By changing the floowplanScrollView.ViewForZoomingInScrollView property to return just the map UIImageView, we ran into the problem that the user location arrow couldn’t distinguish between the absolute coordinated on the map and the relative coordinates to the container view. This effectively meant that as the view was scrolled in and out, the relative position of the arrow on the map would increase and the map images coordinate space was compressed. The easiest solution we could find to this problem was to manually recalculate and modify the location arrow coordinates in relation to the zoom factor of the scroll view.
+[image of incorrect location arrow zooming]
+
+
+
+The second part that needed drawing over the main map was the actual path to the users destination. iOS supplied a nifty CGPath component that could draw a customised line between a set of points on a 2D space. However, in order to be compatible with the other UIView based components, we had to create a custom PathView.cs class that would act as a wrapper to the CGPath class. This class would be responsible for drawing the path and ensuring it remains consistent with the map image during zooming. It would also contain from additional methods for encapsulating the CGPath object from the outside and for adding and getting points on the path in an abstractified way. 
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
