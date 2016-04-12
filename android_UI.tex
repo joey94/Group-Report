@@ -34,7 +34,8 @@
             \end{itemize}
             The spinner is set up by passing it an object of type \texttt{Adapter}. Specifically, in our case, we pass in an \texttt{ArrayAdapter}, a sub-class of \texttt{Adapter}.
             This contains the elements
-            that are used to populate the list. For us, this is a list of \texttt{Room} objects that were read in as input from an XML file as detailed in [reference relevant section of report].
+            that are used to populate the list. For us, this is a list of \texttt{Room} objects that were read in as input from an XML file as detailed in
+            \textbf{[reference relevant section of report]}.
             This adapter is then set to a specific type of layout (currently this is set to simple). Once this has been done, the adapter is then bound to the spinner in order to display
             the correct values to the user. Finally, a callback function, \texttt{spinnerItemSelected}, was added to the spinner to specify the results of a user selecting a given item.
             This allows the user to select a destination from the menu, as when an item is selected, the correct destination coordinates are set within the application.
@@ -62,8 +63,8 @@
                 
                 The main bulk of the new functionality is contained within the \texttt{CustomImageView} class itself. As with all programs that handle image translation and scaling,
                 the class contains a matrix that can be applied to carry out translations and zooms on the displayed image (rotations were not required). The class contains functionality
-                that allows this matrix to be accessed and applied. Section [here] shows this matrix in action when points are translated into correct positions. There is also functionality
-                to set the image to be displayed as either a specific bitmap or an Android resource.
+                that allows this matrix to be accessed and applied. Section \ref{subsec:MapMaker} shows this matrix in action when points are translated into correct positions.
+                There is also functionality to set the image to be displayed as either a specific bitmap or an Android resource.
                 
                 The custom behaviours were implemented by monitoring for touch events on the device
                 screen. When a touch is detected its coordinates are stored as the position of the `last move'.
@@ -82,7 +83,10 @@
                 the \texttt{PostTransitionCutting} function. This applies the transitions to the local version of the image matrix and handles edge cases where the image may overflow
                 or underflow the view. Once this process is complete, the local image matrix is then updated. The final custom behaviour handled was that of the long press. When a 
                 long press is detected, a \texttt{LongPressHandler} is executed. In our case, a long press creates a menu that allows the user to specify a start or end location
-                directly on the floor plan image, should they not wish to use the drop down menu.
+                directly on the floor plan image, should they not wish to use the drop down menu. This menu is created by creating an \texttt{AlertDialog} object which asks the
+                user whether they wish to place a start point or an end point on the floor plan (The debugging version of the application also allows the user arrow to be placed
+                in order to facilitate testing). Once the choice has been made, the relevant coordinates are stored and used to draw the new points - section \ref{subsec:MapMaker}
+                explains the drawing process in detail.
         \subsection{Managing Points and Paths}
             Once the image was being displayed correctly and could be interacted with as required, the next step was to facilitate the drawing of start points, end points, the user location,
             and the path to follow on the screen. There were two approaches considered for this, the advantages and disadvantages of which are discussed below.
@@ -105,6 +109,7 @@
                     revealed that this was not the case; there was no noticeable delay in interface updates. Following this discovery, it was decided to adopt this strategy instead of the
                     overlay system. The following section details how our custom helper class, \texttt{MapMaker}, handled the drawing of the required graphics.
                 \subsubsection{MapMaker Helper Implementation}
+                    \label{subsec:MapMaker}
                     The \texttt{MapMaker} class was created in order to keep the implementation of this part of the program separate from the rest of the application, in keeping
                     with the modular structure of most object-oriented programs. This meant that this module could be tested, maintained, and developed independently without 
                     adversely affecting the main activity -provided that changes to internal code did not alter the external behaviour of the class beyond what was intended.
@@ -147,4 +152,10 @@
                     between adjacent points within the list using \texttt{DrawLine} until the end of the path is reached. Once all of the drawing has been completed, the
                     \texttt{Canvas} is disposed of in order to free memory. Finally, the image being displayed by the custom image view is updated to the newly edited
                     version.
+                    
+                    The final functionality that had to be added to this helper class was the ability to translate the coordinates of the location that a user has touched on the screen
+                    into correct coordinates within the bitmap image. This was necessary due to the need to be able to place start and end points at a location specified by the user
+                    performing a long press on the map via the device screen. The function takes either (\textit{x, y}) coordinates or a two-dimensional vector as input, and returns a
+                    two-dimensional vector containing the newly translated coordinates. This is implemented by obtaining the image matrix from the custom image view and calculating
+                    the inverse of this matrix. This new matrix can then be applied to the inputs in order to return the correctly translated coordinates.
 \end{document}
