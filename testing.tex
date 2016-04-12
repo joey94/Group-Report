@@ -1,0 +1,70 @@
+\documentclass[12pt,a4paper,notitlepage]{report}
+
+\usepackage{graphicx}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\begin{document}
+
+\chapter*{Testing}
+
+\section*{Step Dectection}
+
+Step detection is such an integral part of any dead-reckoning system and such the method of identifying these steps should be tested and evaulated to find how much error the system has a whole. As mentioned previously different methods were implemented to try and find the best system, as such through out development there are 4 different stages of the Step Detector that can be taken for testing:
+\begin{enumerate}
+	\item Basic Peak-Valley Detections
+	\item First Order Low Pass Filter
+	\item 10th Order Butterworth Filter
+	\item 5th Order Butterworth Filter
+\end{enumerate}
+The Basic Peak-Valley variation was selected as it forms the basis of how steps are detected in all future methods. It will serve as a baseline for seeing how much the different filters improve performance for detections. 
+
+\subsection*{Error Rate}
+
+The error rate for the Step Detection algorithms is defined as follows:
+
+\begin{equation}
+Error\ Rate = 1 - \frac{Counted\ Value}{True\ Value}
+\end{equation}
+
+So over a known number of steps, True Value, each algorithm is used and its counter number of steps is used to get it's error rate. The purpose is to see over a set distance how much error is present overall regardless of timing or other factors such as speed, location etc...
+
+%Results
+
+\subsection*{Overcounting}
+
+Overcounting is when additional steps are registered when they shouldn't be, this is different from what was defined as a false positive earlier where a step is counted when no movement is occuring. Since the false positive rate has been discussed previously overcounting was selected as an alternative metric to examine wheter the error rate for each method corresponded to them correctly identifying and counting steps.
+
+There are 2 particular times in which overcounting can occur:
+\begin{enumerate}
+	\item During a step more than one is counted
+	\item Upon finishing walking, additional steps are registered as the user becomes stationary
+\end{enumerate}
+
+%Results
+
+\subsection*{Steps Taken vs Timing}
+
+Having examined the Error and False Positive Rates, it is important to try and see where the errors are occuring within the implemented methods. One way to do this is to look at the timing when steps are considered to be taken. So whenever a step is register to have been taken by the application the current time is documented to allow for this analysis to happen.
+
+The purpose of this test is to explore whether the algorithms are matching the regular waveform a constant speed walking motion will have. What this entails is that if a user is walking at a roughly constant speed, a good method will not only produce low error rates but also count steps in a regular manner. Showing that it is actually identifying the patterns of a step rather than misintepreting the data and appearing to be a strong method.
+
+%Results
+
+\subsection*{Proximity to Destination}
+
+Finally after all the previous tests that simply looked at the step detector methods in an isolated environment, they were then tested against each other in the full application. Each algorithm was used in the application along 2 routes:
+
+\begin{enumerate}
+	\item Room-to-Room, so from the entrance of one room to another  %, on the same floor
+	\item Point to Point, from a specific starting location to a specific destination  %, on the same floor
+%	\item Room to Room, across multiple floors
+%	\item Point to Point across multiple floors
+\end{enumerate}
+
+Upon the application stating that the destination had been reached, the distance between the users location and the actual location of the destination was measure in metres.
+
+The purpose of this final test was to examine how well each implementation would handle working in the full environment with other factors. It also allows for a more tangible look into how accurate the system as appose to pure statistics. However, this does introduce some additional error from the heading calculations and other aspects of the application.
+
+%Results
+
+\end{document}
