@@ -31,7 +31,7 @@
 		When extracting the graph from the hand-curated images, the project encountered many issues related to the difference in performance of mobile devices as well as restrictions when processing specific device OS. It has been therefore decided to pre-extract all graphs from the images and only use the  post processed files in order to remove the on-device processing dependency. While this has downsides as well the performance cost is significantly smaller.
 		\newline
 		
-	Another significant point when considering extracting the graph was the storage method on the device. Unlike PCs, phones utilize significantly smaller overall storage space and therefore we could not accommodate for large, dense and fine graphs. We were therefore forced to develop a method that would allow us to solve this problem. 
+	Another significant point when considering extracting the graph was the storage method on the device. Unlike PCs, phones and similar mobile devices utilize significantly smaller overall storage space and therefore we could not accommodate for large, dense and fine graphs. We were therefore forced to develop a method that would allow us to solve this problem. 
 	\newline
 	
 The last significant part of our considerations for this process was representation of additional data present in the picture. We required a way how to navigate a user from specific rooms as well as allow for filtering of rooms per flood and similar. At the same time we had to balance the benefit gained from keeping data readily available in memory, and the limits on memory used by an application imposed by Android and iOS.
@@ -48,7 +48,7 @@ Our initial version of the extraction algorithm utilized the hand curated graph 
 	In the vanilla version, each pixel represented a node in the graph. After running tests and comparing the measures , it became apparent that this approach is not feasible due to three separate reasons:
 	
 	\begin{itemize}
-		\item Produced graph was too large - the graph created using this method contained up to 500 thousand nodes. This has resulted in overall graph sizes over 80 MB, which is an unreasonable demand for a mobile device.
+		\item Produced graph was too large - the graph created using this method contained up to 2,5 milion nodes. This has resulted in overall graph sizes over 150 MB, which is an unreasonable demand for a mobile device.
 		\item Loading the graph on the device took too long due to the need to deserialize nodes and edges.
 		\item The graph-pathfinding library used was struggling with the large amount of nodes and vertices, delaying the response time from a few hundred milliseconds to a few seconds. This was not suitable for real-time navigation.
 	\end{itemize}
@@ -69,4 +69,17 @@ Our initial version of the extraction algorithm utilized the hand curated graph 
 		\item The language we chose - C\# - has great support for XML data. It allowed us to utilize serialisation and deserialisation of objects into XML, resulting in easier integration and faster loading times.
 	\end{itemize}
 	\subsection{Benefits \& Limitations}
+	By implementing our own custom extraction as well as loading and saving methods for the graph, we have managed to work around the restrictions imposed by the existing methods and utilize the full potential of having access to floor plan data. Our decision to keep room data and navigation data in separate files further allowed us to allow the application to handle arbitrary amount of floors, by simply having a reference handle to files that involve navigation without loading the floor plan into memory. The finalized data storage method is flexible and therefore can be updated at later stages without the need to re-generate all floors for a given building.
+\newline
+
+The extraction method was heavily optimised for speed using only a few steps to reach the final graph as shown in \textbf{Figure[\ref{fig:nav_graph}]}. This approach was adapted to ensure we can extract floor plans from different buildings for later tests, if need be. This has encouraged us to make heavy use of parallelism in our extraction process as well as a series of methods that allow us to access image data directly. 
+\newline
+
+By utilizing the methods explained above, we were aiming to decrease the amount of processing required to be performed on the device and this should therefore benefit user experience. We encountered several issues with mobile devices, where in both cases iOS and Android we reached the maximum memory allowed per-application and therefore had to re-design our approach to loading floor plans multiple repeatedly, eventually arriving at an optimal solution.
+\begin{figure}[h]
+\center
+\includegraphics[trim=0 0 0 0, clip,width=\textwidth,height=\textheight,keepaspectratio]{images/graphGeneration.pdf}
+\caption{Steps in generation of the pathfinding graph, from the initial hand curated image to full navigational graph.}
+\label{fig:nav_graph}
+\end{figure}
 \end{document}
