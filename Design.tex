@@ -1,0 +1,29 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+
+\chapter*{Design}
+
+\section*{Proposed Solution}
+
+The research provided demonstrates existing solutions for different aspects of the indoor navigation problem, in some cases even for user tracking using smartphone inertial sensors exclusively. However, none of these integrate the specified components into a user application, nor do they satisfy the specific set of requirements laid out for our project. 
+Given this fact and the research already conducted, we propose the following solution:
+
+\begin{itemize}
+
+\item Xamarin - We will use Xamarin for the development of the application. If we wish to satisfy our requirement of developing a cross platform solution, the use of the Xamarin development kit seems to be the most efficient way of achieveing this.
+
+\item Step Detection - The application will track the user's movements using a step detection algorithm. This algoirthm will determine when the user is walking and track the amount of steps that the user takes. This will make use of a smartphone's accelerometer in order to track changes in the phone's gravity readings.
+
+\item Heading - The smartphone's compass will be used to keep track of user heading.
+
+\item Floor Plan Graphs - Graphs will be extracted from curated versions of the building's floorplan's. These graphs will be used to then create navigational paths for the user to follow.
+
+\item Wall Collision - Building floor plans will be used to prevent user movement through walls. This will help reduce the error in the system.
+
+\item Data Recording - We shall build a supplementary data logging app that will be used to record user step data. This data will be analysed and used to develop the step detection algorithm.
+
+\end{itemize}
+
+
+
+\end{document}

@@ -1,10 +1,10 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
-    \section{Implementation of Android User Interface}
+    \section*{Implementation of Android User Interface}
         In order to develop an acceptable user interface for the Android version of the application, a variety of packages and custom made
         components were implemented. This section aims to explain the implementation of the user interface in detail, discussing each component
         individually.
-        \subsection{Defining Interface Layout}
+        \subsection*{Defining Interface Layout}
 	        In Android applications, the layout of the user interface is defined by writing code into an AXML file. This code is similar to
             XML, but here tags are used to place elements into the layout and specify the values of various options e.g. colour.
             In our case, each tab in the interface displays its own layout.
@@ -14,7 +14,7 @@
             of options. Once this process is complete, the designer then generates the equivalent AXML code, making the development process
             much easier as one can see the end result without having to compile and deploy the whole application. In some edge cases it was necessary
             to hand modify certain parts of the AXML, but this was a fairly trivial task.
-        \subsection{Managing Separate Interface Pages}
+        \subsection*{Managing Separate Interface Pages}
             The main method of separating disjoint pages of the user interface was achieved through the use of a tab based system. This was chosen due
             to both intuitive usability and ease of implementation. In order to make the addition of new tabs easier to code, an extension class,
             \texttt{ActionBarExtensions}, was developed which contained a function that automates the process of adding a new tab to the
@@ -23,7 +23,7 @@
             true. Note that the final release version of the application will contain less tabs due to the lack of need for the end user to be able to access
             such a page. The setup of all of the tabs is handled by a call to \texttt{setUpUITabs}, which creates tabs for the main screen, settings, and 
             debugging information relating to the step counter in order to facilitate testing.
-        \subsection{Destination Selection Menu}
+        \subsection*{Destination Selection Menu}
             In order to improve the user experience, a drop down menu (in Android development terms this is known as a \texttt{Spinner}) that contains
             all possible destinations was added to the interface. Items in the menu consist of a destination name and some of the following items,
             where applicable:
@@ -39,7 +39,7 @@
             This adapter is then set to a specific type of layout (currently this is set to simple). Once this has been done, the adapter is then bound to the spinner in order to display
             the correct values to the user. Finally, a callback function, \texttt{spinnerItemSelected}, was added to the spinner to specify the results of a user selecting a given item.
             This allows the user to select a destination from the menu, as when an item is selected, the correct destination coordinates are set within the application.
-        \subsection{Displaying the Floor Plan}
+        \subsection*{Displaying the Floor Plan}
             The vast majority of screen real estate on the main tab of the application is occupied by the image of the floor plan being displayed. Therefore, it was crucial to 
             implement this part of the interface in such a way that it is as simple and intuitive as possible, as the user will spend most of their time using this part of
             the application. By implementing standard features that make use of the touch screen functionality of smart phones (dragging the image around, pinch-to-zoom,
@@ -55,7 +55,7 @@
             This did allow for scrolling in multiple directions to function, but only one at a time i.e. diagonal scrolling was not possible. In order to solve this problem,
             the Android development team examined various packages, but failed to find one that exactly suited our requirements. Therefore, a custom class
             (\texttt{CustomImageView}) was written to implement all of the desired functionality. This class is described in the section below.
-            \subsubsection{CustomImageView Implementation}
+            \subsubsection*{CustomImageView Implementation}
                 This part of the application is made up of two key classes, one simple, the other more complex. The first of these is the \texttt{CustomImageViewGestureDetector},
                 which extends the basic \texttt{SimpleGestureListener} to work with our custom image view and handles the detection of common smartphone gestures. For our purposes,
                 we implemented custom detection for touching the screen (known as a `down' gesture), double tapping on the screen, and pressing and holding down on the screen
@@ -87,10 +87,10 @@
                 user whether they wish to place a start point or an end point on the floor plan (The debugging version of the application also allows the user arrow to be placed
                 in order to facilitate testing). Once the choice has been made, the relevant coordinates are stored and used to draw the new points - section \ref{subsec:MapMaker}
                 explains the drawing process in detail.
-        \subsection{Managing Points and Paths}
+        \subsection*{Managing Points and Paths}
             Once the image was being displayed correctly and could be interacted with as required, the next step was to facilitate the drawing of start points, end points, the user location,
             and the path to follow on the screen. There were two approaches considered for this, the advantages and disadvantages of which are discussed below.
-                \subsubsection{Overlay Based Approach}
+                \subsubsection*{Overlay Based Approach}
                     This was the first of the approaches to be considered and involves the creation of a separate view to display the start/end points, user arrow, and path on top
                     of the floor plan image. Initially, this was an attractive solution as it allows the program to be constructed in a more modular way, keeping the management of the
                     floor plan apart from that of the drawing. However, it also introduces the additional task of managing the overlay itself. This becomes particularly challenging
@@ -98,7 +98,7 @@
                     The other downside is that translating point coordinates from the overlay may also be tricky, perhaps requiring the use of another transformation matrix.
                     In the end, this method was deemed unsuitable for our purposes, so another solution was considered: directly editing the bitmap being displayed in the
                     \texttt{CustomImageView}.
-                \subsubsection{Direct Bitmap Editing Approach}
+                \subsubsection*{Direct Bitmap Editing Approach}
                     This method involves editing the actual image being held in the image view. This approach addresses the primary issues found with the overlay based solution:
                     handling situations where the user wishes to either move or scale the floor plan by drawing the additional shapes into the bitmap image.
                      In this case, as the points and/or lines are part of the image itself, any translations
@@ -108,7 +108,7 @@
                     unacceptable when a pleasant user experience is a key objective. Fortunately, some brief testing (on both emulators and physical Android devices)
                     revealed that this was not the case; there was no noticeable delay in interface updates. Following this discovery, it was decided to adopt this strategy instead of the
                     overlay system. The following section details how our custom helper class, \texttt{MapMaker}, handled the drawing of the required graphics.
-                \subsubsection{MapMaker Helper Implementation}
+                \subsubsection*{MapMaker Helper Implementation}
                     \label{subsec:MapMaker}
                     The \texttt{MapMaker} class was created in order to keep the implementation of this part of the program separate from the rest of the application, in keeping
                     with the modular structure of most object-oriented programs. This meant that this module could be tested, maintained, and developed independently without 

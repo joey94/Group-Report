@@ -1,16 +1,31 @@
 %\documentclass{report}
-\documentclass[11pt,a4paper]{article}
+\documentclass[12pt,a4paper,notitlepage]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{subfiles}
 \usepackage{graphicx}
 \usepackage[margin = 1in]{geometry}
+\usepackage{fixltx2e}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{cite}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{parskip}
+\usepackage{listing}
+
+
+\parindent=0pt
+
+\usepackage[toc,page]{appendix}
+\usepackage{hyperref}
 
 \title{\bf CS409 - Group Report}
 \author{Pedram Amirkhalili, Joey Benrimoj,  Dominic Brown, Varun Golani, Robert Hubinsky \\ and Daniel Seabright  } 
 \date{}
 \setcounter{tocdepth}{3}
-\usepackage{fixltx2e}
-\usepackage{amsmath}
+
 
 \begin{document}
 \maketitle
@@ -21,9 +36,13 @@
 \pagebreak
 \subfile{Abstract.tex}
 \subfile{Introduction.tex}
-\subfile{Implementation.tex}
 \subfile{Research.tex}
-
+\subfile{Design.tex}
+\subfile{GraphStuff.tex}
+\subfile{Implementation.tex}
+\subfile{Implementation-iOS.tex}
+\subfile{android_UI.tex}
+\subfile{testing.tex}
 \subfile{Management.tex}
 
 \end{document}
