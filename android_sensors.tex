@@ -1,0 +1,34 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+    \section{Accessing Android Sensors}
+        In order for the step counter to function, it was necessary to pass it the readings from various device sensors. As this cannot be handled in the shared
+        project code, native Android code was developed to facilitate this process. This section explains the implementation of this part of the application. As
+        mentioned previously, the main sensors used are the accelerometer and the compass, in order to obtain acceleration and heading values, respectively.
+        \subsection{SensorProcessorBase Implementation}
+            The first custom class implemented for the purpose of managing the access to the Android sensors was the abstract class
+            \texttt{SensorProcessorBase}. This class was later extended by the classes \texttt{Acceleration} and \texttt{Rotation}, discussed
+            later on in this section. This abstract class is responsible for providing the following functionality:
+            \begin{itemize}
+                \item Storing a list of sensor types its child class is responsible for.
+                \item Storing the time since the last sensor reading.
+                \item Specifying a reading delay (how often we want to be able to access the sensor).
+                \item Storing a sliding window of previously read sensor values.
+            \end{itemize}
+            Implementing the list of accepted sensor types is a simple matter of adding the relevant pre-defined sensor types to the list that was created. For example,
+            the accelerometer would add the value \texttt{SensorType.Accelerometer}. This allows each instance of a sensor class to filter out values that it does not
+            require by simply ignoring them.
+            
+            Accessing the time of the last sensor reading was also a fairly simple matter. Whenever a new reading is taken, the current time
+            is stored within the class. Therefore, if the time since the last reading is requested, it is a simple matter of returning the value of the current time minus the stored
+            value for the time of the previous reading. This function is primarily used when determining whether a change in the value of a sensor needs to fire the associated type
+            of event. When a sensor value is changed, the function that handles this new value is only called in the case where he time since the last reading is not less than that
+            of the specified reading delay, therefore allowing the amount of sensor updates to be limited to a desired rate.
+            
+            The final piece of key functionality in this class, the history of previously read values, is implemented through the use of a \texttt{FixedSizeQueue}. This a custom
+            type implemented in shared code that stores a set of values in first-in, first-out order. If a new insertion would increase the size of the queue above the specified
+            capacity bound, the oldest item is subsequently removed from the data structure. In this manner, a sliding window of previous sensor values can be stored by simply
+            adding each new reading to the implemented queue, which will handle the removal of old data when capacity is reached, thereby keeping the window at the specified size.
+            In our case, we chose to store the ten most recent sensor readings, though this amount could be easily changed if it later became necessary.
+        \subsection{CustomListener Implementation}
+            
+\end{document}

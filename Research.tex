@@ -1,11 +1,11 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\chapter*{Research}
+\chapter{Research}
 
 In this section, we will be presenting the research carried out over the course of the project. We will be looking into the technology available within modern smartphones and also the tools that are provided to create applications for these phones. We shall also be analysing various solutions that have been developed within the field of indoor navigation.
 
- \section*{Tracking user movement}
+ \section{Tracking user movement}
 
 An obvious way to track user position is to perform double integration on the obtained acceleration to get distance travelled. However this results in introduction of error due to being only an approximation of the underlying signal. Furthermore, integration of the noise component leads to the standard deviation of the error in position increasing with integration time~\cite[p.73]{integrationError}. Thong, Y. K., et al.~\cite{integrationErrorPractical} analysed the practical effect that double integration of accelerometer noise has on this error by carrying out experiments using two commercial accelerometers, and found that this error very quickly accumulates with time~\cite[p.1168]{integrationErrorPractical}. Hence this approach is unsuitable for a navigation system which continuously and precisely requires the user’s current position. Foxlin, E.'s approach~\cite{foxlin2005pedestrian} alleviates the integration error by using the concept of `zero-velocity updates (ZUPTs)’, which exploits the fact that there is a momentary stationary period of zero velocity and acceleration during walking motion when the user’s foot makes contact with the ground. This allows correction of the velocity error after each stride and makes the error accumulation ``linear in the number of steps''~\cite[p.38]{foxlin2005pedestrian}. This however, requires a dedicated sensor to be placed on the user’s foot and does not come under the purview of a smartphone based approach. 
 
@@ -16,7 +16,7 @@ While taking the magnitude of the accelerometer allows the step detection proced
 
 Efforts have also been made to extend step detection to work in arbitrary phone positions, so that it can be used in real-world situations where the position varies as the user performs a multitude of activities. Such approaches either involve broadly identifying the type of activity the user is performing and then using the appropriate sensors for step detection in that particular situation, or generating and using one or more measures that already take into account the variations in position. Susi, M., et al.~\cite{susi2013motion} specify a set of possible user activities and associate with each one unique features based on measures derived from accelerometer and gyroscope readings. The user’s current activity is then identified by extracting the feature set corresponding to their motion and using a pre-defined decision tree to classify it as one of the specified activities. A specific version of the algorithm optimised for peak detection in the context of that particular activity is then used to detect steps. For instance, if the activity is classified as `phone in swinging hand' then gyroscope readings are also considered due to periodic rotation of the user’s arm. Conversely, activities such as texting do not involve any rotation and thus only accelerometer readings are looked at. Zeng, Q., et al.~\cite{zeng2015novel} proposed a novel step counting algorithm that works irrespective of the phone’s position and step mode (variation in the user’s motion, including walking and running). In addition to the accelerometer they also make use of the 3-axis gravity sensor, which provides acceleration acting on each of the axes specifically due to gravity. A change in these values signifies a change in the position/orientation of the phone and can be used to compensate for the resulting variance in accelerometer readings. Thus the authors take a linear combination of the accelerometer and gravity readings to produce a single metric incorporating this compensation, on the basis of which step detection is carried out. Lee, H., et al.~\cite{lee2015step} consider both the short and long term changes in accelerometer magnitude to capture the variations caused due to different positions and step modes. Peak/valley candidates are identified on the basis of measures that track these short/long term changes such as mean and standard deviation. Candidates are then validated using adaptive thresholds which ensure that sufficient time, corresponding to the estimated minimum duration between subsequent steps in standard motion, has elapsed between adjacent peaks and valleys. 
 
-\subsection*{Step Detection}
+\subsection{Step Detection}
 
 Step detection is one of the most vital components of the navigation system as it is the basis on which a user's motion is detected. In a dead-reckoning system a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Combining this with step length estimation allows for determining the magnitude of this displacement, which enables keeping track of the user's position as they navigate within the mapped area. 
 
@@ -24,7 +24,7 @@ Algorithms for step detection using smartphones typically analyse the phone's se
 
 Considering that step detection in this project is to be used in the context of a navigation system, the in-pocket case would only be useful to consider if our application was equipped to provide directional information in the form of audio updates, as the user would not be able to observe the phone's screen in this scenario. Our application provides navigation instructions in image and textual format only and hence the in-pocket case is not accounted for. We focus specifically on the in-hand case, which is the most common way in which outdoor navigation applications such as Google Maps are used on smartphones as users have the screen in front of them throughout in order to observe their movement on the map and follow the path provided by the navigational system. Thus our step detection method is also designed to work specifically for the in-hand scenario, and might not operate correctly if the phone is kept in some other position.  
 
-\section*{Sensors Considered}
+\section{Sensors Considered}
 
 Existing approaches predominantly make use of the phone's accelerometer readings in order to detect the user's steps. As the name suggests, an accelerometer is a device that measures the acceleration that is applied to the device. In smartphones, this acceleration $A_{d}$ is measured using the relation in 
 Equation~\ref{eq:accelerometerAcceleration}~\cite{accelerometerAcceleration}.  
@@ -69,7 +69,7 @@ The acceleration due to gravity is now along the Y-axis in accordance with the d
 \\
 In addition to the accelerometer some approaches also consider the readings from the gyroscope, which is a sensor that measures the rate of rotation around the phone's principal axes~\cite{accelerometerAcceleration}. Such rotations can be correlated with the user's steps in certain situations, such as when the phone swings while the user has their hand to the side of their body while walking. However since this project restricts the phone's position to be in the user's hand and in front of them at all times there will be no considerable rotational motion involved. Thus the gyroscope readings will not provide any meaningful information for step detection and they are not considered in our approach. 
 
- \section*{Magnetic Navigation Mapping}
+ \section{Magnetic Navigation Mapping}
  
  Less traditional solutions to the indoor navigation problem have also recently been proposed. One of the most promising and strongly tipped to be leading towards an eventual scalable and comprehensive solution at the level of GPS is an Indoor Positioning System (IPS) developed by a company called IndoorAtlas. The company is comprised of researchers and PhD students from the University of Oulu in Finland, and draws from over ten years of research conducted by the university into the movements of animals via their interaction with the Earth's magnetic field and how this can be translated into technology.\\
  
@@ -90,46 +90,41 @@ IndoorAtlas makes use of a similar concept. The Earth's magnetic exists everywhe
  Although exciting, we felt as a group that a similarly styled solution would not be the most appropriate for our project. The technology is very much in it's infancy and grounded as of now in the theoretical. 10 years of research has resulted in the beginnings of a system that might one day see a commercial use, with many years of hard work still required to get the technology anywhere near the level that GPS was even 10 or 15 years ago. We felt to pursue a solution that made use of magnetic maps was too ambitious for both our level of expertise and size of group and desired to come up with an application design that lay within more well trodden ground.
  
 
-\section*{Smartphones}
+\section{Smartphones}
 
 As can be seen by figure(FILL THIS), the smartphone market is heavily dominated by devices operating the Android operating system. iOS devices produced by Apple come in second, and together both Android and iOS devices comprise about 95\% of the world smartphone market. With this in mind, we analysed the hardware makeup of the smartphones that run both operating systems. \\
 
 Amongst the team, there was an even 50/50 split between owners of Android devices and owners of iOS devices. Considering the fact that development would occur around our own personal devices, we decided to highlight the most advanced device from each operating system that we had access to as the target of our research. These were the iPhone 6 and Motorolla Moto G (2nd Generation).
 
-\subsection*{iPhone 6 Hardware}
+\subsection{iPhone 6 Hardware}
 
 The iPhone 6 contains all of the sensors one would need for the production of an indoor navigation system that relies primarily on inertial sensors. The iPhone 6 comes equiped with an accelerometer, three-axis gyroscope, barometer and digital compass, amongst other sensors. These relay data to the iPhone's built in M8 coprocessor chip, a chip designed to offload the collection of sensor data from the cpu. The M8 coprocessor collects, processes and stores the sensor data when the phone is powered down, allowing this to be accessed upon powering up, helping to conserve battery life. The coprocessor is able to be accessed using the Apple provided Core Motion API. We would make extensive use of this API in order to produce our indoor navigation application. The screen offerings are large, with the iPhone 6's 4.7 inch and iPhone 6 Plus's 5.5 inch screen both offering a sufficient screen area within which to display the application.
 
-\subsection*{Motorolla Moto G (2nd Gen) Hardware}
+\subsection{Motorolla Moto G (2nd Gen) Hardware}
 
 The Motorolla Moto G also contains an accelerometer, gyroscope and compass, but lacks the barometer offered by the iPhone. This phone also does not contain a dedicated coprocessor that handles sensor data. A major distinction between Android and iOS operating systems is that the iOS systems and the devices that operate them are developed concurrently. This means that both the hardware and software is optimisied for each other, allowing for speciailised features such as the M8 processor to be produced. Android must contend with a wide variety of hardware platforms and specifications, meaning it's features are typically more limited. The 5 inch screen however offers a large area within which to display the floorplans and user interface of the application.
 
-\subsection*{Choice of platform}
+\subsection{Choice of platform}
 
 As can be seen, the sensors offered in both smartphones mean that an indoor navigation application is theoreitcally possible on both platforms. This coupled with the fact that our project team each only had access to either one operating system or the other, not both concurrently nor all the same platform, we decided that the best course of action would to be pursue a joint iOS and Android application. This would also reflect the real world distribution of hardware amongst people, allowing a final application to be used by the largest cross section of users possible. This naturally led us to investigate how this could be best achieved.
 
-\section*{Development Platforms}
+\section{Development Platforms}
 
 Both Android and iOS devices have their own development kits that run on their own unique programming languages.
 
-\subsection*{iOS Development Platform}
+\subsection{iOS Development Platform}
 Development for iOS is limited to Apple produced computers (Macbooks, Macs etc.). The integrated development platform (IDE) offered by Apple is Xcode. At the time of writing, Xcode is offered free on the Mac application store for users of the `El Capitan' mac operating system. iOS development can occur in both the Objective-C and Swift programming languages. Both are object oriented languages, with Swift being a newly created language by Apple, introduced at Apple's 2014 Worldwide Developer Conference (WWDC), offering several benefits over the older Objective-C, amongst these added brevity and a greater resilience to erroneous code. No team members were familiar with either of these programming languages, with only one member having used Xcode previously but for a project written in C++. A further restriction existed in the fact that only half the group team mebers owned any kind of Apple computer, meaning they would be unable to develop anything within Xcode.
 
-\subsection*{Android Development Platform}
+\subsection{Android Development Platform}
 
 Android also provides it's own IDE called Android studio. This is available across all computer operating systems (Windows, Mac and Linux) and can be downloaded from their website. Applications for android are written in Java, with the IDE also providing a wide range of supplementary profiling and debugging software. All team members were familiar with Java, with it having been a major part of the computer science course to date, a major .
 
-\subsection*{Shared Development Environment}
+\subsection{Shared Development Environment}
 
 Xamarin is a company owned by Microsoft that develops the Xamarin Studio IDE. Xamarin offers the ability to code applications for Andoird, iOS and Windows Phone with a C\# shared codebase, with code able to be shared across the various platforms. Xamarin.Forms, intorduced in 2014, goes as far as to allow implementations of shared user interfaces.
 
 With their website citing the ability to share up to 90\% of code across applications on multiple platforms, we were attracted by the prospect of being able to have a singular application work on both iOS and Android. Furthermore, two team members were already profficient in C\#, with one also having worked previously with Xamarin.
  
-
-\nocite{*}
-
-\bibliography{StepDetection}
-\bibliographystyle{plain}
 
 
  \end{document}

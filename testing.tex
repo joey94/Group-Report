@@ -2,9 +2,9 @@
 
 \begin{document}
 
-\chapter*{Testing}
+\chapter{Testing}
 
-\section*{Step Dectection}
+\section{Step Dectection}
 
 Step detection is such an integral part of any dead-reckoning system and such the method of identifying these steps should be tested and evaulated to find how much error the system has a whole. As mentioned previously different methods were implemented to try and find the best system, as such through out development there are 4 different stages of the Step Detector that can be taken for testing:
 \begin{enumerate}
@@ -15,7 +15,7 @@ Step detection is such an integral part of any dead-reckoning system and such th
 \end{enumerate}
 The Basic Peak-Valley variation was selected as it forms the basis of how steps are detected in all future methods. It will serve as a baseline for seeing how much the different filters improve performance for detections. 
 
-\subsection*{Error Rate}
+\subsection{Error Rate}
 
 The error rate for the Step Detection algorithms is defined as follows:
 
@@ -27,7 +27,7 @@ So over a known number of steps, True Value, each algorithm is used and its coun
 
 %Results
 
-\subsection*{Overcounting}
+\subsection{Overcounting}
 
 Overcounting is when additional steps are registered when they shouldn't be, this is different from what was defined as a false positive earlier where a step is counted when no movement is occuring. Since the false positive rate has been discussed previously overcounting was selected as an alternative metric to examine wheter the error rate for each method corresponded to them correctly identifying and counting steps.
 
@@ -39,7 +39,7 @@ There are 2 particular times in which overcounting can occur:
 
 %Results
 
-\subsection*{Steps Taken vs Timing}
+\subsection{Steps Taken vs Timing}
 
 Having examined the Error and False Positive Rates, it is important to try and see where the errors are occuring within the implemented methods. One way to do this is to look at the timing when steps are considered to be taken. So whenever a step is register to have been taken by the application the current time is documented to allow for this analysis to happen.
 
@@ -47,7 +47,7 @@ The purpose of this test is to explore whether the algorithms are matching the r
 
 %Results
 
-\subsection*{Proximity to Destination}
+\subsection{Proximity to Destination}
 
 Finally after all the previous tests that simply looked at the step detector methods in an isolated environment, they were then tested against each other in the full application. Each algorithm was used in the application along 2 routes:
 

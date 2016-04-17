@@ -1,5 +1,5 @@
 %\documentclass{report}
-\documentclass[12pt,a4paper,notitlepage]{report}
+\documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{subfiles}
 \usepackage{graphicx}
@@ -13,7 +13,7 @@
 \usepackage{url}
 \usepackage{caption}
 \usepackage{parskip}
-\usepackage{listing}
+\usepackage{listings}
 
 
 \parindent=0pt
@@ -21,15 +21,16 @@
 \usepackage[toc,page]{appendix}
 \usepackage{hyperref}
 
-\title{\bf CS409 - Group Report}
-\author{Pedram Amirkhalili, Joey Benrimoj,  Dominic Brown, Varun Golani, Robert Hubinsky \\ and Daniel Seabright  } 
+%\title{\bf CS409 - Group Report}
+\title{Indoor Localisation and Navigation Using Inertial Sensors on Smartphones}
+\author{Pedram Amirkhalili, Joey Benrimoj,  Dominic Brown, Varun Golani, \\Robert Hubinsky and Daniel Seabright  } 
 \date{}
 \setcounter{tocdepth}{3}
 
 
 \begin{document}
 \maketitle
-\line(1,0){450}
+%\line(1,0){450}
 
 \tableofcontents
 
@@ -44,5 +45,10 @@
 \subfile{android_UI.tex}
 \subfile{testing.tex}
 \subfile{Management.tex}
+
+\nocite{*}
+
+\bibliography{StepDetection}
+\bibliographystyle{plain}
 
 \end{document}
