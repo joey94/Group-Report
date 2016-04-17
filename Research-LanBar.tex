@@ -13,7 +13,7 @@ Landmarks have long since been tools used for navigation, prior to the creation 
 
 Note the term Organic is a reference to the landmark being present in the environment without the need for the development team to place an object or device to create the waypoint.
 
-An example of a Beacon based system is one developed by Inoue. Y, et. al [REF] which works autonomously removing the need for additional infrastructre in the form of a server. The beacons in this project are self-sufficient devices with their own power sources and transmitters, this means that the required infrastructure is low-cost and able to placed in any location without pre-requisites.
+An example of a Beacon based system is one developed by Inoue. Y, et. al ~\cite{Inoue2009} which works autonomously removing the need for additional infrastructre in the form of a server. The beacons in this project are self-sufficient devices with their own power sources and transmitters, this means that the required infrastructure is low-cost and able to placed in any location without pre-requisites.
 
 Prior to using the devices for navigation three sets of reference data are required:
 
@@ -29,7 +29,7 @@ Whilst this approach reduces the amount of infrastructure normally required for 
 
 With Organic Landmarks the issue of not fitting the requirements of using inertial sensors is removed. Since there are longer devices placed in the environment to help with locational calculations. There are two ways in which organic landmarks can be used for navigation, the first is to use ones you can detect using sensors and then reset the error in the system and the user's location. The second if through the use of computer vision identify landmarks and through this keep track of the user, this second method goes beyond the scope of our project and was not researched beyond simple acknowledgement.
 
-An example of a system the uses ``discovered'' landmarks is UnLoc, proposed by Wang. H, et al. [REF], it works by using a combination of Dead Reckoning to detect where the user is moving and Landmarks to reset the error that builds up with such a system. Landmarks are either identified through examining floorplans or by searching through the environment for unique sensors readings that correspond to a specific region. Some of the utilised landmarks are the following:
+An example of a system the uses ``discovered'' landmarks is UnLoc, proposed by Wang. H, et al. ~\cite{wanf2012no}, it works by using a combination of Dead Reckoning to detect where the user is moving and Landmarks to reset the error that builds up with such a system. Landmarks are either identified through examining floorplans or by searching through the environment for unique sensors readings that correspond to a specific region. Some of the utilised landmarks are the following:
 
 \begin{itemize}
 	\item Elevators
@@ -44,17 +44,20 @@ This systems proves to work well in negating the error present in Dead Reckoning
 
 As smartphones continue to get more and more powerful, new sensors are added to the array they already have. In recent years the barometer is becoming more prevelant, this a sensor that can determine the air pressure the phone is currently in. With this information it is possible to obtain a height above sea level for the phone based of the barometric formula, which models the relationship from pressure to altitude.
 
-The application of this information has the potential to be very useful and influential for indoor navigation systems, as if it is accurate enough it will allow for more precise vertical positioning. Potentially meaning that many systems will now be able to keep track of users throughout several floors in large buildings. With this in mind a team from Singapore Management University [REF] set out test if barometric sensors in phones could be provide this breakthrough.
+The application of this information has the potential to be very useful and influential for indoor navigation systems, as if it is accurate enough it will allow for more precise vertical positioning. Potentially meaning that many systems will now be able to keep track of users throughout several floors in large buildings. With this in mind a team from Singapore Management University ~\cite{baro2014} set out test if barometric sensors in phones could be provide this breakthrough.
 
-In their study they tested numerous factors that could have an effect on the readings, finding that, as expected, time, weather and location had an effect on the pressure the sensor gave. These three factors are expected to have an effect as it is well documented that weather has an effect on the pressure, and obviously with time and location the weather and conditions are likely to be given. The other unexpected factor that was found was that even identical devices left next to one another would have different readings but with the same overall pattern. [REF, pg2]
+In their study they tested numerous factors that could have an effect on the readings, finding that, as expected, time, weather and location had an effect on the pressure the sensor gave. These three factors are expected to have an effect as it is well documented that weather has an effect on the pressure, and obviously with time and location the weather and conditions are likely to be given. The other unexpected factor that was found was that even identical devices left next to one another would have different readings but with the same overall pattern. ~\cite[p.2]{baro2014}
 
 This lead them to instead of focusing on the absolute barometer reading to look at the relative reading, since the absolute reading of two identical phones in the same conditions, let alone if the conditions are different. This pressure difference is independent of all the above factors and therefore could be used to predict floor changes. After proving this they moved on recording a number of samples and using data analysis techniques to see if they could predict whether a floor had changed just using the difference in pressure values. With this they managed to achieve a 99.54\% accuracy.
 
 This particular study proves the potential that the barometer has in terms of indoor naviagtion and keeping track of a user's verticality. However it is noted that floors need to have a minimum difference of 0.2hPa or 1.6 metres, as the maximum error in pressure differences was around this value. If in a building the difference between floors is close to this value the probability of error increases.
 
-Whilst this study proves that the barometer is useful, it isn't the only system that shows the uses of the barometer. Another example of this is the iBaro-altimeter system developed at The University of Tokyo [REF]. To calculate ones altitude you need another reference point of pressure as part of the barometric formula, often either obtained from a nearby local source (meteorological station) or a through using a constant.
+Whilst this study proves that the barometer is useful, it isn't the only system that shows the uses of the barometer. Another example of this is the iBaro-altimeter system developed at The University of Tokyo ~\cite{baro22014}. To calculate ones altitude you need another reference point of pressure as part of the barometric formula, often either obtained from a nearby local source (meteorological station) or a through using a constant.
 
 This system they proposed worked by using a series of standard reference points and other temporary ones they could ascertain to be correct, such as a smartphone in the system that they have assigned a altitude to. These collected reference points are stored on a server, then a smartphone that wants its altitude makes a request with some required information.
 
 Whilst this system achieved low error rates, it requires a large amount of infrastructure which doesn't fit with the idea behind the applicaton. Even if the server could be removed from the design, an internet connection would be required to collect some of the reference points and GPS location is one of the inputs that the server wants to return an altitude.
+
+\nocite{*}
+
 \end{document}

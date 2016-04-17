@@ -19,11 +19,15 @@ For detecting these there are unique patterns from the accelerometer readings an
 
 The third option is more problematic in our environment as the entire building has lots of electronic equipment, such as computers, servers, etc.... This means that there is lots of magnetic inteference throughout the department, so there is not really any area that has a unique reading that can be used as a Landmark.
 
-This leaves the final option as the only method of removing error when navigating within a floor, to do this all the routers on a floor need to be identified. For the ground floor of the department the routers are roughly in the positions below:
+This leaves the final option as the only method of removing error when navigating within a floor, to do this all the routers on a floor need to be identified.
 
-[IMAGE]
+\begin{center}
+\includegraphics[scale=0.3]{images-implementation/wifiLocation.png}
+\captionof{figure}{The location of Wifi routers on the ground floor of DCS, marked as red dots}
+\label{fig:wifiLoc}
+\end{center}
 
-The locations of these routers unfortunately mean that the usage of them will provide no benefit. They reside with in the corners of the rooms, and for a landmark to be useful the user must path close enough to it for it to be a viable choice for resetting error. With their locations it is impossible for an effecient routing algorithm to return a path in which the routers are not either at the start or the end of the route. Hence making them effectively useless for this purpose.
+The locations of these routers unfortunately mean that the usage of them will provide no benefit, shown in Figure~\ref{fig:wifiLoc}. They reside with in the corners of the rooms, and for a landmark to be useful the user must path close enough to it for it to be a viable choice for resetting error. With their locations it is impossible for an effecient routing algorithm to return a path in which the routers are not either at the start or the end of the route. Hence making them effectively useless for this purpose.
 
 We also found that we often picked up routers from different floors in certian areas, which could easily be misinterpreted as the user being someone they are not. As well as this devices would connect to a room's router outside of them, meaning that connecting to a router that is specific to a large room it is an unreliable to assume the user is within it.
 
