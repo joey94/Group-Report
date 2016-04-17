@@ -1,12 +1,10 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\chapter{Design}
-
-\section{Proposed Solution}
+\chapter{Proposed Solution}
 
 The research provided demonstrates existing solutions for different aspects of the indoor navigation problem, in some cases even for user tracking using smartphone inertial sensors exclusively. However, none of these integrate the specified components into a user application, nor do they satisfy the specific set of requirements laid out for our project. 
-Given this fact and the research already conducted, we propose the following solution:
+Given this fact and the research already conducted, we propose a solution consisting of the following:
 
 \begin{itemize}
 
@@ -14,16 +12,49 @@ Given this fact and the research already conducted, we propose the following sol
 
 \item Step Detection - The application will track the user's movements using a step detection algorithm. This algoirthm will determine when the user is walking and track the amount of steps that the user takes. This will make use of a smartphone's accelerometer in order to track changes in the phone's gravity readings.
 
+\item Data Recording - We shall build a supplementary data logging app that will be used to record user step data. This data will be analysed and used to develop the step detection algorithm.
+
 \item Heading - The smartphone's compass will be used to keep track of user heading.
 
 \item Floor Plan Graphs - Graphs will be extracted from curated versions of the building's floorplan's. These graphs will be used to then create navigational paths for the user to follow.
 
 \item Wall Collision - Building floor plans will be used to prevent user movement through walls. This will help reduce the error in the system.
 
-\item Data Recording - We shall build a supplementary data logging app that will be used to record user step data. This data will be analysed and used to develop the step detection algorithm.
-
 \end{itemize}
 
+\section{Component Overview}
 
+The following system diagram will show how the various application components are envisioned will work with each other. Considering the iterative nature of development (discussed in depth within the project management section of the report), this diagram provides a general map of how the application will take shape, with the implementation specifics being tackled on an iterative basis.
+
+\begin{center}
+\includegraphics[scale=0.6]{images/systemDiagram.png}
+\captionof{figure}{System Diagram}
+\label{fig:systemDiagram}
+\end{center}
+
+
+\section{UI Design}
+
+Two main designs were developed for the project, one for the logging application that would record step data to be used for data analysis and one for the main application.
+
+\subsection{Data Logging Application}
+
+The data logging application would only ever be used by the group members and as such, need be only functional in design rather than visually appealing. With this in mind, we settled on a simple design, with the intentions of allowing effective data collection. This is shown in the following image.
+
+\begin{center}
+\includegraphics[scale=0.6]{images/dataLoggerDesign.png}
+\captionof{figure}{Data logger page design}
+\label{fig:dataLogger}
+\end{center}
+
+\subsection{Final User Application}
+
+Since this application is intended for commercial use, greater emphasis is required on visual appeal. We again opted for a minimalist design, maximising the size of the floor plan on the screen. Rather than having buttons permanently on screen and cluttering the view, we opted for a pop up menu that would appear after a long press on the screen and disappear when not needed.
+
+\begin{center}
+\includegraphics[scale=0.6]{images/finalApplication.png}
+\captionof{figure}{Final application page design}
+\label{fig:finalApplication}
+\end{center}
 
 \end{document}

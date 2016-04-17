@@ -1,11 +1,11 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\chapter{Floor Plans}
+\section{Floor Plans}
     
 Floor plans played a major role in the design of the application. Not only would the computer science building's floorplans be used to produce the graph that would be used for pathfinding and navigation, it would also provide the backdrop upon which the majority of the application would be displayed. With this in mind, floor plans went through a protracted phase of pre processing and refinement, allowing us to retreive the information we needed and visually enhance the images as well.
 
-\section{Selection of the Images}
+\subsection{Selection of the Images}
 
 Although we initially considered creating our own floor plans from scratch by physically measuring room dimensions and producing images from these figures, we found out that floor plans suited for our needs could be obtained from the Universities' online interactive map. The interactive map contained floor plans of all the Universitiy's academic buildings, made publicly available through their website. Retreiving the images from this website was beneficial for various reasons.
 
@@ -20,7 +20,7 @@ Although we initially considered creating our own floor plans from scratch by ph
 \item They provided us with a good conceptual oultine that could be utilized at later stages of our project, where we would ultimately design our own floor plans to suit the appearence of the application.
 \end{itemize}
 		
-\section{Image Processing}
+\subsection{Image Processing}
 
 Despite the benefits, several issues still existed with the provided floor plans. The images available were often too complex for any immediate processing to take place and contained a lot of noise in the form of labels or icons. This kind of superfluous data, whilst visually appealing, is obviously not suitable for the extraction of a graph for example, from the floor plan (based on our plans to make use of a colour based algorithm) and therefore it was decided that in order to make use of the available resources, hand curation was necessary.
 
@@ -37,17 +37,17 @@ The process of hand-curating the images involved the following steps:
 \item Widen the doors in order to compensate for build-up error of sensors - This was necessary at the later stages of the project, where we realized that the build-up error of the sensors could stop us from navigating through doors.
 \end{itemize}
 		
-\subsection{Benefits}
+\subsubsection{Benefits}
 
 Having a hand curated image allowed us to perform easier extraction of the navigation graph as well as introduced other possibilities on handling the further challenges in the implementation. The hand curated image is further used in wall-detection as well as other support systems for navigation. 
 		
-\section{Graph extraction}
+\subsection{Graph extraction}
 
 The hand curated images were then able to be used for the extraction of the graphs.
 
-\subsection{Considerations}
+\subsubsection{Considerations}
 
-When extracting the graph from the hand-curated images, the project encountered many issues related to the difference in performance of mobile devices as well as restrictions when processing specific device OS. It has been therefore decided to pre-extract all graphs from the images and only use the post processed files in order to remove the on-device processing dependency. While this has downsides as well, the performance cost is significantly smaller.
+When extracting the graph from the hand-curated images, the project encountered many issues related to the difference in performance of mobile devices as well as restrictions when processing specific device OS. It was therefore decided to pre-extract all graphs from the images and only use the post processed files in order to remove the on-device processing dependency. While this has downsides as well, the performance cost is significantly smaller.
 \newline
 		
 Another significant point when considering extracting the graph was the storage method on the device. Unlike PCs, phones and similar mobile devices utilize significantly smaller overall storage space and therefore we could not accommodate for large, dense and fine graphs. We were therefore obliged to find a balance between increased separation between nodes in the graphs in order to reduce graph file size and also ensure that the distances between nodes were small enough to allow for accurate movement and path creation.
@@ -55,30 +55,30 @@ Another significant point when considering extracting the graph was the storage 
 	
 The last significant part of our considerations for this process was representation of additional data present in the picture. We required a way of navigating a user from specific rooms as well as allow for filtering of rooms per floor etc. At the same time we had to balance the benefit gained from keeping data readily available in memory, and the limits on memory used by an application imposed by Android and iOS.
 
-\subsection{Initial approach}
+\subsubsection{Initial approach}
 
 As per the decision explained in the previous section, all of the graph extraction was performed using a computer instead of real-time extraction on the device. This has allowed us to make use of heavy parallelism as well as methods exploiting non-PCL libraries.
 \newline
 	
-Our initial version of the extraction algorithm utilized the hand curated graph we created by using a version of flood algorithm. This way performed by setting an initial point in the middle of the picture (or in any room)  and creating nodes and edges by flooding in 4 directions. This was bounded by simple logic, where no nodes were created in walls (white colour). While this approach worked, it had many performance issues due to objects in the .NET API - namely Bitmap. The GetPixel method was not thread safe and therefore was locking the Bitmap data before accessing it. It was therefore obvious that the subsequent iterations that will require more than a single iteration over all of the elements will have to overcome this problem
+Our initial version of the extraction algorithm utilized the hand curated graph we created by using a version of flood algorithm. This was performed by setting an initial point in the middle of the picture (or in any room)  and creating nodes and edges by flooding in 4 directions. This was bounded by simple logic, where no nodes were created in walls (white colour). While this approach worked, it had many performance issues due to objects in the .NET API - namely Bitmap. The GetPixel method was not thread safe and therefore was locking the Bitmap data before accessing it. It was therefore obvious that the subsequent iterations that will require more than a single iteration over all of the elements will have to overcome this problem
 
-\subsection{Optimisation}
+\subsubsection{Optimisation}
 While the initial tool was capable of extracting a graph from the image, it caused many issues in regards to runtime and the overall size of the graph produced. In order to mend these problems we decided to re-implement the tool with the issues from the previous version in mind. 
 
 \subsubsection{Removing the bitmap object dependency}
 
-The only way how to expose pixel data in the Bitmap object was to use its GetPixel method. This method is not thread safe and is therefore locking. This is caused issues when an attempt at using parallelism with the project was made. In order to remedy this, raw data of the bitmap image was stored in a two dimensional array, expressing information about the image. Thanks to this we were not only able to access the pixel information from multiple threads at once, but also ensure that the access time for an individual pixel is O(1) thanks to direct indexing. 
+The only way how to expose pixel data in the Bitmap object was to use its GetPixel method. This method is not thread safe and was therefore locking. This caused issues when an attempt at using parallelism with the project was made. In order to remedy this, raw data of the bitmap image was stored in a two dimensional array, expressing information about the image. Thanks to this we were not only able to access the pixel information from multiple threads at once, but also ensure that the access time for an individual pixel is O(1), thanks to direct indexing. 
 
 \subsubsection{Node distance}
 In the vanilla version, each pixel represented a node in the graph. After running tests and comparing the measures , it became apparent that this approach is not feasible due to three separate reasons:
 	
 \begin{itemize}
 
-\item Produced graph was too large - the graph created using this method contained up to 2,5 milion nodes. This has resulted in overall graph sizes over 150 MB, which is an unreasonable demand for a mobile device.
+\item Produced graph was too large - the graph created using this method contained up to 2.5 milion nodes. This resulted in overall graph sizes of over 150 MB, which is extremely large for a mobile application.
 
-\item Loading the graph on the device took too long due to the need to deserialize nodes and edges.
+\item Loading the graph on the device took a long time due to the need to deserialize nodes and edges.
 
-\item The graph-pathfinding library used was struggling with the large amount of nodes and vertices, delaying the response time from a few hundred milliseconds to a few seconds. This was not suitable for real-time navigation.
+\item The graph pathfinding library used was struggling with the large amount of nodes and vertices, delaying the response time from a few hundred milliseconds to a few seconds. This was not suitable for real-time navigation.
 
 \end{itemize}
 	
@@ -90,20 +90,20 @@ The initial version was forcing each node to check all four directions for possi
 \subsubsection{Introduction of multi-pass graph generation}
 The initial version also suffered from severe inter-loop dependency. This was caused by the fact that in order to create an edge, all of the vertices had to be already created - otherwise we could miss some of them. This caused the separate threads to block each other. In order to resolve this, multi-pass was adapted.  The optimised version therefore processes separate stages sequentially, while each individual stage exploits paralelism.
 
-\subsection{Runtime summary}
-The optimisations greatly improved the runtime of the extraction. Thanks to the usage of direct indexing and hashing, we were able to ensure that the extraction process didn't take longer than a few seconds to perform all the steps necessary in order to generate a graph that can be navigated across. The initial generation of nodes for the graph runs in the time O(n) as it needs to check each position on the image for a possible node. Each operation with pixels runs in O(1) thanks to the ability to directly index into the pre-processed array. The linking operation runs in a combined time of O(n * log(n)) + O(2n) due to the need to check two directions for possible links as well as locating a node in a collection. The collection of nodes is represented by a Dictionary type, which loosely translates to a HashMap. 
+\subsubsection{Runtime summary}
+The optimisations greatly improved the runtime of the extraction. Thanks to the usage of direct indexing and hashing, we were able to ensure that the extraction process didn't take longer than a few seconds to perform all the steps necessary in order to generate a graph. The initial generation of nodes for the graph runs in the time O(n) as it needs to check each position on the image for a possible node. Each operation with pixels runs in O(1) thanks to the ability to directly index into the pre-processed array. The linking operation runs in a combined time of O(n * log(n)) + O(2n) due to the need to check two directions for possible links as well as locating a node in a collection. The collection of nodes is represented by a Dictionary type, which loosely translates to a HashMap. 
 
-\subsection{Saving and loading}
+\subsubsection{Saving and loading}
 The project utilizes XML as its means of storage. This is due to multiple reasons:
 	
 \begin{itemize}
 
-\item The robust nature of XML based storage is a good match for this project as its ensures validity checking as well as allows for easier understanding of the data present. Using this approach also opened up the graph datastructure to modifications beyond the scope of edge and vertex data. 
+\item The robust nature of XML based storage is a good match for this project as its ensures validity checking as well as allows for easier understanding of the data present. Using this approach also opened up the graph data structure to modifications beyond the scope of edge and vertex data. 
 		
 \item The language we chose - C\# - has great support for XML data. It allowed us to utilize serialisation and deserialisation of objects into XML, resulting in easier integration and faster loading times.
 \end{itemize}
 
-\subsection{Benefits \& Limitations}
+\subsubsection{Benefits \& Limitations}
 By implementing our own custom extraction as well as loading and saving methods for the graph, we have managed to work around the restrictions imposed by the existing methods and utilize the full potential of having access to floor plan data. Our decision to keep room data and navigation data in separate files further allowed us to allow the application to handle arbitrary amount of floors, by simply having a reference handle to files that involve navigation without loading the floor plan into memory. The finalized data storage method is flexible and therefore can be updated at later stages without the need to re-generate all floors for a given building.
 \newline
 

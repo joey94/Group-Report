@@ -1,13 +1,13 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\chapter{Implementation}
+\section{Implementation}
 
 This section will detail the process of turning our designs into a working application. It will mostly read chronologically, with tasks and components completed earlier into the project also appearing earlier within this section. This will also aid in demonstrating our thought process behind changes to the application design that arose through development, be it through complications or the realisation of superior design choices.
 
-\section{Phase One}
+\subsection{Implementation phases}
 
-Actual application development on this project began with our creation of a data logging application. This would be used to gather principally accelerometer data about steps during walking cycles that would inform the development of the step detection algorithm.\\
+Actual application development on this project began with the creation of a data logging application. This would be used to gather principally accelerometer data about steps during walking cycles that would inform the development of the step detection algorithm.\\
 
 Work around this data logging and initial step detection algorithm implementation comprised phase one of our implementation, with phase two encompassing the development of our main, final application.
 
@@ -31,11 +31,11 @@ With the logging application set up, focus shifted towards the recording of step
 
 Whilst we were quite confident of obtaining distinguishable patterns for the step data related to normal walking, we opted to collect data for the turn whilst walking to see whether we were able to identify a way to include accelerometer or gyroscopic data to inform the values obtained for user heading. Although we theorised the compass would prove to be the most accurate means of obtaining user heading, we were nevertheless open to the idea of designing our own heading inference engine if our data analysis pointed to a custom made engine being more accurate.\\
 
-\subsection{Data Analysis}
+\subsection{Data Analysis Tools}
 
 Data analysis primarily involved the plotting of the data values in graph form. For this we made use of R studio. RStudio is a free, open-source IDE designed for statistical computing and graphics. Through our own personal experiences after previously working with RStudio and it's programming language R, we felt that it would facilitate the most painless and comprehensive data analysis for the step data.\\
 
-\subsubsection{Initial Data Analysis}
+\subsection{Initial Data Analysis}
 
 After deciding that the accelerometer readings would form the basis of the step detection approach, the logging application was used to capture some acceleration data corresponding to walking motion to perform an initial analysis and detect any patterns that could be associated with individual steps. The data was recorded while keeping the phone in hand and walking in a straight line for approximately 10 steps. 
 The obtained data is depicted in Figure~\ref{fig:straightWalkRaw}. 
