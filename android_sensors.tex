@@ -49,7 +49,8 @@
             This class (\texttt{Acceleration}) is responsible for accessing the accelerometer of the Android device being used and, therefore, is also responsible for calculating
             the final acceleration vector (a 3-tuple in this case) and returning this vector upon request. The inital setup of an instance of this class first adds 
             the sensor types \texttt{Accelerometer}, \texttt{MagneticField}, and \texttt{Gravity} to its list of accepted sensor types. This allows the instance to filter out
-            unnecessary values, as discussed prior. Following this, the reading delay is set to a value of ten, thus ten sensor readings are taken per second. More than this value
+            unnecessary values, as discussed prior. Following this, the reading delay is set to a value of ten milliseconds, thus one hundred sensor readings are taken per second.
+            More than this value
             leads to too many events being fired, whereas less was found to be detrimental to step detection.
             
             The remaining functionality of this class is found in \texttt{SensorChangedProcess}. This is the method called from the \texttt{CustomListener} in order to access a new
