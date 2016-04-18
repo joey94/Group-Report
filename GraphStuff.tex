@@ -30,7 +30,7 @@ The process of hand-curating the images involved the following steps:
 
 \item Limiting a room to a single colour - This was a requirement as some rooms made use of gradient colours. Keeping these could greatly hinder the extraction process and the gradients were therefore removed.
 
-\item Removal of labels and other text - The room numbers and other information would be stored within a separate fiel and therefore were unnecessary when working on the graph extraction.
+\item Removal of labels and other text - The room numbers and other information would be stored within a separate file and therefore were unnecessary when working on the graph extraction.
 			
 \item Normalizing the colours of walls - Some of the walls and space outside the building were not completely white as they were dissolved by the gradients. Making all of the walls exclusively white was crucial for the success of the graph extraction process.
 			
@@ -67,7 +67,7 @@ While the initial tool was capable of extracting a graph from the image, it caus
 
 \subsubsection{Removing the bitmap object dependency}
 
-The only way how to expose pixel data in the Bitmap object was to use its GetPixel method. This method is not thread safe and was therefore locking. This caused issues when an attempt at using parallelism with the project was made. In order to remedy this, raw data of the bitmap image was stored in a two dimensional array, expressing information about the image. Thanks to this we were not only able to access the pixel information from multiple threads at once, but also ensure that the access time for an individual pixel is O(1), thanks to direct indexing. 
+The only way of exposing the pixel data in the Bitmap object was to use its GetPixel method. This method is not thread safe and was therefore locking. This caused issues when an attempt at using parallelism with the project was made. In order to remedy this, raw data of the bitmap image was stored in a two dimensional array, expressing information about the image. Thanks to this we were not only able to access the pixel information from multiple threads at once, but also ensure that the access time for an individual pixel is O(1), thanks to direct indexing. 
 
 \subsubsection{Node distance}
 In the vanilla version, each pixel represented a node in the graph. After running tests and comparing the measures , it became apparent that this approach is not feasible due to three separate reasons:
@@ -85,7 +85,7 @@ In the vanilla version, each pixel represented a node in the graph. After runnin
 
 \subsubsection{Two-directional linking}
 	
-The initial version was forcing each node to check all four directions for possible neighbours. This was redundant as the same effect could be achieved by ckecking only two directions in an undirected graph. The solution was therefore adapted to only check left and right from each node created in search for neighbours.
+The initial version was forcing each node to check all four directions for possible neighbours. This was redundant as the same effect could be achieved by checking only two directions in an undirected graph. The solution was therefore adapted to only check left and right from each node created in search for neighbours.
 
 \subsubsection{Introduction of multi-pass graph generation}
 The initial version also suffered from severe inter-loop dependency. This was caused by the fact that in order to create an edge, all of the vertices had to be already created - otherwise we could miss some of them. This caused the separate threads to block each other. In order to resolve this, multi-pass was adapted.  The optimised version therefore processes separate stages sequentially, while each individual stage exploits paralelism.

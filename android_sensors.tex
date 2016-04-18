@@ -22,7 +22,7 @@
             Accessing the time of the last sensor reading was also a fairly simple matter. Whenever a new reading is taken, the current time
             is stored within the class. Therefore, if the time since the last reading is requested, it is a simple matter of returning the value of the current time minus the stored
             value for the time of the previous reading. This function is primarily used when determining whether a change in the value of a sensor needs to fire the associated type
-            of event. When a sensor value is changed, the function that handles this new value is only called in the case where he time since the last reading is not less than that
+            of event. When a sensor value is changed, the function that handles this new value is only called in the case where the time since the last reading is not less than that
             of the specified reading delay, therefore allowing the amount of sensor updates to be limited to a desired rate.
             
             The final piece of key functionality in this class, the history of previously read values, is implemented through the use of a \texttt{FixedSizeQueue}. This a custom
@@ -54,7 +54,7 @@
             leads to too many events being fired, whereas less was found to be detrimental to step detection.
             
             The remaining functionality of this class is found in \texttt{SensorChangedProcess}. This is the method called from the \texttt{CustomListener} in order to access a new
-            acceleration value. It firstly carries out a check to determine whether or not the input sensor event is required by the class i.e. is it one of the sensor types previously
+            acceleration value. It firstly carries out a check to determine whether or not the input sensor event is required by the class i.e. whether it is one of the sensor types previously
             added to its list of accepted types? If this is indeed the case, the values are converted into array form and stored within variables for later use. If not, the event can
             be ignored. Once this process is complete, the method checks whether it has the necessary values to compute a valid acceleration value. If it does not, the method 
             simply returns. However, if a value can be calculated, this is done as follows. Firstly, a rotation matrix is calculated using the \texttt{SensorManager} and the

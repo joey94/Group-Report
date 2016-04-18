@@ -6,13 +6,13 @@
 
 \section{Step Dectection}
 
-Step detection is such an integral part of any dead-reckoning system and such the method of identifying these steps should be tested and evaulated to find how much error the system has a whole. As mentioned previously different methods were implemented to try and find the best system, as such through out development there are 3 different stages of the Step Detector that can be taken for testing:
+Step detection is an integral part of any dead-reckoning system and such the method of identifying these steps should be tested and evaulated to find how much error the system has a whole. As mentioned previously, different methods were implemented to try and find the best step detection system, resulting in three step detection algorithm implmentations that needed testing:
 \begin{enumerate}
 	\item First Order Low Pass Filter
 	\item 10th Order Butterworth Filter
 	\item 5th Order Butterworth Filter
 \end{enumerate}
-The Basic Peak-Valley variation was considered for testing as it forms the basis of how steps are detected in all future methods. Which means it could serve as a baseline comparison for all results, however if it is completely unfiltered then it will simply accept anything as a step or if it is slight flitered then it will not accept anything. Therefore it will not allow for proper comparison or analysis so it has been left out.
+The Basic Peak-Valley detection was considered for testing as it forms the basis of how steps are detected in all future methods, making it a useful baseline comparison for all results. However, if it is completely unfiltered, then it will simply accept most actions as a step, whilst if it is flitered, then often no action will trigger a step. As such, it is not suited for analysis as a standalone entity, forcing us to forgo these plans.
 
 All tests are done on a device of each operating system (Android/iOS) with different users. This should allow for these tests to prove that the application works independently of user and device.
 
@@ -24,7 +24,9 @@ The error rate for the Step Detection algorithms is defined as follows:
 Error\ Rate = 1 - \frac{Counted\ Value}{True\ Value}
 \end{equation}
 
-So over a known number of steps, True Value, each algorithm is used and its counted number of steps is used to get it's accuracy. From this is then subtracted from 1 to get the error rate. The purpose is to see over a set distance how much error is present overall regardless of timing or other factors such as speed, location etc... This should help to see how much where in the future the system can be improved.
+Over a given walk, the number of steps counted by the algorithm is divided by the true value of steps taken to determine the proportion of steps detected. Subtracting this value from 1 gives an overall error rate, with values close to 0 indicating favourable error rates.
+
+%So over a known number of steps, True Value, each algorithm is used and its counted number of steps is used to get it's accuracy. From this is then subtracted from 1 to get the error rate. The purpose is to see over a set distance how much error is present overall regardless of timing or other factors such as speed, location etc... This should help to see how much where in the future the system can be improved.
 
 
 \begin{table}[ht]
@@ -42,13 +44,15 @@ So over a known number of steps, True Value, each algorithm is used and its coun
 	\caption{The raw recorded values for each method, Andr. = Androird, Err. = Error Rate}
 \end{table}
 
-The above table shows the number of steps the each step detector counter against the true value. Three different true values where selected to see whether distance would have an impact on error build up. The highest true value, 50, was selected because this is roughly at most the number of steps a user will take within a single floor in our environment. Then when transisitioning to another floor the error should be reset. From the table above you can clearly see that the error doesn't build up for within the step detector algorithms, as the error rate stays fairly constant between the distances. 
+The above table shows the number of steps the each step detector counter against the true value. Three different true values where selected to see whether distance would have an impact on error build up. The highest true value, 50, was selected because this is roughly at most the number of steps a user will take within a single floor in our environment. Then when transitioning to another floor the error should be reset. From the table above it can be see that the error does not build up for within the step detector algorithms, as the error rate stays fairly constant between the distances. 
 
-This lack of error build up is to be expected as they step detectors are identifying a specific pattern within a filtered reading from the accelerometer, which doesn't tend to drift.
+This lack of error build up is to be expected as they step detectors are identifying a specific pattern within a filtered reading from the accelerometer, which does not tend to drift.
 
 However the main point of interest from this data is that the 5th Order Butterworth method has a perfect detection rate and therefore would be better than the small amount of error from the 10th Order one. Despite this the choice to move from 10th to 5th Order was due to the lag that the 10th Order filter caused on the smartphones. The accuracy difference is minimal as well to have next to no effect. 
 
-Though overcounting and getting a negative error rate could be considered worse than undercounting. This is because if you overcount it means that for a single step you will have counted an additional step, and in a dead-reckoning system the user will now have moved double the distance in a given direction by your estimate. This could have a larger effect on the error in the system.
+In this particular case, we considered that the underestimation and overestimation of steps are both equally detrimental, since both would result in the addition of an equal amount of error to the system.
+
+%Though overcounting and getting a negative error rate could be considered worse than undercounting. This is because if you overcount it means that for a single step you will have counted an additional step, and in a dead-reckoning system the user will now have moved double the distance in a given direction by your estimate. This could have a larger effect on the error in the system.
 
 \subsection{Proximity to Destination}
 
@@ -61,9 +65,9 @@ The previous test simply looks at the step detector methods in an isolated envir
 %	\item Point to Point across multiple floors
 \end{enumerate}
 
-Upon the application stating that the destination had been reached, the distance between the users location and the actual location of the destination was measure in metres.
+Upon the application stating that the destination had been reached, the distance between the users location and the actual location of the destination was measured in metres.
 
-The purpose of this final test was to examine how well each implementation would handle working in the full environment with other factors. It also allows for a more tangible look into how accurate the system as appose to pure statistics. However, this does introduce some additional error from the heading calculations and other aspects of the application.
+The purpose of this final test was to examine how well each implementation would handle working in the full environment with other factors. It also allows for a more tangible look into how accurate the system is, as opposed to just producing statistical figures. However, this does introduce some additional error from the heading calculations and other aspects of the application.
 
 %Results
 
@@ -74,8 +78,8 @@ Two other tests where considered for use, but ultimately decided against for dif
 However whilst this method could provide some analysis, it was not used for two reasons:
 
 \begin{enumerate}
-	\item All the methods being tested don't overcount often, it only really differentiates them from the basic unfiltered version.
-	\item The second test that wasn't used would be better at showing which algorithms are working correctly
+	\item All the methods being tested do not overcount often, it only really differentiates them from the basic unfiltered version.
+	\item The second test that was not used would be better at showing which algorithms are working correctly
 \end{enumerate}
 
 The second test that was excluded was aiming to see if step detectors worked effectively over a period of time. The experiment was based off the fact that a person moving at a constant speed will have a repetitive waveform as the input into the algorithms. Therefore the steps being detected should be picked up constantly and equally spaced in time. The purpose of this test is to therefore show that an algorithm is matching the constant pattern and working as intended, it will show up any method that has a low error rate but doesn't work as intended. This was considered a better way to show what the overcounting test would have provided.
