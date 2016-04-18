@@ -32,21 +32,38 @@ Over a given walk, the number of steps counted by the algorithm is divided by th
 \begin{table}[ht]
 	\begin{tabular}{| c || c | c | c | c | c | c | c | c | c | c | c | c |}
 		\hline
-		True & \multicolumn{4}{|c|}{Low Pass} & \multicolumn{4}{|c|}{5th Butterworth} & \multicolumn{4}{|c|}{10th Butterworth} \\
+		True & \multicolumn{4}{c}{Low Pass} & \multicolumn{4}{|c|}{5th Butterworth} & \multicolumn{4}{c|}{10th Butterworth} \\
 		\hline
 		 - & Andr. & Err. & iOS & Err. & Andr. & Err. & iOS & Err. & Andr. & Err. & iOS & Err.\\
 		\hline
-		10 & 9 & 0.1 & x & x & 10 & 0.0 & x & x & 10 & 0.0 & x & x\\ 		
-		25 & 22 & 0.12 & x & x & 25 & 0.0 & x & x & 26 & -0.04 & x & x \\ 	
-		50 & 49 & 0.02 & x & x & 50 & 0.0 & x & x & 51 & -0.02 & x & x\\ 
+		10 & 9 & 0.1 & 9 & 0.1 & 10 & 0.0 & 10 & 0.0 & 10 & 0.0 & 10 & 0.0 \\ 		
+		25 & 22 & 0.12 & 23 & 0.08 & 25 & 0.0 & 24 & 0.04 & 26 & -0.04 & 26 & -0.04 \\ 	
+		50 & 49 & 0.02 & 48 & 0.04 & 50 & 0.0 & 50 & 0.0 & 51 & -0.02 & 47 & 0.06\\ 
 		\hline	
 	\end{tabular}
-	\caption{The raw recorded values for each method, Andr. = Androird, Err. = Error Rate}
+	\caption{The data recorded from the first test user}
 \end{table}
 
 The above table shows the number of steps the each step detector counter against the true value. Three different true values where selected to see whether distance would have an impact on error build up. The highest true value, 50, was selected because this is roughly at most the number of steps a user will take within a single floor in our environment. Then when transitioning to another floor the error should be reset. From the table above it can be see that the error does not build up for within the step detector algorithms, as the error rate stays fairly constant between the distances. 
 
 This lack of error build up is to be expected as they step detectors are identifying a specific pattern within a filtered reading from the accelerometer, which does not tend to drift.
+
+\begin{table}[ht]
+	\begin{tabular}{| c || c | c | c | c | c | c | c | c | c | c | c | c |}
+		\hline
+		True & \multicolumn{4}{c}{Low Pass} & \multicolumn{4}{|c|}{5th Butterworth} & \multicolumn{4}{c|}{10th Butterworth} \\
+		\hline
+		 - & Andr. & Err. & iOS & Err. & Andr. & Err. & iOS & Err. & Andr. & Err. & iOS & Err.\\
+		\hline
+		10 & 8 & 0.2 & 9 & 0.1 & 10 & 0.0 & 9 & 0.1 & 10 & 0.0 & 10 & 0.0 \\ 		
+		25 & 24 & 0.04 & 23 & 0.08 & 24 & 0.04 & 25 & 0.0 & 24 & 0.04 & 25 & 0.0 \\ 	
+		50 & 48 & 0.04 & 49 & 0.02 & 48 & 0.04 & 50 & 0.0 & 50 & 0.0 & 51 & -0.02\\ 
+		\hline	
+	\end{tabular}
+	\caption{The data recorded from the second test user}
+\end{table}
+
+This second table shows very similar error rates to the first in all cases except for 10 steps on Android, though the higher error rate in this case is due to the size of the true value being small and increasing the amount of error each missed step accounts for. Overall what this means is that the step detection algorithms all work regardless of user.
 
 However the main point of interest from this data is that the 5th Order Butterworth method has a perfect detection rate and therefore would be better than the small amount of error from the 10th Order one. Despite this the choice to move from 10th to 5th Order was due to the lag that the 10th Order filter caused on the smartphones. The accuracy difference is minimal as well to have next to no effect. 
 
