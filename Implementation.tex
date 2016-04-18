@@ -37,7 +37,11 @@ Data analysis primarily involved the plotting of the data values in graph form. 
 
 \subsection{Initial Data Analysis}
 
-After deciding that the accelerometer readings would form the basis of the step detection approach, the logging application was used to capture some acceleration data corresponding to walking motion to perform an initial analysis and detect any patterns that could be associated with individual steps. The data was recorded while keeping the phone in hand and walking in a straight line for approximately 10 steps. 
+After deciding that the accelerometer readings would form the basis of the step detection approach, the logging application was used to capture some acceleration data corresponding to walking motion to perform an initial analysis and detect any patterns that could be associated with individual steps. 
+
+All data recording and subsequent step detection was done with the user holding the phone in-hand. Considering that step detection in this project is to be used in the context of a navigation system, the in-pocket case would only be useful to consider if our application was equipped to provide directional information in the form of audio updates, as the user would not be able to observe the phone's screen in this scenario. Our application provides navigation instructions in image and textual format only, in a similar vein to other applications such as Google Maps and hence the in-pocket case is not accounted for.  
+
+The data was recorded while walking in a straight line for approximately 10 steps. 
 The obtained data is depicted in Figure~\ref{fig:straightWalkRaw}. 
 
 \begin{center}
