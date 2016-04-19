@@ -35,8 +35,15 @@
             of time), meaning that there are some potential performance problems. However, iOS does not suffer from this issue due to it only being deployed on Apple devices such as
             the iPhone. Therefore, in terms of overall performance, it is likely that iOS has a slight advantage over the Android platform.
             
-            The final large problem with the Android system was briefly touched on earlier in this section when discussing open source: there are many features that would be considered
+            Another large problem with the Android system was briefly touched on earlier in this section when discussing open source: there are many features that would be considered
             fundamental to smartphone usage that are simply not natively implemented for Android. The most problematic of these was the lack of default functionality to properly
             scroll and zoom large bitmap images (This required the development of a custom tool, discussed earlier). In contrast to this, the iOS image view available through
             Xamarin Studio handled this by default.
+            
+            There was also a major issue encountered that ultimately prevented the completion of the Android version of the application to the same level as that of the iOS version
+            in terms of the user interface. This problem was the inability to correctly free certain areas of allocated memory, eventually causing crashes due to memory leaks. This was
+            caused by the Xamarin Android platform freeing its own reference to the memory, but failing to ensure that the operating system actually released the memory itself
+            (as Android runs its own garbage collection programs). This led to edge cases where, given a high screen refresh rate due to a more complex user interface, the application
+            runs out of memory and subsequently crashes. Unfortunately, a solution to this problem could not be found in the limited amount of time remaining
+            so our efforts then focused on preparing the iOS version of the application for delivery, seeing as it was not subject to the same limitations.
 \end{document}
