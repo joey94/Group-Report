@@ -1,29 +1,59 @@
 %\documentclass{report}
-\documentclass[11pt,a4paper]{article}
+\documentclass[12pt,a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage{subfiles}
 \usepackage{graphicx}
 \usepackage[margin = 1in]{geometry}
-
-\title{\bf CS409 - Group Report}
-\author{Pedram Amirkhalili, Joey Benrimoj,  Dominic Brown, Varun Golani, Robert Hubinsky \\ and Daniel Seabright  } 
-\date{}
-\setcounter{tocdepth}{3}
 \usepackage{fixltx2e}
 \usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{cite}
+\usepackage{textcomp}
+\usepackage{url}
+\usepackage{caption}
+\usepackage{parskip}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage{enumitem}
+
+
+\parindent=0pt
+
+\usepackage[toc,page]{appendix}
+\usepackage{hyperref}
+
+%\title{\bf CS409 - Group Report}
+\title{Indoor Localisation and Navigation Using Inertial Sensors on Smartphones}
+\author{Pedram Amirkhalili, Joey Benrimoj,  Dominic Brown, Varun Golani, \\Robert Hubinsky and Daniel Seabright  } 
+\date{}
+\setcounter{tocdepth}{3}
+
 
 \begin{document}
 \maketitle
-\line(1,0){450}
+%\line(1,0){450}
 
 \tableofcontents
 
 \pagebreak
 \subfile{Abstract.tex}
 \subfile{Introduction.tex}
-\subfile{Implementation.tex}
 \subfile{Research.tex}
-
+\subfile{Research-LanBar.tex}
+\subfile{Design.tex}
+\subfile{Implementation.tex}
+\subfile{GraphStuff.tex}
+\subfile{Implementation-iOS.tex}
+\subfile{android_sensors.tex}
+\subfile{android_UI.tex}
+\subfile{testing.tex}
 \subfile{Management.tex}
+\subfile{Evaluation.tex}
+\subfile{Conclusion.tex}
+\nocite{*}
+
+\bibliographystyle{plain}
+\bibliography{StepDetection,Research-LanBar}
 
 \end{document}

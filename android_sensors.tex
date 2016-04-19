@@ -1,0 +1,73 @@
+\documentclass[main.tex]{subfiles}
+\begin{document}
+    \section{Accessing Android Sensors}
+        In order for the step counter to function, it was necessary to pass it the readings from various device sensors. As this cannot be handled in the shared
+        project code, native Android code was developed to facilitate this process. This section explains the implementation of this part of the application. As
+        mentioned previously, the main sensors used are the accelerometer and the compass, in order to obtain acceleration and heading values, respectively.
+        The events fired by the sensor reading classes are handled in the main activity, which passes them to the shared code \texttt{Collision} class for processing.
+        \subsection{SensorProcessorBase Implementation}
+            The first custom class implemented for the purpose of managing the access to the Android sensors was the abstract class
+            \texttt{SensorProcessorBase}. This class was later extended by the classes \texttt{Acceleration} and \texttt{Rotation}, discussed
+            later on in this section. This abstract class is responsible for providing the following functionality:
+            \begin{itemize}
+                \item Storing a list of sensor types its child class is responsible for.
+                \item Storing the time since the last sensor reading.
+                \item Specifying a reading delay (how often we want to be able to access the sensor).
+                \item Storing a sliding window of previously read sensor values.
+            \end{itemize}
+            Implementing the list of accepted sensor types is a simple matter of adding the relevant pre-defined sensor types to the list that was created. For example,
+            the accelerometer would add the value \texttt{SensorType.Accelerometer}. This allows each instance of a sensor class to filter out values that it does not
+            require by simply ignoring them.
+            
+            Accessing the time of the last sensor reading was also a fairly simple matter. Whenever a new reading is taken, the current time
+            is stored within the class. Therefore, if the time since the last reading is requested, it is a simple matter of returning the value of the current time minus the stored
+            value for the time of the previous reading. This function is primarily used when determining whether a change in the value of a sensor needs to fire the associated type
+            of event. When a sensor value is changed, the function that handles this new value is only called in the case where the time since the last reading is not less than that
+            of the specified reading delay, therefore allowing the amount of sensor updates to be limited to a desired rate.
+            
+            The final piece of key functionality in this class, the history of previously read values, is implemented through the use of a \texttt{FixedSizeQueue}. This a custom
+            type implemented in shared code that stores a set of values in first-in, first-out order. If a new insertion would increase the size of the queue above the specified
+            capacity bound, the oldest item is subsequently removed from the data structure. In this manner, a sliding window of previous sensor values can be stored by simply
+            adding each new reading to the implemented queue, which will handle the removal of old data when capacity is reached, thereby keeping the window at the specified size.
+            In our case, we chose to store the ten most recent sensor readings, though this amount could be easily changed if it later became necessary.
+        \subsection{CustomListener Implementation}
+            The next part of custom implementation was a rather simple piece of code called the \texttt{CustomListener}. This was essentially a wrapper class for the 
+            Android \texttt{SensorManager} that allowed for access to both the \texttt{Rotation} and \texttt{Acceleration} classes through a single object instance. This
+            was primarily done for code modularity, readibility, and ease of extension.
+            
+            The first of the added methods, \texttt{OnAccuracyChanged}, contained no code as we did not need to handle any changes to the precision of the sensors being
+            used. However, leaving it in as a stub would allow for behaviour to be added easily, if it was later deemed necessary to be able to adjust the accuracy of
+            a sensor. For example, an extension could potentially examine the effects of sensor accuracy on step detection or heading inference.
+            
+            The second method added to this class was an event handler for when the value of a sensor changes i.e. a new reading is returned. Intuitively, this method
+            is named \texttt{OnSensorChanged}. This method takes the input sensor event and passes it to the handlers in both \texttt{Acceleration} and \texttt{Rotation}.
+            This is necessary due to the values of certain sensors being required by both classes, these sensors being \texttt{Gravity} and \texttt{MagneticField}. This requirement
+            further supports the integration of both sensor types into this wrapper class, \texttt{CustomListener}. If they were not kept together, handling this overlap of 
+            required sensor readings would require each instance to be handled separately, a solution far less clean than the one provided here, in terms of both performance and
+            maintainability.
+        \subsection{Acceleration Class Implementation}
+            This class (\texttt{Acceleration}) is responsible for accessing the accelerometer of the Android device being used and, therefore, is also responsible for calculating
+            the final acceleration vector (a 3-tuple in this case) and returning this vector upon request. The inital setup of an instance of this class first adds 
+            the sensor types \texttt{Accelerometer}, \texttt{MagneticField}, and \texttt{Gravity} to its list of accepted sensor types. This allows the instance to filter out
+            unnecessary values, as discussed prior. Following this, the reading delay is set to a value of ten milliseconds, thus one hundred sensor readings are taken per second.
+            More than this value
+            leads to too many events being fired, whereas less was found to be detrimental to step detection.
+            
+            The remaining functionality of this class is found in \texttt{SensorChangedProcess}. This is the method called from the \texttt{CustomListener} in order to access a new
+            acceleration value. It firstly carries out a check to determine whether or not the input sensor event is required by the class i.e. whether it is one of the sensor types previously
+            added to its list of accepted types? If this is indeed the case, the values are converted into array form and stored within variables for later use. If not, the event can
+            be ignored. Once this process is complete, the method checks whether it has the necessary values to compute a valid acceleration value. If it does not, the method 
+            simply returns. However, if a value can be calculated, this is done as follows. Firstly, a rotation matrix is calculated using the \texttt{SensorManager} and the
+            values for \texttt{Gravity} and \texttt{MagneticField}. This matrix is then inverted and multiplied by the acceleration vector in order to determine the actual
+            acceleration vector in world coordinates. This value is then stored in the value history for the class, and then subsequently fired as a \texttt{ValueChanged} event.
+        \subsection{Rotation Class Implementation}
+            The heading obtained from the phone's compass is used as the direction of the user's motion whenever a step is detected. More specifically, this heading corresponds to the azimuth reading which is defined to be the angle between magnetic north and the phone's Y-axis~\cite{azimuthDefinition}. In iOS, this azimuth reading along the device's world axes is readily available through the `CLLocationManager' class which performs all the necessary pre-processing. The equivalent in Android's API was the software-based `Orientation' sensor which made use of the physical accelerometer and magnetometer sensors to directly provide the azimuth. However, the sensor was deprecated in API Level 8 and cannot be used for this purpose any longer. 
+
+The current recommended approach in the documentation to compute the azimuth value is to manually instantiate the gravity and magnetometer sensors and use their readings (after low-pass filtering to compensate for noise) to perform the necessary calculations~\cite{ENU}. This involves using the readings to obtain the rotation matrix, which is then passed to the `GetOrientation' method in SensorManager that returns the azimuth value. Note that the SensorManager's `RemapCoordinateSystem' method is used on the rotation matrix before passing it to GetOrientation to obtain the azimuth reading along the world axes.  
+
+On implementing this method it was found that the azimuth value obtained was not responsive enough - there was a considerable lag between the user changing orientation and this being reflected in the azimuth value. Furthermore, rotating the phone along any of its axes resulted in a considerable change of this value in spite of using RemapCoordinateSystem for transformation to world axes in the manner suggested in the documentation. Both these shortcomings meant that the azimuth value could potentially be wildly inaccurate at the time a step is detected, which makes this approach of computing user heading unsuitable for use with the navigation system. 
+
+An alternate method proposed by Nguyen, H. on Stack Overflow~\cite{azimuthFinal} was found to give far better results, albeit with certain restrictions. This approach once again utilises the gravity and magnetometer readings to compute the rotation matrix. Assuming that the phone is held in portrait mode with its Y-axis facing upwards, the heading of the user can be calculated using the direction of the phone's back camera with respect to magnetic north. This direction is obtained in radians by taking the arctangent of the second and fifth elements of the rotation matrix. In order to deal with fluctuations due to noise a fixed-length sliding window of previous rotation matrices is maintained. All these rotation matrices are averaged together to give a single matrix which is used to obtain a stable value of the current direction.
+
+As the heading in this approach is defined only when the phone is held upright in portrait mode, this heading value is manually set to be undefined whenever the phone is held flat. Such situations are detected by observing the angle between the device's Y-axis and the world XY plane, obtained by taking the arccosine of the 8th element of the rotation matrix. The device is defined to be flat if this angle is either lesser than 25 or greater than 155 degrees and hence the heading is computed only when the phone is between these angles.
+\end{document}
