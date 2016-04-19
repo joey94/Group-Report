@@ -90,12 +90,14 @@ We decided to implement a search functionality to allow users to search for the 
 \subsubsection{View Controller}
 The ViewController.cs file is where the majority of the iOS specific code is kept. It is responsible for delegating all communication between the view components and the model of the application which was kept in the shared code project. It was also responsible for assigning many of the dynamic variables and properties of the view components that could not be simply created using the storyboard editor. Because of this, the view controller class is one of the longest, most feature heavy classes that is present in the application. One of the primary goals at the beginning of the project was to be able to get a simple view of a map on the screen that could be panned and zoomed by the user. We achieved this primarily with the use of a UIScrollView class. The initial scroll view component was placed using the storyboard editor, however since we wanted the image displayed to be able to be loaded dynamically to facilitate changing maps, we could not set the contents or any derived properties, (such as content width and height) from the storyboard editor and instead had to elicit the use of the view controller class. An object hook was placed so that we could refer to the scroll view from inside the view controller and the following code was used to import and display the map.
 \begin{lstlisting}
-floorplanImageNoGrid = UIImage.FromBundle("Images/FinalDcsFloor1.png");
+floorplanImageNoGrid = 
+	UIImage.FromBundle("Images/FinalDcsFloor1.png");
 floorplanImageView.Image = floorplanImageNoGrid
 
 floorplanScrollView.AddSubview(floorplanImageView);
 floorplanScrollView.ContentSize = floorplanImageNoGrid.Size;
-floorplanScrollView.ViewForZoomingInScrollView += (UIScrollView sv) => { return floorplanImageView; };
+floorplanScrollView.ViewForZoomingInScrollView += 
+	(UIScrollView sv) => { return floorplanImageView; };
 \end{lstlisting}
 The first 2 lines of this code segment simple loads the proper map image from the applications resources and assigns it to a UIImageView class in order to be able to interact with other UIView classes. The 3rd line then adds this subview to the scroll view which is already set to display on the screen. The 4th and 5th lines are included in order for panning and zooming to work correctly. This simply set the contained size of the scroll view to be equal to that of the image view and the scroll view is told to zoom the image view when pinch-to-zoom gestures are registered. This code segment was included as a simple example to show how easy it is to include and manipulate visual components with ease in iOS. While this is a simple example, the main concepts of a hierarchical architecture of UIViews will remain for the remainder of this section. It is important to note that a UIView can contain more that one subview
 
@@ -109,7 +111,8 @@ container.AddSubview(userLocationArrow);
 container.SizeToFit();
 
 floorplanScrollView.ContentSize = container.Size;
-floorplanScrollView.ViewForZoomingInScrollView += (UIScrollView sv) => { return container; };
+floorplanScrollView.ViewForZoomingInScrollView += 
+	(UIScrollView sv) => { return container; };
 \end{lstlisting}
 While this works nicely, we noticed that on many existing mapping applications such as Google and Apple Maps, the user location arrow didn’t scale with the map when zooming. Instead it stayed an a constant size and simple stayed to reflect the correct location. This was unfortunately not as simple a change as you might expect. By changing the floowplanScrollView.ViewForZoomingInScrollView property to return just the map UIImageView, we ran into the problem that the user location arrow couldn’t distinguish between the absolute coordinated on the map and the relative coordinates to the container view. This effectively meant that as the view was scrolled in and out, the relative position of the arrow on the map would increase and the map images coordinate space was compressed. The easiest solution we could find to this problem was to manually recalculate and modify the location arrow coordinates in relation to the zoom factor of the scroll view.
 
@@ -123,7 +126,7 @@ The second part that needed drawing over the main map was the actual path to the
 
 The second part that needed drawing over the main map was the actual path to the users destination. iOS supplied a nifty CGPath class that could draw a customisable line between a set of points on a 2D space. However, in order to be compatible with the other UIView based components, we had to create a custom PathView.cs class that would act as a wrapper to the CGPath class and would inherit from UIView. This class would be responsible for drawing the path and ensuring it remains consistent with the map image during zooming. It would also contain from additional methods for encapsulating the CGPath object from the outside and for adding and getting points on the path in an abstractified way consistent with the rest of the application.
 
-In order to interact with the map, we implemented a gesture recogniser on the scroll view. This allows for a long tap and hold on any part of the image and would result in a popup that would allow the user to set the point as either a start or and end point for a path. Setting a start location would move the user to that particular point, while setting an end location would attempt to draw a path from the user to the destination. Creating this was fairly simple and simply required the use of the UIAlertController class which allowed us to create iOS style alerts with customisable options. An image for a preliminary options sheet is shown in image \ref{iosalertimage} and the code is shown below.
+In order to interact with the map, we implemented a gesture recogniser on the scroll view. This allows for a long tap and hold on any part of the image and would result in a popup that would allow the user to set the point as either a start or and end point for a path. Setting a start location would move the user to that particular point, while setting an end location would attempt to draw a path from the user to the destination. Creating this was fairly simple and simply required the use of the UIAlertController class which allowed us to create iOS style alerts with customisable options. An image for a preliminary options sheet is shown in image \ref{IOSAlertSheet} and the code is shown below.
 
 \begin{figure}[]
 \centering
@@ -134,26 +137,46 @@ In order to interact with the map, we implemented a gesture recogniser on the sc
 
 \begin{lstlisting}
 // Create a new Alert Controller
-UIAlertController actionSheetAlert = UIAlertController.Create("Options", null, UIAlertControllerStyle.Alert);
+UIAlertController actionSheetAlert = UIAlertController.Create(
+	"Options", 
+	null, 
+	UIAlertControllerStyle.Alert
+);
 
 // Add Actions
-actionSheetAlert.AddAction(UIAlertAction.Create("Cancel",UIAlertActionStyle.Cancel, null));
-actionSheetAlert.AddAction(UIAlertAction.Create("Set Start Point",UIAlertActionStyle.Default, (action) => setStartPoint(tapX, tapY)));
-actionSheetAlert.AddAction(UIAlertAction.Create("Set End Point",UIAlertActionStyle.Default, (action) => setEndPoint(tapX, tapY)));
+actionSheetAlert.AddAction(
+	UIAlertAction.Create("Cancel",
+	UIAlertActionStyle.Cancel, 
+	null));
+actionSheetAlert.AddAction(
+	UIAlertAction.Create("Set Start Point",
+	UIAlertActionStyle.Default, 
+	(action) => setStartPoint(tapX, tapY)));
+actionSheetAlert.AddAction(
+	UIAlertAction.Create("Set End Point",
+	UIAlertActionStyle.Default, 
+	(action) => setEndPoint(tapX, tapY)));
 \end{lstlisting}
 
 \subsubsection{Getting Sensor Values}
 One of the crucial aspects required for the step detector and wall collision classes to work was various device sensor readings. These included heading information and accelerometer and gyroscope values. Since these classes were designed and written as shared code to be utilised by both iOS and android, They could not directly access these sensor readings them selves and instead had to implement methods for receiving these from the correct native projects. As such, sensor readings were the responsibility of the native projects to collect and manipulate into the correct format required by the step detector and wall collision classes. Retrieving sensor readings in iOS is fairly simple and many similar sensor readings are nicely encapsulated into easy to understand objects. Additionally, the Xamarin iOS framework makes use of the functional paradigm support of C\# in order to simplify the process of receiving updated sensor values. C\# is able to handle functions as first order variables, and as such, they can be easily passed into functions as arguments and can be dynamically run by variable name. This allows us to pass our handler functions into the sensor managers, (that is, the code that will be run whenever a new set of updated values is provided). This allows easy encapsulation and purity of the sensor managers and a relatively simple solution to retrieving updated values, (an issue that could potentially require a much more complex solution with other languages). To show this, we will show how accelerometer readings, which will be crucial for step detection, are taken on an iOS device using Xamarin and C\#. The method definition for retrieving accelerometer values is 
 \begin{lstlisting}
-CMMotionManager.StartAccelerometerUpdates(NSOperationQueue queue, CMAccelerometerHandler handler)
+CMMotionManager.StartAccelerometerUpdates(
+	NSOperationQueue queue, 
+	CMAccelerometerHandler handler
+);
 \end{lstlisting}
 The important argument here is the CMAccelerometerHandler handler. This is where the method that is called whenever the accelerometer values are updated. The CMAccelerometerHandler referenced here is a delegate type. A delegate is a special keyword used by C\# to specify a method definition without actually specifying any actual body to the method. The declaration for CMAccelerometerHandler is shown below.
 \begin{lstlisting}
-public delegate void CMAccelerometerHandler (CMAccelerometerData data, NSError error);
+public delegate void CMAccelerometerHandler (
+	CMAccelerometerData data, 
+	NSError error
+);
 \end{lstlisting}
 What this declaration does is define a type of method CMAccelerometerHandler that takes those two particular arguments. Now any event that is created with the type CMAccelerometerHandler will require its subscriber methods to also implement this same declaration. This ensures that the correct arguments can be passed into the subscriber methods when the event is called. Shown below is the implementation used in our application for retrieving accelerometer values and passing them into the step detector class. In this example, we make use of an anonymous lambda function instead of declaring a full named method. As such, this lambda function has the same declaration as the CMAccelerometerHandler delegate.
 \begin{lstlisting}
-motionManager.StartAccelerometerUpdates(NSOperationQueue.CurrentQueue,
+motionManager.StartAccelerometerUpdates(
+	NSOperationQueue.CurrentQueue,
 	(data, error) =>
 	{
 		accelX = data.Acceleration.X*9.8;
@@ -162,8 +185,9 @@ motionManager.StartAccelerometerUpdates(NSOperationQueue.CurrentQueue,
 			  Math.Pow(accelY, 2) + 
 			  Math.Pow(data.Acceleration.Z*9.8, 2));
 
-		col.PassSensorReadings(CollisionSensorType.Accelometer, accelX,
-			accelY, accelZ);
+		col.PassSensorReadings(
+			CollisionSensorType.Accelometer, 
+			accelX, accelY, accelZ);
 	});
 \end{lstlisting}
 
