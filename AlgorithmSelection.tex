@@ -55,14 +55,14 @@ In order to compare the algorithms we selected, we devised a series of tests tha
 
 It is important to note that each of the tests were ran 1000 times on the Nexus7 lent to us by DCS. This ensured that the test results were less prone to random fluctuations, as well as allowing us to use the device performance as a direct measure for comparison with further tests. During the series of tests we were also observing other measures such as peak memory allocated during the run of the application, as well as turnaround times.
 
-\begin{figure}[H]
+\begin{figure}[]
 \center
 \includegraphics[trim=0 0 0 0, clip,width=0.8\textwidth,height=\textheight,keepaspectratio]{images/algoTurnaroundTimes.pdf}
 \caption{Average times required by algorithms to return from computing tests.}
 \label{fig:algoTurnaround}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[]
 \center
 \includegraphics[trim=0 0 0 0, clip,width=0.8\textwidth,height=\textheight,keepaspectratio]{images/algoMemoryAlloc.pdf}
 \caption{The maximum amount of memory specific algorithm (and libraries it loaded) required during its execution.}
@@ -70,10 +70,5 @@ It is important to note that each of the tests were ran 1000 times on the Nexus7
 \end{figure}
 
 The results of our tests in figure[\ref{fig:algoTurnaround}] show that Recast is able to outperform both Dijkstra and A*, however it also comes with a significantly larger payload thanks to packing the whole Urho library with itself, as well as the memory required for pre-processing the graph. This therefore results in a 50\% larger memory requirement than the second highest competitor, Dijkstra. This can be seen in figure[\ref{fig:algoMemAlloc}]. While this might seem like a reasonable cost to pay for the performance benefit, for a mobile device (in which memory is a much more limited resource) it is too large. Therefore, we have decided to not go with Recast. Between A* and Dijkstra, the difference in memory allocated is negligible, and Dijkstra outperforms A* thanks to caching provided by the library. In our tests, A* also underperformed due to the large amount of walls in the floor plans, where it tried to utilize its predictive heuristic function to get closer to the target. From our testing we therefore decided to make use of the QuickGraph library, together with the provided Dijkstra observer. 
-
-\nocite{*}
-
-\bibliography{AlgorithmSelection}
-\bibliographystyle{plain}
 
 \end{document}
