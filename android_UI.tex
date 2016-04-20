@@ -38,7 +38,13 @@
             \textbf{[reference relevant section of report]}.
             This adapter is then set to a specific type of layout (currently this is set to simple). Once this has been done, the adapter is then bound to the spinner in order to display
             the correct values to the user. Finally, a callback function, \texttt{spinnerItemSelected}, was added to the spinner to specify the results of a user selecting a given item.
-            This allows the user to select a destination from the menu, as when an item is selected, the correct destination coordinates are set within the application.
+            This allows the user to select a destination from the menu, as when an item is selected, the correct destination coordinates are set within the application. This menu is shown within Figure ~\ref{fig:androidSpinner}.
+       
+            \begin{center}
+\includegraphics[scale=0.5]{images/search_open.png}
+\captionof{figure}{Android room selection menu}
+\label{fig:androidSpinner}
+\end{center}
         \subsection{Displaying the Floor Plan}
             The vast majority of screen real estate on the main tab of the application is occupied by the image of the floor plan being displayed. Therefore, it was crucial to 
             implement this part of the interface in such a way that it is as simple and intuitive as possible, as the user will spend most of their time using this part of
@@ -85,8 +91,17 @@
                 long press is detected, a \texttt{LongPressHandler} is executed. In our case, a long press creates a menu that allows the user to specify a start or end location
                 directly on the floor plan image, should they not wish to use the drop down menu. This menu is created by creating an \texttt{AlertDialog} object which asks the
                 user whether they wish to place a start point or an end point on the floor plan (The debugging version of the application also allows the user arrow to be placed
-                in order to facilitate testing). Once the choice has been made, the relevant coordinates are stored and used to draw the new points - section \ref{subsec:MapMaker}
+                in order to facilitate testing). This menu is shown within figure [~\ref{fig:androidStartEndMenu}. Once the choice has been made, the relevant coordinates are stored and used to draw the new points - section \ref{subsec:MapMaker}
                 explains the drawing process in detail.
+
+                    
+\begin{center}
+\includegraphics[scale=0.5]{images/location_action.png}
+\captionof{figure}{Android start and end point selection menu.}
+\label{fig:androidStartEndMenu}
+\end{center}                    
+                                    
+                
         \subsection{Managing Points and Paths}
             Once the image was being displayed correctly and could be interacted with as required, the next step was to facilitate the drawing of start points, end points, the user location,
             and the path to follow on the screen. There were two approaches considered for this, the advantages and disadvantages of which are discussed below.
@@ -157,5 +172,11 @@
                     into correct coordinates within the bitmap image. This was necessary due to the need to be able to place start and end points at a location specified by the user
                     performing a long press on the map via the device screen. The function takes either (\textit{x, y}) coordinates or a two-dimensional vector as input, and returns a
                     two-dimensional vector containing the newly translated coordinates. This is implemented by obtaining the image matrix from the custom image view and calculating
-                    the inverse of this matrix. This new matrix can then be applied to the inputs in order to return the correctly translated coordinates.
+                    the inverse of this matrix. This new matrix can then be applied to the inputs in order to return the correctly translated coordinates. Figure  [~\ref{fig:androidPathDrawing}]  shows the android path drawing.
+
+\begin{center}
+\includegraphics[scale=0.5]{images/pathfinding.png}
+\captionof{figure}{Android path drawing.}
+\label{fig:androidPathDrawing}
+\end{center}
 \end{document}
