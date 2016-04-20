@@ -7,21 +7,21 @@ The purpose of this component is two-fold. Firstly, to give the dead-reckoning s
 
 \subsubsection{Initial Implementation}
 
-For the initial implementation the extracted floor plan graphs are used as the basis for deciding whether a step the systems believes the user has made is valid or not. These graphs have one important feature that allows for this, two adjacent nodes are not connected if there is a wall between the corresponding positions in the floor plans. This allows for the following procedure to determine if a step is valid:
+For the initial implementation, the extracted floor plan graphs are used as the basis for deciding whether a step the systems believes the user has made is valid or not. These graphs have one important feature that allows for this, two adjacent nodes are not connected if there is a wall between the corresponding positions in the floor plans. This allows for the following procedure to determine if a step is valid:
 
 \begin{itemize}
-	\item \textbf{Assign the nearest node to the user} - The node nearest to the user's estimated real position is assigned to the user, this can be used for path finding a new route if required, or in this case determining the validity of a movement. The nearest node was originally found through a brute force search, though this was later changed to a more efficient, modular arithmetic method that exploits the known distances between nodes to center on the nearest node in O(1) time.
-	\item \textbf{Simulate a step} - A step is then simulated from the user's real position, this is essentially calculating where the user will move to given their current heading and rough stride length estimate. The stride length was initially set to the equivalent of 12 pixels in the floors plans, since the distance between nodes is 10 therefore allowing for proper testing. 
-	\item \textbf{Check for new nearest node} - From the new simulated real position check if there is a new nearest node:
+	\item \textbf{Assign the nearest node to the user} - The node nearest to the user's estimated real position is assigned to the user, this can be used for path finding a new route if required, or in this case determining the validity of a movement. The nearest node was originally found through a brute force search, though this was later changed to a more efficient modular arithmetic method that exploits the known distances between nodes to center on the nearest node in O(1) time.
+	\item \textbf{Simulate a step} - A step is then simulated from the user's real position, this is essentially calculating where the user will move to given their current heading and rough stride length estimate. The stride length was initially set to the equivalent of 12 pixels in the floor plans, since the distance between nodes is 10, therefore allowing for proper testing. 
+	\item \textbf{Check for new nearest node} - From the new simulated real position, check if there is a new nearest node:
 	\begin{itemize}
-		\item If there is a new nearest node, path find from the first nearest node to the new one. If path length is greater than 2 the user must have transitioned over a wall, see Figure~\ref{fig:iniCol} for an example. If the path length is less than or equal to 2 the move is valid
-		\item If the nearest node does not change the move is valid
+		\item If there is a new nearest node, path find from the first nearest node to the new one. If path length is greater than 2 the user must have transitioned over a wall, see Figure~\ref{fig:iniCol} for an example. If the length of the path is less than or equal to 2, the move is valid
+		\item If the nearest node does not change then the move is valid
 	\end{itemize}
 \end{itemize}
 
 \begin{center}
 \includegraphics[scale=1.5]{images-implementation/collision1.png}
-\captionof{figure}{Diagrams showing the above steps, the lefthand pair is a step being rejected due to a path length of 3, the righthand pair accept the step as valid}
+\captionof{figure}{Diagrams showing the above steps, the lefthand pair is a step being rejected due to a path length of 3, the righthand pair accepts the step as valid}
 \label{fig:iniCol}
 \end{center}
 
@@ -31,10 +31,10 @@ This implementation serves its purpose but it was ultimately scrapped due to the
 
 \begin{enumerate}
 	\item The initial implementation is gated by the distance between two nodes. If the stride length is greater than two and a half times the number of pixels between nodes, then every step will have a path length greater than 3. Meaning every step is then rejected, the step length we found to be the average of our groups equated to around 30 pixels. This problem can be bypassed by simply running the method over 30 pixels in 3 chunks of 10.
-	\item Due to the reliance on path finding it heavily slows down the application to unusable levels. This is exacerbated by the need to repeat it multiple times to work over the set stride length
+	\item Due to the reliance on path finding, it heavily slows down the application to unusable levels. This is exacerbated by the need to repeat it multiple times to work over the set stride length
 \end{enumerate}
 
-Whilst the first problem was fixable the second was not without creating a new method, the implementation below was made to solve this issue.
+Whilst the first problem was fixable, the second was not without creating a new method, the implementation below was made to solve this issue.
 
 \subsubsection{Final Implementation}
 
@@ -42,7 +42,7 @@ With the initial method being too slow, another one was developed. Instead of wo
 
 It does this by taking the co-ordinates of the current nearest node and the new nearest node from the simulated step and creating a path, pixel by pixel, between the two node locations. It decides whether to move in the X and Y direction by examining which of the difference in X or Y between the path's head and end point is larger. It selects the larger difference and then assesses which direction it needs to move by checking which co-ordinate of the two locations is larger. For example, to move left the difference between the path's X and end's X needs to be greater than the Y difference of these two points and then the path's X is greater than the end's X co-ordinate.
 
-Once the next pixel in the path has been chosen the method then checks the colour of that pixel. If it is white then the user's step will hit a wall and it classifies the step as invalid. If the pixel is not white the method continues pathing between the nodes. This repeats pixel by pixel until the end location is reached and now the move is considered valid as no white pixels existed on the path.
+Once the next pixel in the path has been chosen, the method then checks the colour of that pixel. If it is white then the user's step will hit a wall and it classifies the step as invalid. If the pixel is not white the method continues pathing between the nodes. This repeats pixel by pixel until the end location is reached and now the move is considered valid as no white pixels existed on the path.
 
 This proved to be a much faster method and removed the lag that was being experienced with the previous method, since the cost of loading the image (which occurs when the application is first opened) and the cost of checking pixel colours are both less than the cost of running the path finding algorithm.
 

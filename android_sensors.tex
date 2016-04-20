@@ -56,7 +56,7 @@
             
             The remaining functionality of this class is found in \texttt{SensorChangedProcess}. This is the method called from the \texttt{CustomListener} in order to access a new
             acceleration value. It firstly carries out a check to determine whether or not the input sensor event is required by the class i.e. whether it is one of the sensor types previously
-            added to its list of accepted types? If this is indeed the case, the values are converted into array form and stored within variables for later use. If not, the event can
+            added to its list of accepted types. If this is indeed the case, the values are converted into array form and stored within variables for later use. If not, the event can
             be ignored. Once this process is complete, the method checks whether it has the necessary values to compute a valid acceleration value. If it does not, the method 
             simply returns. However, if a value can be calculated, this is done as follows. Firstly, a rotation matrix is calculated using the \texttt{SensorManager} and the
             values for \texttt{Gravity} and \texttt{MagneticField}. This matrix is then inverted and multiplied by the acceleration vector in order to determine the actual
