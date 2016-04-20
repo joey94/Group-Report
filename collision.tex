@@ -10,7 +10,7 @@ The purpose of this component is two-fold, firstly to give the dead-reckoning sy
 For the initial implementation the extracted floor plan graphs are used as the basis for deciding whether a step the systems believes the user has made is valid or not. These graphs have one important feature that allows for this, two adjacent nodes are not connected if there is a wall between the corresponding positions in the floor plans. This allows for the following procedure to determine if a step is valid:
 
 \begin{itemize}
-	\item \textbf{Assign the nearest node to the user} - The node nearest to the user's estimated real position is assigned to the user, this can be used for path finding a new route if required, or in this case determing the validity of a movement. The nearest node was originally found through a brute force search, this was later changed utilising the search functions in-built to the graph packages, as it was faster.
+	\item \textbf{Assign the nearest node to the user} - The node nearest to the user's estimated real position is assigned to the user, this can be used for path finding a new route if required, or in this case determing the validity of a movement. The nearest node was originally found through a brute force search, though this was later changed to a more efficient, modular arithmetic method that exploits the known distances between nodes to center on the nearest node in O(1) time.
 	\item \textbf{Simulate a step} - A step is then simulated from the user's real position, this is essentially calculating where the user will move to given their current heading and rough stride length estimate. The stride length was initially set to the equivalent of 12 pixels in the floors plans, since the distance between nodes is 10 therefore allowing for proper testing. 
 	\item \textbf{Check for new nearest node} - From the new simulated real position check if there is a new nearest node:
 	\begin{itemize}
@@ -44,6 +44,6 @@ It does this by taking the co-ordinates of the current nearest node and the new 
 
 Once the next pixel in the path has been chosen in then checks the colour of that pixel, if it is white then the user's step will hit a wall and it returns the step is invalid. If the pixel is not white continue pathing between the nodes. This repeats pixel by pixel until the end location is reached and now the move is considered valid as no white pixels existed on the path.
 
-This proved to be a much faster method and removed the lag that was being experienced with the previous method, the cost of loading the image is at the very start of the application.
+This proved to be a much faster method and removed the lag that was being experienced with the previous method, since the cost of loading the image (which occurs when the application is first opened) and the cost of checking pixel colours are both less than the cost of running the path finding algorithm.
 
 \end{document}

@@ -1,9 +1,10 @@
 \documentclass[main.tex]{subfiles}
 \begin{document}
 
-\section{Implementation}
+\section{Early Implementation}
 
-This section will detail the process of turning our designs into a working application. It will mostly read chronologically, with tasks and components completed earlier into the project also appearing earlier within this section. This will also aid in demonstrating our thought process behind changes to the application design that arose through development, be it through complications or the realisation of superior design choices.
+Before work began on the implementation of the various main components of the final indoor navigation application, time was spent early on setting up the project and finding our feet with regards to Xamarin.
+%This section will detail the process of turning our designs into a working application. It will mostly read chronologically, with tasks and components completed earlier into the project also appearing earlier within this section. This will also aid in demonstrating our thought process behind changes to the application design that arose through development, be it through complications or the realisation of superior design choices.
 
 \subsection{Implementation phases}
 
@@ -37,7 +38,7 @@ Whilst we were quite confident of obtaining distinguishable patterns for the ste
 
 Data analysis primarily involved the plotting of the data values in graph form. For this we made use of R studio. RStudio is a free, open-source IDE designed for statistical computing and graphics. Through our own personal experiences after previously working with RStudio and its programming language R, we felt that it would facilitate the most painless and comprehensive data analysis for the step data.\\
 
-\subsection{Initial Data Analysis}
+\section{Step Detection Data Analysis}
 
 After deciding that the accelerometer readings would form the basis of the step detection approach, the logging application was used to capture some acceleration data corresponding to walking motion to perform an initial analysis and detect any patterns that could be associated with individual steps. 
 
