@@ -3,21 +3,21 @@
 
 \section{Floor Plans}
     
-Floor plans played a major role in the design of the application. Not only would the computer science building's floorplans be used to produce the graph that would be used for pathfinding and navigation, it would also provide the backdrop upon which the majority of the application would be displayed. With this in mind, floor plans went through a protracted phase of pre processing and refinement, allowing us to retreive the information we needed and visually enhance the images as well.
+Floor plans played a major role in the design of the application. Not only would the Computer Science building's floorplans be used to produce the graph that would be used for pathfinding and navigation, it would also provide the backdrop upon which the majority of the application would be displayed. With this in mind, floor plans went through a protracted phase of pre processing and refinement, allowing us to retrieve the information we needed and visually enhance the images as well.
 
 \subsection{Selection of the Images}
 
-Although we initially considered creating our own floor plans from scratch by physically measuring room dimensions and producing images from these figures, we found out that floor plans suited for our needs could be obtained from the Universities' online interactive map. The interactive map contained floor plans of all the Universitiy's academic buildings, made publicly available through their website. Retreiving the images from this website was beneficial for various reasons.
+Although we initially considered creating our own floor plans from scratch by physically measuring room dimensions and producing images from these figures, we found out that floor plans suited for our needs could be obtained from the University's online interactive map. The interactive map contained floor plans of all the University's academic buildings, made publicly available through their website. Retrieving the images from this website was beneficial for various reasons.
 
 \begin{itemize}
 
-\item They are created to-scale, allowing us to rely on the proportions of the floor plan. This was crucial for our needs as we needed to represent real world movement with the movement of a cursor on the image. Any discrepencies between the scaling of the image and the real world dimensions of the computer science building would add unwanted error to the system.
+\item They are created to-scale, allowing us to rely on the proportions of the floor plan. This was crucial for our needs as we needed to represent real world movement with the movement of a cursor on the image. Any discrepancies between the scaling of the image and the real world dimensions of the Computer Science building would add unwanted error to the system.
 
-\item The images contained additional information that benefited our application as well. This comprised of room numbers, symbols for utility rooms etc.
+\item The images contained additional information that benefited our application as well. This comprised of room numbers, symbols for utility rooms and so on.
 
-\item Floor plans for different buildings could be obtained with ease, allowing us to possibly expand the application to other buildings if needed. This was a consideration for further testing should we run into issues with testing within the computer science building.
+\item Floor plans for different buildings could be obtained with ease, allowing us to possibly expand the application to other buildings if needed. This was a consideration for further testing should we run into issues with testing within the Computer Science building.
 
-\item They provided us with a good conceptual oultine that could be utilized at later stages of our project, where we would ultimately design our own floor plans to suit the appearence of the application.
+\item They provided us with a good conceptual outline that could be utilized at later stages of our project, where we would ultimately design our own floor plans to suit the appearance of the application.
 \end{itemize}
 		
 \subsection{Image Processing}
@@ -53,7 +53,7 @@ When extracting the graph from the hand-curated images, the project encountered 
 Another significant point when considering extracting the graph was the storage method on the device. Unlike PCs, phones and similar mobile devices utilize significantly smaller overall storage space and therefore we could not accommodate for large, dense and fine graphs. We were therefore obliged to find a balance between increased separation between nodes in the graphs in order to reduce graph file size and also ensure that the distances between nodes were small enough to allow for accurate movement and path creation.
 \newline
 	
-The last significant part of our considerations for this process was representation of additional data present in the picture. We required a way of navigating a user from specific rooms as well as allow for filtering of rooms per floor etc. At the same time we had to balance the benefit gained from keeping data readily available in memory, and the limits on memory used by an application imposed by Android and iOS.
+The last significant part of our considerations for this process was representation of additional data present in the picture. We required a way of navigating a user from specific rooms as well as allow for functionality like filtering of rooms per floor. At the same time we had to balance the benefit gained from keeping data readily available in memory, and the limits on memory used by an application imposed by Android and iOS.
 
 \subsubsection{Initial approach}
 
@@ -70,11 +70,11 @@ While the initial tool was capable of extracting a graph from the image, it caus
 The only way of exposing the pixel data in the Bitmap object was to use its GetPixel method. This method is not thread safe and was therefore locking. This caused issues when an attempt at using parallelism with the project was made. In order to remedy this, raw data of the bitmap image was stored in a two dimensional array, expressing information about the image. Thanks to this we were not only able to access the pixel information from multiple threads at once, but also ensure that the access time for an individual pixel is O(1), thanks to direct indexing. 
 
 \subsubsection{Node distance}
-In the vanilla version, each pixel represented a node in the graph. After running tests and comparing the measures , it became apparent that this approach is not feasible due to three separate reasons:
+In the vanilla version, each pixel represented a node in the graph. After running tests and comparing the measures, it became apparent that this approach is not feasible due to three separate reasons:
 	
 \begin{itemize}
 
-\item Produced graph was too large - the graph created using this method contained up to 2.5 milion nodes. This resulted in overall graph sizes of over 150 MB, which is extremely large for a mobile application.
+\item Produced graph was too large - the graph created using this method contained up to 2.5 million nodes. This resulted in overall graph sizes of over 150 MB, which is extremely large for a mobile application.
 
 \item Loading the graph on the device took a long time due to the need to deserialize nodes and edges.
 
@@ -88,7 +88,7 @@ In the vanilla version, each pixel represented a node in the graph. After runnin
 The initial version was forcing each node to check all four directions for possible neighbours. This was redundant as the same effect could be achieved by checking only two directions in an undirected graph. The solution was therefore adapted to only check left and right from each node created in search for neighbours.
 
 \subsubsection{Introduction of multi-pass graph generation}
-The initial version also suffered from severe inter-loop dependency. This was caused by the fact that in order to create an edge, all of the vertices had to be already created - otherwise we could miss some of them. This caused the separate threads to block each other. In order to resolve this, multi-pass was adapted.  The optimised version therefore processes separate stages sequentially, while each individual stage exploits paralelism.
+The initial version also suffered from severe inter-loop dependency. This was caused by the fact that in order to create an edge, all of the vertices had to be already created - otherwise we could miss some of them. This caused the separate threads to block each other. In order to resolve this, multi-pass was adapted.  The optimised version therefore processes separate stages sequentially, while each individual stage exploits parallelism.
 
 \subsubsection{Runtime summary}
 The optimisations greatly improved the runtime of the extraction. Thanks to the usage of direct indexing and hashing, we were able to ensure that the extraction process didn't take longer than a few seconds to perform all the steps necessary in order to generate a graph. The initial generation of nodes for the graph runs in the time O(n) as it needs to check each position on the image for a possible node. Each operation with pixels runs in O(1) thanks to the ability to directly index into the pre-processed array. The linking operation runs in a combined time of O(n * log(n)) + O(2n) due to the need to check two directions for possible links as well as locating a node in a collection. The collection of nodes is represented by a Dictionary type, which loosely translates to a HashMap. 
@@ -100,7 +100,7 @@ The project utilizes XML as its means of storage. This is due to multiple reason
 
 \item The robust nature of XML based storage is a good match for this project as its ensures validity checking as well as allows for easier understanding of the data present. Using this approach also opened up the graph data structure to modifications beyond the scope of edge and vertex data. 
 		
-\item The language we chose - C\# - has great support for XML data. It allowed us to utilize serialisation and deserialisation of objects into XML, resulting in easier integration and faster loading times.
+\item The language we chose - C\# - has great support for XML data. It allowed us to utilize serialisation and deserialization of objects into XML, resulting in easier integration and faster loading times.
 \end{itemize}
 
 \subsubsection{Benefits \& Limitations}

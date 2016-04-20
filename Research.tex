@@ -53,7 +53,7 @@ In order to confirm that the actual sensor readings correspond to the described 
 \label{fig:accelerationZ}
 \end{center}
 
-As expected, the acceleration along the X and Y axes are close to 0, while there is a constant acceleration of about $9.81 m/s^2$ along the Z axis due to the force of gravity acting downwards through the screen of the phone. Note that the direction of acceleration in this case is upwards as the phone at rest accelerates upwards with respect to the local reference frame of a freely falling object close to the surface. 
+As expected, the acceleration along the X and Y axes is close to 0, while there is a constant acceleration of about $9.81 m/s^2$ along the Z-axis due to the force of gravity acting downwards through the screen of the phone. Note that the direction of acceleration in this case is upwards as the phone at rest accelerates upwards with respect to the local reference frame of a freely falling object close to the surface. 
 
 This process is repeated with the phone held upright this time (with the bottom of the phone in contact with the surface). The obtained readings are shown in Figure~\ref{fig:accelerationY}.
 
@@ -75,56 +75,56 @@ As smartphones continue to get more and more powerful, new sensors are added to 
 
 The application of this information has the potential to be very useful and influential for indoor navigation systems, as if accurate enough, a barometer would allow for more precise vertical positioning, allowing systems to keep track of users throughout several floors in large buildings. With this in mind, a team from Singapore Management University ~\cite{baro2014} set out to test if barometric sensors in phones could be used for this purpose.
 
-In their study they tested numerous factors that could have an effect on the readings, finding that  time, weather and location had an effect on the pressure values the sensors recorded. Although this was expected, the team was caught by surprise by the fact that even identical devices left next to one another would produce different pressure readings but with the same overall pattern. ~\cite[p.2]{baro2014}
+In their study they tested numerous factors that could have an effect on the readings, finding that  time, weather and location had an effect on the pressure values the sensors recorded. Although this was expected, the team was surprised by the fact that even identical devices left next to one another would produce different pressure readings but with the same overall pattern. ~\cite[p.2]{baro2014}
 %These three factors are expected to have an effect as it is well documented that weather has an effect on the pressure, and obviously with time and location the weather and conditions are likely to be given. The other unexpected factor that was found 
 
-This lead them to instead of focusing on the absolute barometer reading, look at the relative reading, so the differences between changes in readings. This pressure difference is independent of all the above factors and therefore could be used to predict floor changes. After proving this was indeed the case, they moved on recording a number of samples and using data analysis techniques to see if they could predict whether a floor had changed using just the difference in pressure values. With this they managed to achieve a 99.54\% accuracy.
+This led them to focus on the relative barometer reading (the differences between changes in readings) instead of the absolute one. This pressure difference is independent of all the above factors and therefore could be used to predict floor changes. After proving this was indeed the case, they moved on to recording a number of samples and used data analysis techniques to see if they could predict whether a floor had changed using just the difference in pressure values. With this they managed to achieve a 99.54\% accuracy.
 
-This particular study proves the potential that the barometer has in terms of indoor navigation and keeping track of a user's verticality. However it is noted that floors need to have a minimum difference of 0.2hPa or 1.6 metres, as the maximum error in pressure differences was around this value. If in a building the difference between floors is close to this value the probability of error increases.
+This particular study proves the potential that the barometer has in terms of indoor navigation and keeping track of a user's verticality. However it is noted that floors need to have a minimum difference of 0.2hPa or 1.6 metres, as the maximum error in pressure differences was around this value. In a building, if the difference between floors is close to this value the probability of error increases.
 
-Whilst this study proves that the barometer is useful, it is not the only system that shows the uses of the barometer. Another example of this is the iBaro-altimeter system developed at The University of Tokyo ~\cite{baro22014}. To calculate ones altitude another pressure reference point is needed as part of the barometric formula, often either obtained from a nearby local source (meteorological station) or a through using a constant.
+Whilst this study proves that the barometer is useful, it is not the only system that showcases its uses. Another example of this is the iBaro-altimeter system developed at The University of Tokyo ~\cite{baro22014}. To calculate one's altitude another pressure reference point is needed as part of the barometric formula, often either obtained from a nearby local source (meteorological station) or through using a constant.
 
-This system they proposed worked by using a series of standard reference points and other temporary ones they could ascertain to be correct, such as a smartphone in the system that they have assigned an altitude to. These collected reference points are stored on a server, then a smartphone that wants its altitude makes a request with some required information.
+This system they proposed worked by using a series of standard reference points and other temporary ones they could ascertain to be correct, such as a smartphone in the system that they assigned an altitude to. These collected reference points are stored on a server. A smartphone which then wants its altitude makes a request with some required information.
 
-Whilst this system achieved low error rates, it requires a large amount of infrastructure which does not fit with the idea behind the application. Even if the server could be removed from the design, an internet connection would be required to collect some of the reference points and GPS location is one of the inputs that the server wants to return an altitude.
+Whilst this system achieved low error rates, it requires a large amount of infrastructure which does not fit with the idea behind our application. Even if the server could be removed from the design, an internet connection would be necessary to collect some of the reference points, and GPS location is one of the inputs that the server requires to return an altitude.
 
 \section{Landmarks}
 
-Landmarks have long since been tools used for navigation, prior to the creation of smartphones and other technologies. It should then be of no surprise that some navigation methods for smart phones have adopted these as the core of how they operate. For the purposes of this project, two different classes of landmark based systems were examined:
+Landmarks have long been tools used for navigation, prior to the creation of smartphones and other technologies. It should then be of no surprise that some navigation methods for smartphones have adopted these as the core of how they operate. For the purposes of this project, two different classes of landmark based systems were examined:
 
 \begin{enumerate}
-	\item \textbf{Beacon/Non-Organic Landmarks} - This is were wireless beacons are placed in the environment and the device uses them to determine its location
-	\item \textbf{Organic Landmarks} - This a system that uses landmarks that have been identified to be within the environment, such as WiFi routers, elevators etc...
+	\item \textbf{Beacon/Non-Organic Landmarks} - This is where wireless beacons are placed in the environment and the device uses them to determine its location
+	\item \textbf{Organic Landmarks} - This a system that uses landmarks that have been identified to be within the environment, such as WiFi routers and elevators.
 \end{enumerate}
 
 Note the term Organic is a reference to the landmark being present in the environment without the need for the development team to place an object or device to create the waypoint.
 
-An example of a Beacon based system is one developed by Inoue. Y, et. al ~\cite{Inoue2009} which works autonomously, removing the need for additional infrastructure in the form of a server. The beacons in this project are self-sufficient devices with their own power sources and transmitters, meaning that the required infrastructure is low-cost and able to be placed in any location.
+An example of a Beacon based system is one developed by Inoue. Y, et. al ~\cite{Inoue2009} which works autonomously, removing the need for additional infrastructure in the form of a server. The beacons in this project are self-sufficient devices with their own power sources and transmitters, meaning that the required infrastructure is low-cost and can be placed in any location.
 
-Prior to using the devices for , three sets of reference data are required:
+Prior to using the devices, three sets of reference data are required:
 
 \begin{enumerate}
 	\item \textbf{Pedestrian Network Data} - Data that defines where a pedestrian can walk within the specified environment.
-	\item \textbf{Building Map Data} - The floor plan for the building
-	\item \textbf{Received Signal Strength (RSS) Fingerprint Data} - This is data that helps with locational calculations
+	\item \textbf{Building Map Data} - The floor plan for the building.
+	\item \textbf{Received Signal Strength (RSS) Fingerprint Data} - Data that helps with locational calculations.
 \end{enumerate}
 
 The RSS Fingerprint Data is obtained by measuring the RSS at fixed points in the environment for every beacon. From the reference data and real-time beacon signal data it is then possible to calculate where the user should be located. This application uses a series of particle filters to then estimate a position and keep updating it as new beacon data is received.
 
 Whilst this approach reduces the amount of infrastructure normally required for beacon based approaches by not requiring a server, it still requires the placement of devices in the environment. This combined with the focus not being on the use of inertial sensors for navigation make it unviable for the scope of our requirements.
 
-With Organic Landmarks the issue of not fitting the requirements of using inertial sensors is removed, since there are no longer devices placed in the environment to help with locational calculations. There are two ways in which organic landmarks can be used for navigation, the first is to use landmarks that can be detected using sensors and then reset the error in the system and the user's location. The second is to use computer vision to identify landmarks and through this keep track of the user, (though this second method goes beyond the scope of our project and was therefore not researched beyond simple acknowledgement).
+With Organic Landmarks the issue of not fitting the requirements of using inertial sensors is removed, since there are no longer devices placed in the environment to help with locational calculations. There are two ways in which organic landmarks can be used for navigation, the first is to use landmarks that can be detected using sensors and then reset the error in the system and the user's location. The second is to use computer vision to identify landmarks and through this keep track of the user. This second method goes beyond the scope of our project and was therefore not researched beyond simple acknowledgement.
 
-An example of a system that uses ``discovered'' landmarks is UnLoc, proposed by Wang. H, et al. ~\cite{wanf2012no}, which works by using a combination of Dead Reckoning to detect where the user is moving and Landmarks to reset the error that builds up with such a system. Landmarks are either identified through examining floor plans or by searching through the environment for unique sensor readings that correspond to a specific region. Some of the utilised landmarks are the following:
+An example of a system that uses ``discovered'' landmarks is UnLoc, proposed by Wang. H, et al. ~\cite{wang2012no}, which works by using a combination of Dead Reckoning to detect where the user is moving and Landmarks to reset the error that builds up with such a system. Landmarks are either identified through examining floor plans or by searching through the environment for unique sensor readings that correspond to a specific region. Some of the utilised landmarks are the following:
 
 \begin{itemize}
 	\item Elevators
 	\item Stairs
-	\item Wi-fi Routers
+	\item WiFi Routers
 	\item Areas of Specific Magnetic Signals
 \end{itemize}
 
-This systems is shown to work well in negating the error present in Dead Reckoning and maintaining an accurate user location. Since the landmarks used are present within the University of Warwick computer science building, we felt this warranted further investigation during development.
+This system is shown to work well in negating the error present in Dead Reckoning and maintaining an accurate user location. Since the landmarks used are present within the University of Warwick Computer Science building, we felt this warranted further investigation during development.
 
  \section{Magnetic Navigation Mapping}
  
@@ -136,15 +136,15 @@ IndoorAtlas makes use of a similar concept. The Earth's magnetic field exists ev
  
 For this to be possible, floor plans of the target buildings are first produced. Then users carrying smartphones operating the software map out the area with the magnetometer. Theoretically, any user who then visits the area is able to download the pre built magnetic map and then be tracked. A smartphone's magnetometer is able to produce a magnetic map to an accuracy of up to 0.1cm, with final system navigation accuracy claimed to be between 0.1 and 2 metres. \\
  
-One of the most exciting prospects of such a solution is the lack of a need for external infrastructure. Whereas other solutions produced by Google and Nokia make use of WiFi hotspots or bluetooth beacons, which by definition require external infrastructure, the IndoorAtlas solution only requires a smartphone. Magnetic fields are also present everywhere, whereas WiFi and bluetooth would be infeasible in places like underground metro systems (ironically it would be places like these that might benefit the most by an effective IPS system directing people efficiently).\\
+One of the most exciting prospects of such a solution is the lack of a need for external infrastructure. Whereas other solutions produced by Google and Nokia make use of WiFi hotspots or bluetooth beacons, which by definition require external infrastructure, the IndoorAtlas solution only requires a smartphone. Magnetic fields are also present everywhere, whereas WiFi and bluetooth would be infeasible in places like underground metro systems (ironically it would be places like these that might benefit the most by having an effective IPS system directing people efficiently).\\
  
 Several problems exist with this method though. Principle amongst these is the fact that magnetic fields change over time. These fields are dictated largely by iron that sits molten deep within the earth. As this molten iron shifts, so too do the magnetic fields. Local changes in magnetic field are also caused by the addition of buildings within the vicinity of the target building and even changes to its own interior arrangement. This results in collected data becoming obsolete before too long.\\
  
- A provided workaround to this problem is to create a network of users that continuously updates the magnetic map information. Borrowing the concept of Simultaneous Location and Mapping (SLAM), this would involve either providing users instructions about how to update local magnetic maps within already established locations, or implementing an advanced autmoatic update system, that uses previous known locations and incorrectly matching readings to update the magnetic maps in an automated manner. The latter, though more complex, would theoretically mean that any shifts in magnetic field within popular locations that are traversed regularly by users would always be picked up and updated and provide accurate navigational information~\cite{IAReport}.\\
+ A provided workaround to this problem is to create a network of users that continuously update the magnetic map information. Borrowing the concept of Simultaneous Location and Mapping (SLAM), this would involve either providing users with instructions about how to update local magnetic maps within already established locations, or implementing an advanced automatic update system that uses previous known locations and incorrectly matching readings to update the magnetic maps in an automated manner. The latter, though more complex, would theoretically mean that any shifts in magnetic field within popular locations that are traversed regularly by users would always be picked up and updated and provide accurate navigational information~\cite{IAReport}.\\
  
  Access to floor plans might also be problematic. Privacy concerns coupled with the vast amount of buildings that could be eligible for such a solution means that this is a further barrier to this technology really taking hold.\\
  
-Although exciting, we felt as a group that a similarly styled solution would not be the most appropriate for our project. The technology is very much in it's infancy and grounded as of now in the theoretical. 10 years of research has resulted in the beginnings of a system that might one day see a commercial use, with many years of hard work still required to get the technology anywhere near the level that GPS was even 15 or 20 years ago. We felt to pursue a solution that made use of magnetic maps was too ambitious for both our level of expertise and size of group and desired to come up with an application design that lay within more well trodden ground.
+Although exciting, we felt as a group that a similarly styled solution would not be the most appropriate for our project. The technology is very much in its infancy and grounded as of now in the theoretical. 10 years of research has resulted in the beginnings of a system that might one day see a commercial use, with many years of hard work still required to get the technology anywhere near the level that GPS was even 15 or 20 years ago. We felt that pursuing a solution that made use of magnetic maps was too ambitious for both our level of expertise and size of group and desired to come up with an application design that lay within more well trodden ground.
  
 \section{Smartphones}
 
@@ -164,7 +164,7 @@ The iPhone 6 contains all of the sensors one would need for the production of an
 
 \subsection{Motorola Moto G (2nd Gen) Hardware}
 
-The Motorola Moto G also contains an accelerometer, gyroscope and compass, but lacks the barometer offered by the iPhone ~\cite{motoSpecs}. This phone also does not contain a dedicated coprocessor that handles sensor data. A major distinction between Android and iOS operating systems is that the iOS systems and the devices that operate them are developed concurrently. This means that both the hardware and software is optimised for each other, allowing for specialised features such as the M8 processor to be produced. Android must contend with a wide variety of hardware platforms and specifications, meaning its features are typically more limited. The 5 inch screen however offers a large area within which to display the floor plans and user interface of the application.
+The Motorola Moto G also contains an accelerometer, gyroscope and compass, but lacks the barometer offered by the iPhone ~\cite{motoSpecs}. This phone also does not contain a dedicated coprocessor that handles sensor data. A major distinction between Android and iOS operating systems is that the iOS systems and the devices that operate them are developed concurrently. This means that both the hardware and software are optimised for each other, allowing for specialised features such as the M8 processor to be produced. Android must contend with a wide variety of hardware platforms and specifications, meaning its features are typically more limited. The 5 inch screen however offers a large area within which to display the floor plans and user interface of the application.
 
 \subsection{Choice of platform}
 
@@ -176,11 +176,11 @@ Both Android and iOS devices have their own development kits that run on their o
 
 \subsection{iOS Development Platform}
 
-Development for iOS is limited to Apple produced computers (MacBooks, Macs etc.). The integrated development platform (IDE) offered by Apple is Xcode ~\cite{xcode}. At the time of writing, Xcode is offered free on the Mac application store for users of the `El Capitan' mac operating system. iOS development can occur in both the Objective-C and Swift programming languages. Both are object oriented languages, with Swift being a newly created language by Apple, introduced at Apple's 2014 Worldwide Developer Conference (WWDC), offering several benefits over the older Objective-C, amongst these added brevity and a greater resilience to erroneous code ~\cite{swift}. No team members were familiar with either of these programming languages, with only one member having used Xcode previously, but for a project written in C++. A further restriction existed in the fact that only half the group team members owned any kind of Apple computer, meaning they would be unable to develop anything within Xcode.
+Development for iOS is limited to Apple produced computers (MacBooks, Macs etc.). The integrated development platform (IDE) offered by Apple is Xcode ~\cite{xcode}. At the time of writing, Xcode is offered free on the Mac application store for users of the `El Capitan' Mac operating system. iOS development can occur in both the Objective-C and Swift programming languages. Both are object oriented languages, with Swift being a newly created language by Apple, introduced at Apple's 2014 Worldwide Developer Conference (WWDC), offering several benefits over the older Objective-C, amongst these added brevity and a greater resilience to erroneous code ~\cite{swift}. No team members were familiar with either of these programming languages, with only one member having used Xcode previously, but for a project written in C++. A further restriction existed in the fact that only half the group team members owned any kind of Apple computer, meaning they would be unable to develop anything within Xcode.
 
 \subsection{Android Development Platform}
 
-Android also provides its own IDE called Android studio ~\cite{androidStudio}. This is available across all computer operating systems (Windows, Mac and Linux) and can be downloaded from their website. Applications for android are written in Java, with the IDE also providing a wide range of supplementary profiling and debugging software. All team members were familiar with Java, with it having been a major part of the computer science course to date.
+Android also provides its own IDE called Android studio ~\cite{androidStudio}. This is available across all computer operating systems (Windows, Mac and Linux) and can be downloaded from their website. Applications for Android are written in Java, with the IDE also providing a wide range of supplementary profiling and debugging software. All team members were familiar with Java, with it having been a major part of the Computer Science course to date.
 
 \subsection{Shared Development Environment}
 
