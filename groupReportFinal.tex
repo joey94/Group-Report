@@ -44,9 +44,9 @@ This report documents the work carried out in the creation of an internal naviga
 
 \chapter{Introduction}
 
-Navigation is the process of accurately determining a person's location and then planning out movements through possible paths to a desired destination~\cite{navMeaning}. Historically, this has been a problem that has been tackled mainly for the case of exterior navigation. From the more primitive use of stars on sea voyages hundreds of years ago, to the use of technology today, exterior navigation has been solved in large part through the use of satellite navigation systems. The best known and most popular of these is the Global Positioning System (GPS), navigation technology that is used in almost every sea vessel, plane and motor vehicle that exists today~\cite{gps}.\\
+Navigation is the process of accurately determining a person's location and then planning out movements through possible paths to a desired destination~\cite{navMeaning}. Historically, this has been a problem that has been tackled mainly for the case of exterior navigation. From the more primitive use of stars on sea voyages hundreds of years ago, to the use of technology today, exterior navigation has been solved in large part through the use of satellite navigation systems. The best known and most popular of these is the Global Positioning System (GPS), navigation technology that is used in almost every sea vessel, plane and motor vehicle that exists today~\cite{gps}.
 
-The development of smartphones has resulted in many of them now also being fitted with a GPS unit, allowing navigation to be available to anyone at any time. Issues exist however with GPS signals penetrating through buildings~\cite{gps}, limiting their usefulness for navigation within indoor environments. Indeed, even if signals were able to make their way indoors, the margins of error associated with GPS technology (running into the tens of metres) means that this would likely prove to be ineffective for navigation anyway, considering the smaller overall distances involved, between doors for example, when compared to exterior navigation, where distances between buildings are larger.\\
+The development of smartphones has resulted in many of them now also being fitted with a GPS unit, allowing navigation to be available to anyone at any time. Issues exist however with GPS signals penetrating through buildings~\cite{gps}, limiting their usefulness for navigation within indoor environments. Indeed, even if signals were able to make their way indoors, the margins of error associated with GPS technology (running into the tens of metres) means that this would likely prove to be ineffective for navigation anyway, considering the smaller overall distances involved, between doors for example, when compared to exterior navigation, where distances between buildings are larger.
 
 Despite this, a similarly comprehensive alternative to GPS for interior navigation has yet to be devised.
 
@@ -61,7 +61,7 @@ A solution would also have a myriad of real world applications. Users within lar
 For this project we proposed the development of a smartphone application that is able to track and navigate a user within an indoor environment. For the purposes of the project, the indoor environment was defined as the University of Warwick's Computer Science Department building. The following objectives were set:\\
 
 \begin{itemize}
-\item Inertial Sensors - The application should make exclusive use of a smartphone's inertial sensors in order to track a user's movement. This means not considering solutions that involve use of WiFi signals, bluetooth beacons, or any other kind of input that would depend on external hardware. We wished the eventual solution to be self sufficient, and only require the user and their smartphone (which would include building floor plans that are pre loaded into the smartphone).
+\item Sensors - The application should make use of a smartphone's built-in sensors in order to track a user's movement. We wish the eventual solution to be self sufficient, and only require the user and their smartphone.
 
 \item Accuracy - The navigation should be accomplished to a reasonable degree of accuracy. Anything more than a few metres could result in users being directed to the wrong location. The application should be able to guide users to a correct destination at a consistent level.
 
@@ -139,6 +139,8 @@ Although exciting, we felt as a group that a similarly styled solution would not
 
 \chapter{Background Research}
 
+Having documented existing solutions and their various components, we decided to carry out background research on some of the aspects encountered.
+
  \section{Tracking user movement}
 
 An obvious way to track user position is to perform double integration on the obtained acceleration to get distance travelled. However this results in introduction of error, as the result is only an approximation of the underlying signal. Furthermore, integration of the noise component leads to the standard deviation of the error in position increasing with integration time~\cite[p.73]{integrationError}. Thong, Y. K., et al.~\cite{integrationErrorPractical} analysed the practical effect that double integration of accelerometer noise has on this error by carrying out experiments using two commercial accelerometers, and found that this error very quickly accumulates with time~\cite[p.1168]{integrationErrorPractical}. As such, this approach is deemed unsuitable for a navigation system which continuously and precisely requires the user’s current position. Foxlin, E.'s approach~\cite{foxlin2005pedestrian} alleviates the integration error by using the concept of `zero-velocity updates (ZUPTs)’, which exploits the fact that there is a momentary stationary period of zero velocity and acceleration during walking motion when the user’s foot makes contact with the ground. This allows correction of the velocity error after each stride and makes the error accumulation ``linear in the number of steps''~\cite[p.38]{foxlin2005pedestrian}. This, however, requires a dedicated sensor to be placed on the user’s foot and does not come under the purview of a smartphone based approach. 
@@ -178,9 +180,9 @@ In addition to the accelerometer some approaches also consider the readings from
 
 As smartphones continue to get more and more powerful, new sensors are added to the array they already have. In recent years the barometer is becoming more prevalent. This a sensor that can determine the air pressure surrounding the phone. With this information, it is possible to obtain a height above sea level for the phone based off the barometric formula, which models the relationship from pressure to altitude.
 
-The application of this information has the potential to be very useful and influential for indoor navigation systems, as if accurate enough, a barometer would allow for more precise vertical positioning, allowing systems to keep track of users throughout several floors in large buildings. With this in mind, a team from Singapore Management University ~\cite{baro2014} set out to test if barometric sensors in phones could be used for this purpose.
+The application of this information has the potential to be very useful for indoor navigation systems, as if accurate enough, a barometer would allow for more precise vertical positioning, allowing systems to keep track of users throughout several floors in large buildings. With this in mind, a team from Singapore Management University ~\cite{baro2014} set out to test if barometric sensors in phones could be used for this purpose.
 
-In their study they tested numerous factors that could have an effect on the readings, finding that  time, weather and location had an effect on the pressure values the sensors recorded. Although this was expected, the team was surprised by the fact that even identical devices left next to one another would produce different pressure readings but with the same overall pattern. ~\cite[p.2]{baro2014}
+In their study they tested numerous factors that could have an effect on the readings, finding that  time, weather and location had an effect on the pressure values the sensors recorded. Although this was expected, the team was surprised by the fact that even identical devices left next to one another would produce different pressure readings but with the same overall pattern of changes. ~\cite[p.2]{baro2014}
 %These three factors are expected to have an effect as it is well documented that weather has an effect on the pressure, and obviously with time and location the weather and conditions are likely to be given. The other unexpected factor that was found 
 
 This led them to focus on the relative barometer reading (the differences between changes in readings) instead of the absolute one. This pressure difference is independent of all the above factors and therefore could be used to predict floor changes. After proving this was indeed the case, they moved on to recording a number of samples and used data analysis techniques to see if they could predict whether a floor had changed using just the difference in pressure values. With this they managed to achieve a 99.54\% accuracy.
@@ -189,15 +191,15 @@ This particular study proves the potential that the barometer has in terms of in
 
 Whilst this study proves that the barometer is useful, it is not the only system that showcases its uses. Another example of this is the iBaro-altimeter system developed at The University of Tokyo ~\cite{baro22014}. To calculate one's altitude another pressure reference point is needed as part of the barometric formula, often either obtained from a nearby local source (meteorological station) or through using a constant.
 
-This system they proposed worked by using a series of standard reference points and other temporary ones they could ascertain to be correct, such as a smartphone in the system that they assigned an altitude to. These collected reference points are stored on a server. A smartphone which then wants its altitude makes a request with some required information.
+The system they proposed worked by using a series of standard reference points and other temporary ones they could ascertain to be correct, such as a smartphone in the system that they assigned an altitude to. These collected reference points are stored on a server. A smartphone which then wants its altitude makes a request with some required information.
 
 Whilst this system achieved low error rates, it requires a large amount of infrastructure which does not fit with the idea behind our application. Even if the server could be removed from the design, an internet connection would be necessary to collect some of the reference points, and GPS location is one of the inputs that the server requires to return an altitude.
 
 \subsection{Practical Research}
 
-(ADD INTRO)
+Aside from research based on existing work, we chose to record data and perform our own research on various components and methodologies.
 
-In order to confirm that the actual sensor readings correspond to the described behaviour we recorded and analysed accelerometer data from our own phones. The first recording was performed with the phone remaining stationary throughout and kept flat on the surface with the screen facing upwards. The readings obtained are shown in Figure~\ref{fig:accelerationZ}.
+To begin with, in order to confirm that the actual sensor readings correspond to the described behaviour we recorded and analysed accelerometer data from our own phones. The first recording was performed with the phone remaining stationary throughout and kept flat on the surface with the screen facing upwards. The readings obtained are shown in Figure~\ref{fig:accelerationZ}.
 
 \begin{center}
 \includegraphics[scale=0.9]{images/accelerationZ.png}
@@ -219,9 +221,9 @@ The acceleration due to gravity is now along the Y-axis in accordance with the d
  
 \subsubsection{Data Analysis}
 
-After deciding that the accelerometer readings would form the basis of the step detection approach, the logging application was used to capture some acceleration data corresponding to walking motion to perform an initial analysis and detect any patterns that could be associated with individual steps. 
+We recorded acceleration data corresponding to walking motion to perform an initial analysis and detect any patterns that could be associated with individual steps. 
 
-All data recording and subsequent step detection was done with the user holding the phone in-hand. Considering that step detection in this project is to be used in the context of a navigation system, the in-pocket case would only be useful to consider if our application was equipped to provide directional information in the form of audio updates, as the user would not be able to observe the phone's screen in this scenario. Our application provides navigation instructions in image and textual format only, in a similar vein to other applications such as Google Maps and hence the in-pocket case is not accounted for.  
+Considering that any step detection in this project would be used in the context of a navigation system, the in-pocket case is only useful to consider if our application was equipped to provide directional information in the form of audio updates, as the user would not be able to observe the phone's screen in this scenario. Our application would provide navigation instructions in image and textual format only, in a similar vein to other applications such as Google Maps and hence the in-pocket case is not accounted for.  
 
 The data was recorded while walking in a straight line for approximately 10 steps. 
 The obtained data is depicted in Figure~\ref{fig:straightWalkRaw}. 
@@ -262,7 +264,6 @@ where $a(n)$ is the $n$th reading from the accelerometer. Similarly, valleys are
 \begin{equation}\label{eq:valleyDetection}
 a(n) = valley\ if\ previousSlope < 0\ \&\ newSlope > 0
 \end{equation}
-In the application, each new reading from the accelerometer is checked to see whether it is a peak or valley. This is done by maintaining a small sliding window of the three most recent accelerometer values. The middle value in this window is the one which is subject to the peak/valley check as the required slopes can be computed from the adjacent values. A step event is thus fired whenever a valley and peak are detected in succession.  
 
 On applying this step detection approach to the graph in Figure~\ref{fig:straightWalkRawMagnitude} it is found that the number steps returned by the algorithm is significantly greater than the actual number of steps that were taken. This is due to the jagged nature of the graph, which is a consequence of the phone's accelerometer having high sensitivity. Even very slight movements cause non-negligible acceleration to be recorded, which leads to the introduction of a considerable amount of noise arising from the jitters and vibrations experienced by the phone while walking. These jitters result in a number of small kinks in the accelerometer graph that are interpreted as peaks/valleys by the step detector, triggering false positives. There is thus a need to remove these kinks by applying some smoothing so that only large changes in acceleration cause peaks and valleys to be formed.  
 
@@ -315,22 +316,22 @@ Overall having looked at these landmarks it is clear that all of these options c
 
 Considering the research conducted thus far, the existing solutions that were analysed and the objectives set at the onset of the project, we propose the following solution.
 
-\paragraph{Dead Reckoning Based On Step Detection}
+\paragraph{Dead Reckoning Based On Step Detection:}
 
-: We propose the use of a step detection algrotihm that tracks a user's movement based on the readings of the inertial sensors of a smarthphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Our desire to create an infrastructureless application made the use of other techniques unattractive, with the prevalence of step detection within existing solutions also indicating that step detection is a productive avenue of development.
+We propose the use of a step detection algrotihm that tracks a user's movement based on the readings of the inertial sensors of a smartphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Our desire to create an infrastructureless application made the use of other techniques unattractive, with the prevalence of step detection within existing solutions also indicating that step detection is a productive avenue of development.
 
-\paragraph{Heading Based on Compass Readings}
+\paragraph{Heading Based on Compass Readings:}
 
-: Compass readings indicate the current heading of the smartphone. Considering that the smartphone will be held by the user and face the direction of travel, this heading can also be inferred as being the direction of the user.
+Compass readings indicate the current heading of the smartphone. Considering that the smartphone will be held by the user and face the direction of travel, this heading can also be inferred as being the direction of the user.
 
-\paragraph{Pathfinding and Wall Collision}
-: This is a unique concept not featured in any of the existing solutions that we examined. It involves the use of pathfinding algorithms to create routes within buildings, with wall collision used to correct erroneous user movement. 
+\paragraph{Pathfinding and Wall Collision:}
+This is a unique concept not featured in any of the existing solutions that we examined. It involves the use of pathfinding algorithms to create routes within buildings, with wall collision used to correct erroneous user movement. 
 
 \section{System Overview}
 
 \subsection{Preprocessing}
 
-The pathfinding and wall collision components of the application require preprocessing to occur on the floor plan images of buildings. The preprocessing diagram depicted ~\ref{fig:preFlow} is tailored to the specific requirements of the University of Warwick computer science department floor plans.
+The pathfinding and wall collision components of the application require preprocessing to occur on the floor plan images of buildings. The preprocessing diagram depicted in Figure ~\ref{fig:preFlow} is tailored to the specific requirements of the University of Warwick Computer Science department floor plans.
 
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{images/preFlow.png}
@@ -342,7 +343,7 @@ The pathfinding and wall collision components of the application require preproc
 Images are obtained from the University of Warwick's online interactive map, which provides floor plan images of all the University's buildings.
 
 \paragraph{Hand Made Image}
-In order for these images to be processed, these need to be hand curated and made into the required format.
+In order for these images to be processed, these need to be hand curated and converted into the required format.
 
 \paragraph{Graph Extration}
 In order to have a graph from which to implement path finding, an adapted flood fill algorithm is used on the hand curated floor plan. This creates a mesh of all accessible areas within a floor, omitting links that would cross walls or enter areas outside of the bounds of the floor plan.
@@ -363,7 +364,7 @@ Once the preprocessing is accomplished, this is stored and used by the main appl
 \end{figure}
 
 \paragraph{Sensors}
-The accelereometer and magnetometer are the primary sensors of use. These sensors are subscribed to as events and provide updated information for the rest of the application every 10ms.
+The accelereometer and magnetometer are the primary sensors of use. These sensors are subscribed to as events by other components and provide updated information for the rest of the application.
 
 \paragraph{Butterworth Filter}
 The accelerometer values are very noisy and require filtering before use by the step detection system. A 5th order Butterworth filter is used for this process, as it provides the optimal balance between responsiveness, accuracy and robustness.
