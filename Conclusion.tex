@@ -2,7 +2,13 @@
 \begin{document}
     \chapter{Conclusions and Future Work}
         \section{Conclusions}
-            Conclusions will go here
+
+Throughout the last six months, we have worked on the development of an indoor navigation smartphone application. As part of this work, we obtained floor plans of the University of Warwick's computer science department building. These were hand curated so that a graph extraction algorithm could be run on these images, creating a graph that was used to create paths that would guide a user to a destination.
+
+We built a step detection algorithm using the smartphone's inertial sensors. After first analysing data obtained from a custom build data logging application, we implemented a Butterworth filter that smooths the accelerometer values obtained by the phone. Steps were then recorded by analysing the peak and valley distances and magnitudes produced in the accelerometer readings during a walking cycle. Analysis showed that we managed to obtain a relatively accurate step detector, demonstrating low overall error rates.
+
+Error rates increased when testing the application as a whole. Our heading system was susceptible to local variations in magnetic field, causing navigation to be impossible in certain situations. When magnetic interference was minimal, navigation was however shown to be accurate enough to take the user to within visual distance of their intended destination. Further work is however required with regards the heading inference system in order to limit the effect of local variations in the magnetic field.
+
         \section{Future Work}
             Despite the significant progress made over the course of this project, there are obviously some areas in which there is room for
             further research, improvement, and extension to be carried out. The most significant of these is clearly the completion of an Android version of the
@@ -14,16 +20,15 @@
             not an ideal solution, however, since Xamarin Studio facilitates cross-platform mobile development, reducing the amount of maintenance required when developing
             for multiple platforms.
             
-            Another potential extension to the application is the potential usage of the WiFi system present in most modern smartphones in order to make use
-            of WiFi access points to reset the error in the current location of the user. For reasons discussed previously (mostly due to unhelpful hotspot positioning within
-            DCS), this functionality could not be included in the application as orginally planned. The addition of such a subsystem to the application has good potential to
-            improve the inference of the current location of the user of the software, assuming that their device is WiFi capable. Clearly, such a system would require
-            rigorous testing and fine-tuning in order to be accurate, which is why DCS was not a suitable trial location due to its WiFi hotspot positioning. Therefore, 
-            any attempts to extend the application to add this functionality should be tested in an appropriate setting, to ensure acceptable progress and results.
+The heading system also displayed it's fair share of problems. A heading inference system based on accelerometer and gyroscope readings is a possible avenue of future work that could reduce the error associated with fluctuatinf compass readings. The use of the gyroscope and accelerometer for heading inference was a topic that was encountered during the initial research phase of the project, but given the amount of time devoted to the creation of an accurate step detection system, the compass based system was opted for instead.
+%            Another potential extension to the application is the usage of the WiFi system present in most modern smartphones in order to make use
+%            of WiFi access points to reset the error in the current location of the user. For reasons discussed previously (mostly due to unhelpful hotspot positioning within
+%            DCS), this functionality could not be included in the application as orginally planned. The addition of such a subsystem to the application has good potential to
+%            improve the inference of the current location of the user of the software, assuming that their device is WiFi capable. Clearly, such a system would require
+%            rigorous testing and fine-tuning in order to be accurate, which is why DCS was not a suitable trial location due to its WiFi hotspot positioning. Therefore, 
+%            any attempts to extend the application to add this functionality should be tested in an appropriate setting, to ensure acceptable progress and results.
             
-            Finally, along the same lines as the previous suggestion, other types of landmarks could also be exploited in order to improve user location inference. This
-            was not successfully implemented over the course of this work as, after investigating the associated actions (opening of doors, usage of elevators/stairs etc.),
-            the collected sensor readings did not allow the implementation of such a system in a way that matched our initial requirements as mentioned in the previously
-            created project specification. It is possible, however, that further research may uncover some pattern within the readings that would allow for the implementation
-            of this subsystem as originally desired.
+            Finally, the concept of landmarks could also be exploited in order to improve user location tracking. This
+            was not successfully implemented over the course of this work as, after investigating the associated actions (opening of doors, usage of elevators/stairs etc.) that could be prescribed as indicating landmarks,
+            the collected sensor readings did not allow the implementation of such a system in a way that matched our initial requirements as mentioned in the project specification. It is possible, however, that further research may uncover some pattern within the readings that would allow for the implementation of this subsystem as originally desired.
 \end{document}
