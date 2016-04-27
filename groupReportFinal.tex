@@ -46,7 +46,7 @@ This report documents the work carried out in the creation of an internal naviga
 
 Navigation is the process of accurately determining a person's location and then planning out movements through possible paths to a desired destination~\cite{navMeaning}. Historically, this has been a problem that has been tackled mainly for the case of exterior navigation. From the more primitive use of stars on sea voyages hundreds of years ago, to the use of technology today, exterior navigation has been solved in large part through the use of satellite navigation systems. The best known and most popular of these is the Global Positioning System (GPS), navigation technology that is used in almost every sea vessel, plane and motor vehicle that exists today~\cite{gps}.
 
-The development of smartphones has resulted in many of them now also being fitted with a GPS unit, allowing navigation to be available to anyone at any time. Issues exist however with GPS signals penetrating through buildings~\cite{gps}, limiting their usefulness for navigation within indoor environments. Indeed, even if signals were able to make their way indoors, the margins of error associated with GPS technology (running into the tens of metres) means that this would likely prove to be ineffective for navigation anyway, considering the smaller overall distances involved, between doors for example, when compared to exterior navigation, where distances between buildings are larger.
+The development of smartphones has resulted in many of them now also being fitted with a GPS unit, allowing navigation to be available to anyone at any time. Issues exist however with GPS signals penetrating through buildings~\cite{gps}, limiting their usefulness for navigation within indoor environments. Indeed, even if signals were able to make their way indoors, the margins of error associated with GPS technology (running into the tens of metres) means that this would likely prove to be ineffective for navigation anyway. This is due to the smaller overall distances involved, between doors for example, when compared to exterior navigation, where distances between buildings are larger.
 
 Despite this, a similarly comprehensive alternative to GPS for interior navigation has yet to be devised.
 
@@ -58,53 +58,60 @@ A solution would also have a myriad of real world applications. Users within lar
 
 \section{Objectives}
 
-For this project we proposed the development of a smartphone application that is able to track and navigate a user within an indoor environment. For the purposes of the project, the indoor environment was defined as the University of Warwick's Computer Science Department building. The following objectives were set:\\
+For this project we proposed the development of a smartphone application that is able to track and navigate a user within an indoor environment. For the purposes of the project, the indoor environment was defined as the University of Warwick's Computer Science Department building. The following objectives were set:
 
 \begin{itemize}
 \item Sensors - The application should make use of a smartphone's built-in sensors in order to track a user's movement. We wish the eventual solution to be self sufficient, and only require the user and their smartphone.
 
-\item Accuracy - The navigation should be accomplished to a reasonable degree of accuracy. Anything more than a few metres could result in users being directed to the wrong location. The application should be able to guide users to a correct destination at a consistent level.
+\item Accuracy - The navigation should be accomplished to a reasonable degree of accuracy. Anything more than a few metres could result in users being directed to the wrong location. The application should be able to guide users to a correct destination consistently.
 
-\item User Interface - An effective solution should have an intuitive and attractive user interface. The application should display the user's location and the path that must be followed in an appealing and easy to read manner. The floor plans used need to be carefully designed and the interface should feel professionally crafted and not like a proof of concept placeholder.
+\item User Interface - An effective solution should have an intuitive and attractive user interface. The application should display the user's location and any path that should be followed in a simple and appealing manner. The interface should feel professionally crafted and not like a proof of concept placeholder.
 
 \end{itemize}
 
 \chapter{Existing Solutions}
 
-Many solutions have been proposed for the problem of indoor navigation. Within this section we shall be documenting some of the most popular of these.
+Numerous solutions have been proposed for the problem of indoor navigation. In this section we document some of the most popular of these.
 
 \section{Dead Reckoning Using a Step Detection Algorithm}
+\label{sec:drRes}
+A team of researchers from Microsoft Research Asia, based in Beijing, China, tackled the indoor navigation problem by creating a dead reckoning system that used step detection and heading inference to track a user's movement within a building~\cite{li2012reliable}. Their system comprised of three main components.
 
-\section{Landmark System}
+\paragraph{Step Detection}
+They developed a step detection algorithm that first passes values from an accelerometer through a low pass, finite impulse response (FIR) digital filter, in order to remove high frequency noise. Steps are registered as peaks of the acceleration waveform obtained from the sensors. In order to eliminate the registering of false positive steps, they further implement a heuristic constraint system and dynamic time warping (DTW) validation. The heuristics used were a maximum allowed time duration of a step and a maximum and minimum acceleration change permitted within a step. 
 
-\section{Landmarks}
+Their DTW validation system exploits the periodicity of left and right steps during walking. Under the assumption that the acceleration wavelet of left and right steps will be very similar, the DTW system checks the similarity of the of the peaks highlighted within the wavelet, with a high likeness value valdiating that a step has indeed been taken.
+
+\paragraph{Heading Inference}
+For heading inference, the team assumed that an initial heading is known. For example, when considering the case when a phone is in a user's pocket, they assume that a user would check their phone and then subsequently place it in their pocket. This change in orientation, during the transition between a user's hand and pocket, is then calculated. Within a pocket, the phone is likely to maintain its orientation during motion along a constant heading. Therefore any subsequent changes in the recorded orientation of the phone, and therefore heading, can be assumed to also apply to the user.
+
+\paragraph{Adaptive Step Length Estimation}
+With the team establishing systems that determine when a user moves and in which direction, the last component of their solution aims to establish the distance that a user moves during each step. For this they developed a step length estimation system. They found through their work that there exists a linear relationship between stride length and walking frequency. After initially making use of a generic stride length, the system keeps track of a user's steps and adjusts the stride length value based on the aforementioned relationship. 
+
+These three components form the basis of their solution. Testing on paths about 100m long shows their system achieving mean positional errors of 2.4m when the phone is held in hand and 2.9m when the phone is placed within pocket. They did however acknowledge that errors in heading inference and stride estimation resulted in 17 failed runs out of 40 test runs, showing that there was still room for improvement for the system overall.
+
+\section{Landmarks and Beacon Based Triangulation}
 
 Landmarks have long been tools used for navigation, prior to the creation of smartphones and other technologies. It should then be of no surprise that some navigation methods for smartphones have adopted these as the core of how they operate. For the purposes of this project, two different classes of landmark based systems were examined:
 
 \begin{enumerate}
-	\item \textbf{Beacon/Non-Organic Landmarks} - This is where wireless beacons are placed in the environment and the device uses them to determine its location
-	\item \textbf{Organic Landmarks} - This a system that uses landmarks that have been identified to be within the environment, such as WiFi routers and elevators.
+	\item \textbf{Beacon/Non-Organic Landmarks} - This is where wireless beacons are placed in the environment and the device uses them to determine its location.
+	\item \textbf{Organic Landmarks} - This a system that uses landmarks that have been identified to be within the environment, such as WiFi routers and elevators. Note the term Organic is a reference to the landmark being present in the environment without the need for the development team to place an object or device to create the waypoint.
 \end{enumerate}
 
-Note the term Organic is a reference to the landmark being present in the environment without the need for the development team to place an object or device to create the waypoint.
-
-An example of a Beacon based system is one developed by Inoue. Y, et. al ~\cite{Inoue2009} which works autonomously, removing the need for additional infrastructure in the form of a server. The beacons in this project are self-sufficient devices with their own power sources and transmitters, meaning that the required infrastructure is low-cost and can be placed in any location.
-
-Prior to using the devices, three sets of reference data are required:
+An example of a beacon based system is one developed by Inoue. Y, et. al ~\cite{Inoue2009} which works autonomously, removing the need for additional infrastructure in the form of a server. The beacons in this project are self-sufficient devices with their own power sources and transmitters, meaning that the required infrastructure is low-cost and can be placed in any location. Prior to using the devices, three sets of reference data are required:
 
 \begin{enumerate}
-	\item \textbf{Pedestrian Network Data} - Data that defines where a pedestrian can walk within the specified environment.
+	\item \textbf{Pedestrian Network Data} - Defines where a pedestrian can walk within the specified environment.
 	\item \textbf{Building Map Data} - The floor plan for the building.
-	\item \textbf{Received Signal Strength (RSS) Fingerprint Data} - Data that helps with locational calculations.
+	\item \textbf{Received Signal Strength (RSS) Fingerprint Data} - Helps with locational calculations.
 \end{enumerate}
 
-The RSS Fingerprint Data is obtained by measuring the RSS at fixed points in the environment for every beacon. From the reference data and real-time beacon signal data it is then possible to calculate where the user should be located. This application uses a series of particle filters to then estimate a position and keep updating it as new beacon data is received.
+The RSS fingerprint data is obtained by measuring the RSS at fixed points in the environment for every beacon. From the reference data and real-time beacon signal data it is then possible to calculate where the user should be located. Their application uses a series of particle filters to then estimate a position and keep updating it as new beacon data is received. Whilst this approach reduces the amount of infrastructure normally required for beacon based approaches by not requiring a server, it still requires the placement of devices in the environment.
 
-Whilst this approach reduces the amount of infrastructure normally required for beacon based approaches by not requiring a server, it still requires the placement of devices in the environment. This combined with the focus not being on the use of inertial sensors for navigation make it unviable for the scope of our requirements.
+In the case of organic landmarks, there are two ways in which these can be used for navigation. The first is to use landmarks that can be detected using sensors and then reset the error in the system and the user's location. The second is to use computer vision to identify landmarks and through this keep track of the user.
 
-With Organic Landmarks the issue of not fitting the requirements of using inertial sensors is removed, since there are no longer devices placed in the environment to help with locational calculations. There are two ways in which organic landmarks can be used for navigation, the first is to use landmarks that can be detected using sensors and then reset the error in the system and the user's location. The second is to use computer vision to identify landmarks and through this keep track of the user. This second method goes beyond the scope of our project and was therefore not researched beyond simple acknowledgement.
-
-An example of a system that uses ``discovered'' landmarks is UnLoc, proposed by Wang. H, et al. ~\cite{wang2012no}, which works by using a combination of Dead Reckoning to detect where the user is moving and Landmarks to reset the error that builds up with such a system. Landmarks are either identified through examining floor plans or by searching through the environment for unique sensor readings that correspond to a specific region. Some of the utilised landmarks are the following:
+An example of a system that uses `discovered' landmarks is UnLoc, proposed by Wang. H, et al. ~\cite{wang2012no}, which works by using a combination of dead reckoning to detect where the user is moving and landmarks to reset the error that builds up with such a system. Landmarks are either identified through examining floor plans or by searching through the environment for unique sensor readings that correspond to a specific region. Some of the utilised landmarks are the following:
 
 \begin{itemize}
 	\item Elevators
@@ -113,9 +120,7 @@ An example of a system that uses ``discovered'' landmarks is UnLoc, proposed by 
 	\item Areas of Specific Magnetic Signals
 \end{itemize}
 
-This system is shown to work well in negating the error present in Dead Reckoning and maintaining an accurate user location. Since the landmarks used are present within the University of Warwick Computer Science building, we felt this warranted further investigation during development.
-
-\section{Beacon Based Location Triangulation}
+This system is shown to work well in negating the error present in dead reckoning and maintaining an accurate user location. Since the landmarks used are present within the University of Warwick Computer Science building, we felt this warranted further investigation during development.
 
 \section{Magnetic Navigation Mapping}
  
@@ -134,8 +139,6 @@ Several problems exist with this method though. Principle amongst these is the f
  A provided workaround to this problem is to create a network of users that continuously update the magnetic map information. Borrowing the concept of Simultaneous Location and Mapping (SLAM), this would involve either providing users with instructions about how to update local magnetic maps within already established locations, or implementing an advanced automatic update system that uses previous known locations and incorrectly matching readings to update the magnetic maps in an automated manner. The latter, though more complex, would theoretically mean that any shifts in magnetic field within popular locations that are traversed regularly by users would always be picked up and updated and provide accurate navigational information~\cite{IAReport}.
  
  Access to floor plans might also be problematic. Privacy concerns coupled with the vast amount of buildings that could be eligible for such a solution means that this is a further barrier to this technology really taking hold.
- 
-Although exciting, we felt as a group that a similarly styled solution would not be the most appropriate for our project. The technology is very much in its infancy and grounded as of now in the theoretical. 10 years of research has resulted in the beginnings of a system that might one day see a commercial use, with many years of hard work still required to get the technology anywhere near the level that GPS was even 15 or 20 years ago. We felt that pursuing a solution that made use of magnetic maps was too ambitious for both our level of expertise and size of group and desired to come up with an application design that lay within more well trodden ground.
 
 \chapter{Background Research}
 
@@ -145,7 +148,7 @@ Having documented existing solutions and their various components, we decided to
 
 An obvious way to track user position is to perform double integration on the obtained acceleration to get distance travelled. However this results in introduction of error, as the result is only an approximation of the underlying signal. Furthermore, integration of the noise component leads to the standard deviation of the error in position increasing with integration time~\cite[p.73]{integrationError}. Thong, Y. K., et al.~\cite{integrationErrorPractical} analysed the practical effect that double integration of accelerometer noise has on this error by carrying out experiments using two commercial accelerometers, and found that this error very quickly accumulates with time~\cite[p.1168]{integrationErrorPractical}. As such, this approach is deemed unsuitable for a navigation system which continuously and precisely requires the user’s current position. Foxlin, E.'s approach~\cite{foxlin2005pedestrian} alleviates the integration error by using the concept of `zero-velocity updates (ZUPTs)’, which exploits the fact that there is a momentary stationary period of zero velocity and acceleration during walking motion when the user’s foot makes contact with the ground. This allows correction of the velocity error after each stride and makes the error accumulation ``linear in the number of steps''~\cite[p.38]{foxlin2005pedestrian}. This, however, requires a dedicated sensor to be placed on the user’s foot and does not come under the purview of a smartphone based approach. 
 
-Most dead-reckoning systems thus make use of step detection to identify user movement and step length estimation to estimate their displacement and avoid the double integration problem. Existing approaches that make use of a smartphone’s inertial sensors typically restrict the phone’s position to two scenarios - the user having the phone in their pocket and/or in front of them in their hand. Steps are detected by identifying the consistent change in sensor readings, particularly the accelerometer, caused by rhythmic motion during walking. For instance, Wang, H., et al.~\cite{wang2012no} observe that the graph of magnitude readings of a 3-axis accelerometer follow a sinusoidal pattern corresponding to the ``natural up/down bounce of the human body for each step taken''~\cite[p.203]{wang2012no} in both the in-hand and pocket case. They then isolate individual steps through simple peak detection and thresholding in the graph. Li, F., et al.~\cite{li2012reliable} also use accelerometer magnitude in a similar manner to identify steps, subsequently applying heuristic constraints and dynamic time warping validation to reduce false positives.  
+Most dead-reckoning systems thus make use of step detection to identify user movement and step length estimation to estimate their displacement and avoid the double integration problem. Existing approaches that make use of a smartphone’s inertial sensors typically restrict the phone’s position to two scenarios - the user having the phone in their pocket and/or in front of them in their hand. Steps are detected by identifying the consistent change in sensor readings, particularly the accelerometer, caused by rhythmic motion during walking. For instance, Wang, H., et al.~\cite{wang2012no} observe that the graph of magnitude readings of a 3-axis accelerometer follow a sinusoidal pattern corresponding to the ``natural up/down bounce of the human body for each step taken''~\cite[p.203]{wang2012no} in both the in-hand and pocket case. They then isolate individual steps through simple peak detection and thresholding in the graph. As mentioned previously in section~\ref{sec:drRes}, Li, F., et al.~\cite{li2012reliable} also use accelerometer magnitude in a similar manner to identify steps, subsequently applying heuristic constraints and dynamic time warping validation to reduce false positives.  
 
 While taking the magnitude of the accelerometer allows the step detection procedure to be independent of the phone’s orientation, as a side effect, moving the phone along the axes that do not correspond to the user’s vertical movement can also produce similar sinusoidal patterns. Jin, Y., et al.~\cite{jin2011robust} isolate acceleration specifically along the required vertical axis by projecting the acceleration measurements from the phone’s local x-y-z axes to the East-North-Up (E-N-U) world co-ordinate system, where `Up' is the desired axis.  This is achieved by using the `rotation matrix' containing orientation measurements that are applied to the acceleration vector in the local co-ordinates. Once the accelerometer readings are obtained on this vertical axis they detect steps by identifying sequences of local maxima followed by local minima along with thresholding on both the time elapsed and absolute value difference between the two. 
 
@@ -197,7 +200,7 @@ Whilst this system achieved low error rates, it requires a large amount of infra
 
 \subsection{Practical Research}
 
-Aside from research based on existing work, we chose to record data and perform our own research on various components and methodologies.
+Aside from research based on existing work, we chose to record data and perform our own research on various components and methodologies discussed previously in existing solutions.
 
 To begin with, in order to confirm that the actual sensor readings correspond to the described behaviour we recorded and analysed accelerometer data from our own phones. The first recording was performed with the phone remaining stationary throughout and kept flat on the surface with the screen facing upwards. The readings obtained are shown in Figure~\ref{fig:accelerationZ}.
 
@@ -270,32 +273,28 @@ On applying this step detection approach to the graph in Figure~\ref{fig:straigh
 
 \subsubsection{Barometer}
 
-For the barometer, both Andriod and iOS have native ways to get both the current air pressure and the height above sea level the device. From research and small amounts of testing it was evident that using the absolute height would not provide any useful way of detecting floor change with the fluctuations that occur with time, weather and location. To avoid this the difference between heights can be used to detect if a user has gone up or down a floor. 
+Most smartphones have ways of obtaining both the current air pressure and altitude of the device from its internal barometer readings. From our own testing, which involved recording barometer readings as we moved up and down stairs between floors of the target indoor environment (with different phones), it became evident that using the absolute altitude readings would not provide any useful way of detecting floor change.
+These values are affected by external factors such as weather conditions, meaning absolute altitudes cannot be preassigned to specific floors. This confirmed what had been established within the research papers.
 
-However despite there being a clear correlation between moving between floors and the change in height, the height recieved from these native functions would range between 3-5m over a small period of time. This means that it is very difficult to be certain if the user has changed floors, the difference in floor height with in the department is 4m, or it is simply an outlier from the functions. 
+To avoid this, the difference between altitudes can instead be used to detect if a user has gone up or down a floor. The issue encountered here is that the altitude readings would also fluctuate wildly, by as much as 5m whilst in a stationary position. It would therefore be very difficult to be certain of the user changing floors, since the difference in floor height within the department is 4m, below the range of error associated with the barometer readings. The research papers discussed thus far made use of 10-fold cross fold validation in order to predict the floor changes (using prereocorded as opposed to live data), an impossibility with the limited processing power of smartphones.
 
 To help combat this the average was taken over a large number of reading across a period of time, however whilst this solved the rapidly changing value, it meant that if a user took too long transistioning between floors the average would slowly slide in their direction of movement. When this occurs nothing will be flagged as a large enough distance to be moving from floor A to B and the system will not recognise the movement. 
 
-Given more time this issues could be solved, and from research and the testing done it can be seen that the barometer will be a useful sensor for indoor localisation.
+Given more time, a ribust solution could be devised, and from research and the testing done it can be seen that the barometer will be a useful sensor for indoor localisation.
 
 \subsubsection{Landmarks}
 
-Before implementing a system that uses landmarks, the options for potential landmarks first have to be analysed as to whether they can provide the benefits in our specific environment. The main options that were explored are:
+Before considering implementing a system that uses landmarks, we first had to analyse the options availabe for potential landmarks, to ascertain whether they can be of benefit in our specific environment. The main options that were explored are:
 
 \begin{itemize}
 	\item Stairs
 	\item Elevators
-	\item Areas of unique magnetic readings
-	\item Wi-fi Routers
+	\item WiFi Routers
 \end{itemize}
 
-The first 2 options are present in the department building, however they are limited in how they can help with resetting the error in the system. This is because stairs and elevators are naturally only used when moving from one floor to another. Meaning navigation on a single floor will not be helped with resetting error but for navigation over multiple floors they can be utilised. 
+The first two options are present in the department building. However, they are limited in how they can help with resetting the error in the system. This is because stairs and elevators are naturally only used when moving from one floor to another, meaning only navigation over multiple floors could utilise these landmarks. Both have unique patterns that can be seen from the accelerometer readings, in conjunction with the potential for the barometer to verify the movement between floors, they can be used as landmarks.
 
-Both have unique patterns that can be seen from the accelerometer readings, in conjunction with the potential for the barometer to verify the movement between floors, they can be used as landmarks. However a detection algorithm did not get implemented for either of the patterns, to still allow for the removal of error build up the user is requested to alert the application when they have moved from one floor to another.
-
-Magnetic readings are likely to be prevelant throughout our environment as the entire building has lots of electronic equipment, such as computers, servers, etc.... These readings manifest themselves more in general magnetic inteference as appose to small pockets of unique signals, this makes areas of magnetic readings unfeasible as a landmark in our scenario.
-
-This leaves Wi-fi as the only method of removing error when navigating within a floor, to do this all the routers on a floor need to be identified.
+This leaves WiFi as the only method of removing error when navigating within a floor. To do this all the routers on a floor need to be identified.
 
 \begin{center}
 \includegraphics[scale=0.3]{images-implementation/wifiLocation.png}
@@ -303,15 +302,13 @@ This leaves Wi-fi as the only method of removing error when navigating within a 
 \label{fig:wifiLoc}
 \end{center}
 
-After identifying the locations of the routers on the ground floor, as shown in Figure~\ref{fig:wifiLoc}, it becomes apparent that bar one they will not be able to serve as landmarks. They reside with in the corners/sides of the rooms, and for a landmark to be useful the user must path close enough to it for it to be a viable choice for resetting error. With most of their locations it is impossible for an effecient routing algorithm to return a path in which the routers are not either at the start or the end of the route. Hence making them effectively useless for this purpose. The singular router that could be used is the one residing within CS0.03, as it sits before a door that leads to two other rooms. Despite this ideal placement it still isn't suited for use as a Landmark, as the two rooms for which the pathing would make the user pass by the router have restricted access due to containing servers/equipment.
+After identifying the locations of the routers on the ground floor, as shown in Figure~\ref{fig:wifiLoc}, it becomes apparent that bar one they will not be able to serve as landmarks. They reside within the corners/sides of the rooms, and for a landmark to be useful the user must pass close enough to it for it to be a viable choice for resetting error. With most of their locations it is highly unlikely that a path in the building will start and end in close proximity to a router, hence making them effectively useless for this purpose. The singular router that could be used is the one residing within CS0.03, as it sits before a door that leads to two other rooms. Despite this ideal placement, it still is not suited for use as a landmark, as this is a restricted area and inaccessible anyway.
 
-We also found that we often picked up routers from different floors in certian areas, whilst this could be a landmark in a similar way to pockets of magnetic readings. It was not consistent across different devices used for testing, hence not viable for a landmark since it isn't available to all. As well as this devices would connect to a room's router outside of them, meaning that connecting to a router that is specific to a large room it is an unreliable to assume the user is within it.
+We also found that we often picked up routers from different floors in certian areas. However, these readings were not consistent across different devices used for testing, rendering them unviable for use as a landmark. Devices would also connect to routers lying outside the room the user was located in, meaning specific routers could not be associated with any single area.
 
-Whilst routers are not viable for landmarks on the ground floor for the reasons stated above, it doesn't mean they will not be viable for the upper floors. This was tested the same as before by identifying router locations, but it became quickly evident that from placement again they would not be of use. In conjunction with the large number of small rooms/offices on the upper floors it becomes hard to snap a user to these routers.
+Routers on the 2nd floor were examined in the same manner, by identifying router locations, but it became quickly evident that they would again not be of use due to their placement. The large number of small rooms and offices on the upper floors also makes it hard to snap a user to any router.
 
-Another thing to note about using routers is that there are two main bands that are used for communication, 2Ghz and 5Ghz, so dependent on the routers and smartphones they may not be usable. In this case the router's in the department are dualband meaning both are available, it does however mean that 2 MAC addresses are needed to be stored per router for unique identification.
-
-Overall having looked at these landmarks it is clear that all of these options could be useful in the right environment, unfortunately in our case a variety of factors play a role in making them infeasible.
+Another thing to note when using routers is that there are two main bands that are used for communication (2GHz and 5GHz), so dependent on the routers and smartphones they may not be usable. In this case the routers in the department are dual band, meaning both are available. It does however mean that two MAC addresses are needed to be stored per router for unique identification, potentially proving problematic when dealing with large numbers of routers.
 
 \chapter{Proposed Solution}
 
@@ -529,26 +526,26 @@ It was noted in the previous section that the frequency of normal walking motion
 \section{Pathfinding Algorithm}
 
 \subsection{Practical Motivation}
-While the main aim of the application developed by this project was to actively track user movement within a building, we realized that making use of pathfinding will greatly benefit the project as well. This resulted from information obtained from other sources, where certain positions in buildings were utilized in order to reset the error caused by the sensors. On top of that, this addition resulted in an easier to understand interface as well as aiding the user in the search for their destination. In order to add a pathfinding algorithm to our project, we decided to investigate the different available options and evaluate their performance in order to identify the optimal algorithm.
+While the main aim of the application developed by this project was to actively track user movement within a building, we realized that making use of pathfinding will greatly benefit the project as well. This addition would result in an easier to understand interface, as well as aiding the user in the search for their destination. In order to add a pathfinding algorithm to our project, we decided to investigate the different available options and evaluate their performance in order to identify the optimal approach.
 
 \subsection{Pathfinding Algorithms Considered}
-Section~\ref{sec:floorPlans} details how we extract graph structures from the image data of each floor. This graph structure can be thought of as a mesh, representing walkable areas of the floor via vertices and edges. There are several algorithms that are capable of performing path finding on this type of data-structure and we selected the most popular ones for our testing. 
+Section~\ref{sec:floorPlans} details how we extract graph structures from the image data of each floor. This graph structure can be thought of as a mesh, representing walkable areas of the floor via vertices and edges. There are several algorithms that are capable of performing path finding on this type of data structure and we selected the most popular ones for our testing. 
 
 \subsubsection{Dijkstra's Algorithm}
-This is a shortest path graph pathfinding algorithm. While there are many iterations, the two major versions differ greatly. Initially, this algorithm searched for the path only between the two specified nodes (start and end node), however the later versions, being the more prevalent ones nowadays, perform this kind of calculation on all nodes in the graph. This means that if we specify a node within the graph as our finish node, the algorithm will calculate the shortest path from all of the other nodes in the graph to this node. While this seems inefficient, the reason for this is the minimal performance hit incurred by performing this operation, as well as the possibility of these results being reused at a later run of the algorithm. These kinds of implementations therefore make heavy use of caching. The base runtime of Dijkstra's algorithm is $O(V^2)$, where V is equal to the number of vertices in the graph. This can however be further optimised by using the altered implementation of the algorithm by Fredman \& Tarjan\cite{algoImprovedDijkstra}, where the implementation is based on a min-priority queue that makes use of a Fibonacci heap. This kind of implementation runs in $O( E + V + log(V) )$ , where E stands for the number of edges in the graph and V stands for the number of nodes. Thanks to this change in implementation, Dijkstra is one of the fastest shortest path algorithms that can be used for arbitrary directed graphs with a single restriction that dictates that edge weights have to be non-negative.
+This is a shortest path graph pathfinding algorithm. While there are many iterations, the two major versions differ greatly. Initially, this algorithm searched for the path only between the two specified nodes (start and end node). However, the later versions, being the more prevalent ones nowadays, perform this kind of calculation on all nodes in the graph. This means that if we specify a node within the graph as our finish node, the algorithm will calculate the shortest path from all of the other nodes in the graph to this node. While this seems inefficient, the performance hit incurred by carrying out this operation is minimal, with the possibility of these results being reused at a later run of the algorithm. Such implementations therefore make heavy use of caching. The base runtime of Dijkstra's algorithm is $O(V^2)$, where V is equal to the number of vertices in the graph. This can however be further optimised by using the altered implementation of the algorithm by Fredman \& Tarjan\cite{algoImprovedDijkstra}, where the implementation is based on a min-priority queue that makes use of a Fibonacci heap. This kind of implementation runs in $O( E + V + log(V) )$ , where E stands for the number of edges in the graph. Thanks to this change in implementation, Dijkstra is one of the fastest shortest path algorithms that can be used for arbitrary directed graphs with a single restriction which dictates that edge weights have to be non-negative.
 
 
 \subsubsection{A*}
 A* is an informed graph search algorithm that makes use of heuristics.  An informed algorithm functions on the premise of solving a problem by searching for the solution amongst all of the solutions available for a given graph. While this might seem inefficient as there can be millions of ways to traverse a graph, A* employs two measures to greatly reduce the subset of solutions. It does this by utilizing two measures for each node:
 \begin{itemize}
-\item g(n) - This function represents the cost of the path required to reach a specific node n. A cost in this case can be anything ranging from distance to petrol required to travel. Using this function ensures that any specific solution is aware of the requirements to get into the state it is in.
+\item g(n) - Represents the cost of the path required to reach a specific node n. A cost in this case can be anything ranging from distance to petrol required to travel. Using this function ensures that any specific solution is aware of the requirements to get into the state it is in.
 \item h(n) - Represents the estimated cost of travelling from a specific node n to the target finish node. We can use multiple estimation techniques depending on the knowledge of environment, such as Manhattan distance or Euclidean distance.
 \end{itemize}
 
 The strength of A* comes from combining the two measures explained above into a single measure, allowing the algorithm to estimate the best partial move when traversing a graph. This makes A* a very flexible and strong candidate for path finding on graphs. Therefore, it is also highly favoured in games.
 
 \subsubsection{Recast}
-The last algorithm considered was the Recast\cite{libRecast} algorithm, now commonly used in games. It originates from a game navigation construction toolkit. The Recast approach makes use of heavy pre-processing of the input meshes. The only restriction for the input mesh is for it to consist of triangles, this is then pre-processed into voxel mold, which then in turn allows the algorithm to estimate walkable spaces and perform a conversion to convex polygons. Once the conversion is complete, Recast is then able to make use of the polygons to reason about walkable space, taking into account measures of an agent (such as height or width).
+The last algorithm considered was the Recast\cite{libRecast} algorithm, now commonly used in games. It originates from a game navigation construction toolkit. The Recast approach makes use of heavy pre-processing of the input meshes. The only restriction for the input mesh is for it to consist of triangles. This is then pre-processed into voxel mold, which subsequently allows the algorithm to estimate walkable spaces and perform a conversion to convex polygons. Once the conversion is complete, Recast is then able to make use of the polygons to reason about walkable space, taking into account measures of an agent (such as height or width).
 
 Recast offers a great deal of flexibility and has an excellent turnaround time. The fact that it allows for real-time modification of the mesh and is able to respond to changes in it further allows for possible extensions of the project such as obstacle detection (moved furniture for example) or others. While this does require additional levels of pre-processing, the potential performance gain is significant enough to benchmark this algorithm.
 
@@ -556,18 +553,18 @@ The three algorithms considered were tested on a mobile device to assess perform
 
 \section{Wall Collision Algorithm}
 
-The purpose of this component is two-fold. Firstly, to give the dead-reckoning system a sense of walls and the limits they enforce on movement. Secondly, to ensure that any error from not taking into account walls is not introduced. The basic concept is that when the application believes the user has taken a step in a given direction, it verifies that step can logically be taken. For example if a step is detected and user is facing a wall, the system should not believe that the user has moved through a wall.
+The purpose of this component is two-fold. Firstly, to give the dead reckoning system a sense of walls and the limits they enforce on movement. Secondly, to ensure that any error from not taking into account walls is not introduced. The basic concept is that when the application believes the user has taken a step in a given direction, it verifies that step can logically be taken. For example, if a step is detected and user is facing a wall, the system should not believe that the user has moved through a wall.
 
-\subsection{Initial Implementation}
+\subsection{Initial Approach}
 
-For the initial implementation, the extracted floor plan graphs are used as the basis for deciding whether a step the systems believes the user has made is valid or not. These graphs have one important feature that allows for this, two adjacent nodes are not connected if there is a wall between the corresponding positions in the floor plans. This allows for the following procedure to determine if a step is valid:
+For our initial approach, the extracted floor plan graphs were used as the basis for deciding whether a step taken is valid or not. These graphs have one important feature that allows for this, two adjacent nodes are not connected if there is a wall between the corresponding positions in the floor plans. This allows for the following procedure to determine if a step is valid:
 
 \begin{itemize}
-	\item \textbf{Assign the nearest node to the user} - The node nearest to the user's estimated real position is assigned to the user, this can be used for path finding a new route if required, or in this case determining the validity of a movement. The nearest node was originally found through a brute force search, though this was later changed to a more efficient modular arithmetic method that exploits the known distances between nodes to center on the nearest node in O(1) time.
-	\item \textbf{Simulate a step} - A step is then simulated from the user's real position, this is essentially calculating where the user will move to given their current heading and rough stride length estimate. The stride length was initially set to the equivalent of 12 pixels in the floor plans, since the distance between nodes is 10, therefore allowing for proper testing. 
-	\item \textbf{Check for new nearest node} - From the new simulated real position, check if there is a new nearest node:
+	\item \textbf{Assign the nearest node to the user} - The node nearest to the user's estimated real position is assigned to the user. This can be used for generating a new route if required, or in this case determining the validity of a movement. The nearest node was originally found through a brute force search, though this was later changed to a more efficient modular arithmetic method that exploits the known distances between nodes to center on the nearest node in O(1) time.
+	\item \textbf{Simulate a step} - A step is then simulated from the user's real position. This is essentially calculating where the user will move to given their current heading and rough stride length estimate.
+	\item \textbf{Check for new nearest node} - From the new simulated real position, the algorithm checks if there is a new nearest node:
 	\begin{itemize}
-		\item If there is a new nearest node, path find from the first nearest node to the new one. If path length is greater than 2 the user must have transitioned over a wall, see Figure~\ref{fig:iniCol} for an example. If the length of the path is less than or equal to 2, the move is valid
+		\item If there is a new nearest node, find a path from the first nearest node to the new one. If path length is greater than 2, the user must have transitioned over a wall, see Figure~\ref{fig:iniCol} for an example. If the length of the path is less than or equal to 2, the move is valid
 		\item If the nearest node does not change then the move is valid
 	\end{itemize}
 \end{itemize}
@@ -580,26 +577,26 @@ For the initial implementation, the extracted floor plan graphs are used as the 
 
 \subsection{Issues}
 
-This implementation serves its purpose but it was ultimately scrapped due to the following two reasons:
+This implementation serves its purpose but it was ultimately deemed unsuitable due to the following two reasons:
 
 \begin{enumerate}
-	\item The initial implementation is gated by the distance between two nodes. If the stride length is greater than two and a half times the number of pixels between nodes, then every step will have a path length greater than 3. Meaning every step is then rejected, the step length we found to be the average of our groups equated to around 30 pixels. This problem can be bypassed by simply running the method over 30 pixels in 3 chunks of 10.
+	\item The initial implementation is gated by the distance between two nodes. If the stride length is greater than two and a half times the number of pixels between nodes, then every step will have a path length greater than 3, meaning every step is then rejected, the step length we found to be the average of our group equated to around 30 pixels. This problem can be bypassed by simply running the method over 30 pixels in three chunks of 10.
 	\item Due to the reliance on path finding, it heavily slows down the application to unusable levels. This is exacerbated by the need to repeat it multiple times to work over the set stride length
 \end{enumerate}
 
-Whilst the first problem was fixable, the second was not without creating a new method, the implementation below was made to solve this issue.
+Whilst the first problem was fixable, the second was not without creating a new method. The implementation below was made to solve this issue.
 
-\subsection{Final Implementation}
-The purpose of this component is two-fold. Firstly, to give the dead-reckoning system a sense of walls and the limits they enforce on movement. Secondly, to ensure that any error from not taking into account walls is not introduced. The basic concept is that when the application believes the user has taken a step in a given direction, it verifies that step can logically be taken. For example if a step is detected and user is facing a wall, the system should not believe that the user has moved through a wall. 
+\subsection{Final Approach}
 
 With the initial method being too slow, another one was developed. Instead of working directly with the graph, which causes the slow down due to path finding, it works with the raw hand curated floor plan image. It directly looks at the colours of pixels within this image to determine if the path from start to end would have crossed a wall, a white pixel.
 
-The algorithm initially estimates the line from a source point to a destination point using the Bresenhams line algorithm\ref{algoBresenhamLine}. This method was chosen due to its efficiency when estimating points in n-dimensional space that form a line between two specific points. Bresenhams line algorithm is popular due to the simplicity of operations it performs in order to come up with its estimation, making use only of bit-shifting, integer addition and subtraction. Our version of the algorithm combines our step-checking method with the algorithm itself. As the algorithm estimates the next pixel responsible for forming a line between two points, instead of using the information about the points X and Y to draw it, we perform our wall collision check where we verify that This method allows us to estimate a collection of pixels that would be responsible for drawing the line, returning the position of the pixels in 2D space. 
+The algorithm initially estimates the line from a source point to a destination point using the Bresenham's line algorithm\cite{algoBresenhamLine}. This method was chosen due to its efficiency when estimating points in n-dimensional space that form a line between two specific points. Bresenham's line algorithm is popular due to the simplicity of operations it performs in order to come up with its estimation, making use only of bit-shifting, integer addition and subtraction. Our version of the algorithm combines our step-checking method with the algorithm itself. As the algorithm estimates the next pixel responsible for forming a line between two points, instead of using the information about the X and Y coordinates of the points to draw it, we perform our wall collision check. This is where we verify that this method allows us to estimate a collection of pixels that would be responsible for drawing the line, returning the position of the pixels in 2D space. 
 
-Once we have the collection of pixels, we are able to iterate over them, inspecting each pixel individually for its ARGB values. We have constructed a blacklist of values that define various invalid areas (such as walls) in our hand-curated floor plans. Using the values of each pixel we can then estimate if the line estimated contains any pixels that would go through any such areas.
+Once we have the collection of pixels, we are able to iterate over them, inspecting each pixel individually for its ARGB values. We constructed a blacklist of values that define various invalid areas (such as walls) in our hand-curated floor plans. Using the values of each pixel, we can then estimate if the line contains any pixels that would go through any such areas.
 This proved to be a much faster method and removed the lag that was being experienced with the previous method, since the cost of loading the image (which occurs when the application is first opened) and the cost of checking pixel colours are both less than the cost of running the path finding algorithm.
 
 \chapter{Implementation}
+This section will detail the implementation specifics of our application, highlighting the tools, technology and programming solutions used.
 
 \section{Smartphones}
 
