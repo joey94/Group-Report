@@ -249,6 +249,7 @@ The primary issue with this approach is that step detection is dependent on the 
 From the plot it can be seen that using magnitude still preserves the 10 peak/valley pairs corresponding to steps that were identified in the previous graph. Thus step detection can now be carried out on the basis of a single measure that accounts for changes in orientation. 
 
 \subsubsection{Peak/valley detection}
+\label{sec:peakValley}
 
 Figures~\ref{fig:straightWalkRaw} and~\ref{fig:straightWalkRawMagnitude} show a clear association between steps taken and peak/valley pairs in the graph. Thus individual steps can be identified by detecting the formation of such pairs in real-time. Mathematically, peaks are defined as points in the graph where the slope transitions from positive to negative. Equation~\ref{eq:peakDetection} shows how it can be determined whether a point is a peak. 
 
@@ -380,11 +381,14 @@ Makes use of the extracted graphs to find the shortest path between a source and
 
 \chapter{Algorithm Design}
 
+This section details the design processes involved in the creation of the main algorithms used as part of the project. These are the step detection, pathfinding and wall collision algorithms.
+
 \section{Step Detection Algorithm}
+Having established during the practical research detailed within section ~\ref{sec:peakValley} that the accelerometer readings contain significant noise, any step detection algorithm consequently requires that these values first be smoothed. This is achieved through the use of a low-pass filter.
 
 \subsection{Low-pass filtering}
 
-A low-pass filter is one which allows low frequency signals to pass through while attenuating signals that are above a defined `cut-off frequency'. In essence, it smooths the signal by eliminating small, momentary fluctuations while preserving any significant changes in the signal that occur gradually over a longer period. Hence a low-pass filter is applied to the accelerometer readings in order to counteract the effects of the added noise and remove the kinks in the graph which contribute to false positives, while resulting in the peaks and valleys corresponding to steps taken to be more well defined. 
+A low-pass filter allows low frequency signals to pass through while attenuating signals that are above a defined `cut-off frequency'. In essence, it smooths the signal by eliminating small, momentary fluctuations while preserving any significant changes in the signal that occur gradually over a longer period. Hence a low-pass filter is applied to the accelerometer readings in order to counteract the effects of the added noise and remove the kinks in the graph which contribute to false positives, while resulting in the peaks and valleys corresponding to steps taken to be more well defined. 
 
 \subsubsection{Exponential smoothing}
 
@@ -410,14 +414,14 @@ Thus any variations in the raw input values must occur consistently over a susta
 
 The filtered graph obtained is far smoother than its unfiltered counterpart and removes most of its kinks, thus reducing the number of false positives with regards to step detection.   
 
-On initial tests using this approach the step counting was found to be fairly accurate during standard walking motion, with each individual step being detected almost immediately after it was actually taken. However, step events were also often found to fire when the user was stationary and performing other activities while having the phone in their hand. For instance, it was observed that modest hand motions of the user while standing and talking to someone resulted in steps being recorded. This suggests that the accelerometer magnitude patterns produced by such motions are similar to those obtained while walking. In order to investigate this the logging application was used to record accelerometer values while the phone was kept in hand and moved up and down slightly in a periodic manner without taking any steps. The filtered output from this recording is shown in Figure~\ref{fig:complementaryFilterHandMotionMagnitude}. 
+On initial tests using this approach the step counting was found to be fairly accurate during standard walking motion, with each individual step being detected almost immediately after it was actually taken. However, step events were also often found to fire when the user was stationary and performing other activities while having the phone in their hand. For instance, it was observed that modest hand motions of the user while standing and talking to someone resulted in steps being recorded. This suggests that the accelerometer magnitude patterns produced by such motions are similar to those obtained while walking. In order to investigate this, accelerometer values were recorded while the phone was kept in hand and moved up and down slightly in a periodic manner without taking any steps. The filtered output from this recording is shown in Figure~\ref{fig:complementaryFilterHandMotionMagnitude}. 
 
 \begin{center}
 \includegraphics[scale=0.9]{images/complementaryFilterHandMotionMagnitude.png}
 \captionof{figure}{Filtered magnitude of hand motion}
 \label{fig:complementaryFilterHandMotionMagnitude}
 \end{center}
-The plot confirms that using the exponential smoothing method to filter these hand motions produces peak/valley combinations that are almost indistinguishable from normal walking motion and results in steps being detected falsely. This first-order filter is thus deemed to be too sensitive for the purpose of navigation. 
+The plot confirms that using the exponential smoothing method to filter these hand motions produces peak/valley combinations that are almost indistinguishable from normal walking motion and results in steps being detected falsely. This first-order filter was thus deemed to be too sensitive for the purpose of navigation. 
 
 \subsubsection{Butterworth Filter}
 
@@ -458,7 +462,7 @@ It is this difference in the magnitudes of the initial peaks between the exponen
 \end{center}
 In this case the magnitude difference between the second valley and second peak (not counting the first actual pair formed due to initial filter adjustment), represented by $\mathit{diff}_1$ in the graph, is below the minimum threshold $t_{min}$ and thus this pair does not trigger a step event. The magnitude difference $\mathit{diff}_2$ between the next valley and peak however is greater than $t_{min}$ and this counts as a step. For sudden hand motions, only the first 1-2 peaks will be produced in the filtered output and since both will ideally be below $t_{min}$ no false positives will be recorded. For standard walking, the first step will be recorded on the 3rd valley/peak combination in this instance. This approach also accounts for the previous `missed' pairs, which are actual legitimate steps in such cases, by keeping a record of valley/peak combinations that would have triggered a step but were below the threshold. Once the first step above $t_{min}$ has been detected the algorithm then knows that the previous peaks were not formed due to hand motions and counts those towards the step total as well. Note that a separate minimum threshold $t_{significant}$, which is smaller than $t_{min}$, is used to decide whether a valley/peak pair should be included in the record maintained. This ensures that very small peaks produced through slight sensor fluctuations rather than any actual motion are excluded.  
 
-Initial tests with this approach showed that it was more robust with regards to false positives as compared to the first-order filter, with steps being recorded far less frequently for slight hand motions. However, with step detection during normal walking itself it was found that there was a noticeable lag between when steps were recorded and actually taken. This can once again be attributed to filter output computation being based on the large history of values, which results in any changes to the input being reflected a short while after they actually occur. As the first-order filter was deemed to be too sensitive and the tenth-order filter is too laggy, a fifth-order Butterworth filter, which uses 6 input and 5 filter output values, is used to attain the middle ground in the compromise between robustness and reactivity. The results of applying the fifth and tenth-order filters on the accelerometer readings for normal walking motion are compared in Figure~\ref{fig:butterworth5thVs10thOrderWalkingMagnitude}.  
+Initial tests with this approach showed that it was more robust with regards to false positives as compared to the first-order filter, with steps being recorded far less frequently for slight hand motions. However, with step detection during normal walking itself it was found that there was a noticeable lag between when steps were recorded and actually taken. This can once again be attributed to filter output computation being based on the large history of values, which results in any changes to the input being reflected a short while after they actually occur. The testing and evaluation relating to these algorithms is presented in detial within section~\ref{sec:stepTesting}. As the first-order filter was deemed to be too sensitive and the tenth-order filter is too laggy, a fifth-order Butterworth filter, which uses 6 input and 5 filter output values, is used to attain the middle ground in the compromise between robustness and reactivity. The results of applying the fifth and tenth-order filters on the accelerometer readings for normal walking motion are compared in Figure~\ref{fig:butterworth5thVs10thOrderWalkingMagnitude}.  
 
 \begin{center}
 \includegraphics[scale=0.9]{images/butterworth5thVs10thOrderWalkingMagnitude.png}
@@ -495,7 +499,7 @@ The mapping from the device to world ENU co-ordinates is achieved through use of
 \captionof{figure}{Accelerometer readings in ENU system for normal walking}
 \label{fig:straightWalkVerticalAcceleration}
 \end{center}
-As seen in the plot, the Z-axis readings represent the user's vertical acceleration and thus fully defines the walking motion through peak/valley formation for the purpose of step detection. The Y-axis readings largely remain around 0 as the forward acceleration during walking is negligible, while the X-axis readings exhibit some variation due to the slight sidewards sway of the body while taking steps. Thus step detection can be carried out solely on the basis of the ENU Z-axis accelerometer readings.  
+As seen in the plot, the Z-axis readings represent the user's vertical acceleration and thus fully define the walking motion through peak/valley formation for the purpose of step detection. The Y-axis readings largely remain around 0 as the forward acceleration during walking is negligible, while the X-axis readings exhibit some variation due to the slight sidewards sway of the body while taking steps. Thus step detection can be carried out solely on the basis of the ENU Z-axis accelerometer readings.  
 
 The robustness of this approach with respect to the magnitude readings is demonstrated by Figure~\ref{fig:sidewaysMotionVerticalAcceleration}, which depicts the filtered accelerometer output when moving the phone in a sideways manner.  
 
@@ -518,20 +522,20 @@ A minimum threshold $t_{min}$ for the absolute difference between adjacent valle
 
 Steps are currently detected solely on the basis of the acceleration difference from a valley to its corresponding peak. The absolute acceleration in the downward phase of a step is expected to be roughly similar to that in the upward phase for standard walking. Thus the condition that the peak to valley difference must be within a certain percentage of the preceding valley to peak difference for it to be classified as a step is introduced. This means that any step is now actually recorded at the valley following the peak.   
 
-\subsubsection{Time difference}
+\subsubsection{Time Difference}
 
 It was noted in the previous section that the frequency of normal walking motion ranges between 0.7-3 Hz. Assuming 3 steps to be the maximum taken per second during walking means that the time interval between subsequent steps is at least approximately 330ms. Any smaller time difference suggests that the recorded motion is too quick for it to be standard walking. Thus allowing for a small margin, a minimum requirement of 300ms between consecutive steps is set in the application. If a valley is found to occur before 300ms have passed since the previous one, the step associated with it is ignored and not added to the overall count.
 
-\section{Path Finding Algorithm}
+\section{Pathfinding Algorithm}
 
-\subsection{Practical motivation}
-While the main aim of the application developed by this project was to actively track user movement within a building, we realized that making use of path finding will greatly benefit the project as well. This resulted from information obtained from other sources, where certain positions in buildings were utilized in order to reset the error caused by the sensors. On top of that, this addition resulted in an easier to understand interface as well as aiding the user in the search for their destination. In order to add a path finding algorithm to our project, we decided to investigate the different available options and evaluate their performance in order to identify the optimal algorithm.
+\subsection{Practical Motivation}
+While the main aim of the application developed by this project was to actively track user movement within a building, we realized that making use of pathfinding will greatly benefit the project as well. This resulted from information obtained from other sources, where certain positions in buildings were utilized in order to reset the error caused by the sensors. On top of that, this addition resulted in an easier to understand interface as well as aiding the user in the search for their destination. In order to add a pathfinding algorithm to our project, we decided to investigate the different available options and evaluate their performance in order to identify the optimal algorithm.
 
-\subsection{Path finding algorithms considered}
-The previous sections detailed how we extracted a graph structure from the image data provided for each floor. This graph structure can be thought of as a mesh, representing walkable areas of the floor via vertices and edges. There are several algorithms that are capable of performing path finding on this type of data-structure and we selected the most popular ones for our testing. 
+\subsection{Pathfinding Algorithms Considered}
+Section~\ref{sec:floorPlans} details how we extract graph structures from the image data of each floor. This graph structure can be thought of as a mesh, representing walkable areas of the floor via vertices and edges. There are several algorithms that are capable of performing path finding on this type of data-structure and we selected the most popular ones for our testing. 
 
-\subsubsection{Dijkstra}
-This is a shortest path graph path finding algorithm. While there are many iterations, the two major versions differ greatly. Initially, this algorithm searched for the path only between the two specified nodes (start and end node), however the later versions, being the more prevalent ones nowadays, perform this kind of calculation on all nodes in the graph. This means that if we specify a node within the graph as our finish node, the algorithm will calculate the shortest path from all of the other nodes in the graph to this node. While this seems inefficient, the reason for this is the minimal performance hit incurred by performing this operation, as well as the possibility of these results being reused at a later run of the algorithm. These kinds of implementations therefore make heavy use of caching. The base runtime of Dijkstra's algorithm is $O(V^2)$, where V is equal to the number of vertices in the graph. This can however be further optimised by using the altered implementation of the algorithm by Fredman \& Tarjan\cite{algoImprovedDijkstra}, where the implementation is based on a min-priority queue that makes use of a Fibonacci heap. This kind of implementation runs in $O( E + V + log(V) )$ , where E stands for the number of edges in the graph and V stands for the number of nodes. Thanks to this change in implementation, Dijkstra is one of the fastest shortest path algorithms that can be used for arbitrary directed graphs with a single restriction that dictates that edge weights have to be non-negative.
+\subsubsection{Dijkstra's Algorithm}
+This is a shortest path graph pathfinding algorithm. While there are many iterations, the two major versions differ greatly. Initially, this algorithm searched for the path only between the two specified nodes (start and end node), however the later versions, being the more prevalent ones nowadays, perform this kind of calculation on all nodes in the graph. This means that if we specify a node within the graph as our finish node, the algorithm will calculate the shortest path from all of the other nodes in the graph to this node. While this seems inefficient, the reason for this is the minimal performance hit incurred by performing this operation, as well as the possibility of these results being reused at a later run of the algorithm. These kinds of implementations therefore make heavy use of caching. The base runtime of Dijkstra's algorithm is $O(V^2)$, where V is equal to the number of vertices in the graph. This can however be further optimised by using the altered implementation of the algorithm by Fredman \& Tarjan\cite{algoImprovedDijkstra}, where the implementation is based on a min-priority queue that makes use of a Fibonacci heap. This kind of implementation runs in $O( E + V + log(V) )$ , where E stands for the number of edges in the graph and V stands for the number of nodes. Thanks to this change in implementation, Dijkstra is one of the fastest shortest path algorithms that can be used for arbitrary directed graphs with a single restriction that dictates that edge weights have to be non-negative.
 
 
 \subsubsection{A*}
@@ -545,9 +549,10 @@ The strength of A* comes from combining the two measures explained above into a 
 
 \subsubsection{Recast}
 The last algorithm considered was the Recast\cite{libRecast} algorithm, now commonly used in games. It originates from a game navigation construction toolkit. The Recast approach makes use of heavy pre-processing of the input meshes. The only restriction for the input mesh is for it to consist of triangles, this is then pre-processed into voxel mold, which then in turn allows the algorithm to estimate walkable spaces and perform a conversion to convex polygons. Once the conversion is complete, Recast is then able to make use of the polygons to reason about walkable space, taking into account measures of an agent (such as height or width).
-\newline
 
 Recast offers a great deal of flexibility and has an excellent turnaround time. The fact that it allows for real-time modification of the mesh and is able to respond to changes in it further allows for possible extensions of the project such as obstacle detection (moved furniture for example) or others. While this does require additional levels of pre-processing, the potential performance gain is significant enough to benchmark this algorithm.
+
+The three algorithms considered were tested on a mobile device to assess performance. This is shown in detail within section~\ref{sec:pathTest}. Final results had us opt for Dijsktra's algorithm as the final pathfinding method.
 
 \section{Wall Collision Algorithm}
 
@@ -639,7 +644,7 @@ Xamarin is a company owned by Microsoft that develops the Xamarin Studio IDE ~\c
 With their website citing the ability to share up to 90\% of code across applications on multiple platforms, we were attracted by the prospect of being able to have a singular application work on both iOS and Android. Furthermore, two team members were already proficient in C\#, with one also having worked previously with Xamarin.
 
 \section{Floor Plans}
-    
+\label{sec:floorPlans}
 Floor plans played a major role in the design of the application. Not only would the Computer Science building's floor plans be used to produce the graph that would be used for pathfinding and navigation, it would also provide the backdrop upon which the majority of the application would be displayed. With this in mind, floor plans went through a protracted phase of pre processing and refinement, allowing us to retrieve the information we needed and visually enhance the images as well.
 
 \subsection{Selection of the Images}
@@ -1225,6 +1230,7 @@ This made use of the previously mentioned wallCheck() method, which would take a
 \chapter{Testing and Evaluation}
 
 \section{Step Dectection}
+\label{sec:stepTesting}
 
 Step detection is an integral part of any dead-reckoning system and as such, 
 it is prudent to test this particular component in isolation to try and ascertain how much error within the whole system is attributable to the step detection.
@@ -1284,7 +1290,7 @@ In this particular case, we considered that the underestimation and overestimati
 %Though overcounting and getting a negative error rate could be considered worse than undercounting. This is because if you overcount it means that for a single step you will have counted an additional step, and in a dead-reckoning system the user will now have moved double the distance in a given direction by your estimate. This could have a larger effect on the error in the system.
 
 \section{Pathfinding algorithm evaluation}
-
+\label{sec:pathTest}
 \subsection{Algorithm comparison}
 In order to compare the algorithms we selected, we devised a series of tests that allowed us to verify the validity of a given algorithm, as well as its performance and requirements for computation. Our test mesh was the ground floor of DCS, with 19 thousand nodes and 32 thousand edges. We selected this as our testing dataset in order to simulate the application of the algorithm we desired in a closed environment. The tests performed consisted of three stages: 
 
