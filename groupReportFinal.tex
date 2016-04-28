@@ -196,8 +196,6 @@ Whilst this study proves that the barometer is useful, it is not the only system
 
 The system they proposed worked by using a series of standard reference points and other temporary ones they could ascertain to be correct, such as a smartphone in the system that they assigned an altitude to. These collected reference points are stored on a server. A smartphone which then wants its altitude makes a request with some required information.
 
-Whilst this system achieved low error rates, it requires a large amount of infrastructure which does not fit with the idea behind our application. Even if the server could be removed from the design, an internet connection would be necessary to collect some of the reference points, and GPS location is one of the inputs that the server requires to return an altitude.
-
 \subsection{Practical Research}
 
 Aside from research based on existing work, we chose to record data and perform our own research on various components and methodologies discussed previously in existing solutions.
@@ -276,11 +274,11 @@ On applying this step detection approach to the graph in Figure~\ref{fig:straigh
 Most smartphones have ways of obtaining both the current air pressure and altitude of the device from its internal barometer readings. From our own testing, which involved recording barometer readings as we moved up and down stairs between floors of the target indoor environment (with different phones), it became evident that using the absolute altitude readings would not provide any useful way of detecting floor change.
 These values are affected by external factors such as weather conditions, meaning absolute altitudes cannot be preassigned to specific floors. This confirmed what had been established within the research papers.
 
-To avoid this, the difference between altitudes can instead be used to detect if a user has gone up or down a floor. The issue encountered here is that the altitude readings would also fluctuate wildly, by as much as 5m whilst in a stationary position. It would therefore be very difficult to be certain of the user changing floors, since the difference in floor height within the department is 4m, below the range of error associated with the barometer readings. The research papers discussed thus far made use of 10-fold cross fold validation in order to predict the floor changes (using prereocorded as opposed to live data), an impossibility with the limited processing power of smartphones.
+To avoid this, the difference between altitudes can instead be used to detect if a user has gone up or down a floor. The issue encountered here is that the altitude readings would also fluctuate wildly, by as much as 5m whilst in a stationary position. It would therefore be very difficult to be certain of the user changing floors, since the difference in floor height within the target indoor environment is 4m, below the range of error associated with the barometer readings. The research papers discussed thus far made use of 10-fold cross fold validation in order to predict the floor changes (using prereocorded as opposed to live data), an impossibility with the limited processing power of smartphones.
 
 To help combat this the average was taken over a large number of reading across a period of time, however whilst this solved the rapidly changing value, it meant that if a user took too long transistioning between floors the average would slowly slide in their direction of movement. When this occurs nothing will be flagged as a large enough distance to be moving from floor A to B and the system will not recognise the movement. 
 
-Given more time, a ribust solution could be devised, and from research and the testing done it can be seen that the barometer will be a useful sensor for indoor localisation.
+Given more time, a robust solution could be devised, and from research and the testing done it can be seen that the barometer is a useful sensor for indoor localisation and multi floor navigation.
 
 \subsubsection{Landmarks}
 
@@ -292,7 +290,9 @@ Before considering implementing a system that uses landmarks, we first had to an
 	\item WiFi Routers
 \end{itemize}
 
-The first two options are present in the department building. However, they are limited in how they can help with resetting the error in the system. This is because stairs and elevators are naturally only used when moving from one floor to another, meaning only navigation over multiple floors could utilise these landmarks. Both have unique patterns that can be seen from the accelerometer readings, in conjunction with the potential for the barometer to verify the movement between floors, they can be used as landmarks.
+The first two options are present in the department building. However, they are limited in how they can help with resetting the error in the system. This is because stairs and elevators are naturally only used when moving from one floor to another, meaning only navigation over multiple floors could utilise these landmarks. 
+
+%Furthermore, an initial investigation into accelerometer readings produced from these landmarks did not indicate these had the potential to be utilised within the current project.
 
 This leaves WiFi as the only method of removing error when navigating within a floor. To do this all the routers on a floor need to be identified.
 
@@ -306,7 +306,7 @@ After identifying the locations of the routers on the ground floor, as shown in 
 
 We also found that we often picked up routers from different floors in certian areas. However, these readings were not consistent across different devices used for testing, rendering them unviable for use as a landmark. Devices would also connect to routers lying outside the room the user was located in, meaning specific routers could not be associated with any single area.
 
-Routers on the 2nd floor were examined in the same manner, by identifying router locations, but it became quickly evident that they would again not be of use due to their placement. The large number of small rooms and offices on the upper floors also makes it hard to snap a user to any router.
+Routers on the 2nd floor were examined in the same manner, by identifying router locations, but it became quickly evident that they would again not be of use due to their placement. The large number of small rooms and offices on the upper floors also made it hard to snap a user to any router.
 
 Another thing to note when using routers is that there are two main bands that are used for communication (2GHz and 5GHz), so dependent on the routers and smartphones they may not be usable. In this case the routers in the department are dual band, meaning both are available. It does however mean that two MAC addresses are needed to be stored per router for unique identification, potentially proving problematic when dealing with large numbers of routers.
 
@@ -314,20 +314,29 @@ Another thing to note when using routers is that there are two main bands that a
 
 Considering the research conducted thus far, the existing solutions that were analysed and the objectives set at the onset of the project, we propose the following solution.
 
-\paragraph{Dead Reckoning Based On Step Detection:}
+\subsubsection{Dead Reckoning Based On Step Detection}
 
-We propose the use of a step detection algorithm that tracks a user's movement based on the readings of the inertial sensors of a smartphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Our desire to create an infrastructureless application made the use of other techniques, such as those using beacons, unattractive, with the prevalence of step detection within existing solutions also indicating that step detection is a productive avenue of development.
+We propose the use of a step detection algorithm that tracks a user's movement based on the readings of the inertial sensors of a smartphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. 
+
+\subsubsection{Heading Based on Compass Readings}
+
+Compass readings indicate the current heading of the smartphone. Considering that the smartphone will be held by the user and face the direction of travel, this heading can also be inferred as being the direction of the user.
+
+\subsubsection{Path Finding and Wall Collision}
+
+This fulfils the navigation aspect of the solution, indicating the shortest path for a user to take to their desired destination and preventing incorrect movement through walls.
+
+\subsubsection{Motivation for Solution}
 
 Upon considering the magnetic navigation mapping, we felt that, although exciting, a similarly styled solution would not be the most appropriate for our project. The technology is very much in its infancy and grounded as of now in the theoretical. 10 years of research has resulted in the beginnings of a system that might one day see a commercial use, with many years of hard work still required to get the technology anywhere near the level that GPS was even 15 or 20 years ago. We felt that pursuing a solution that made use of magnetic maps was too ambitious for both our level of expertise and size of group and desired to come up with an application design that lay within more well trodden ground.
 
 Likewise, our practical research determined that solutions making use of landmarks would also not be appropriate, given the lack of meaningful error correction that would result from such a system within the target indoor environment.
 
-\paragraph{Heading Based on Compass Readings:}
+Our desire to create an infrastructureless application, mainly to reduce costs and ensure solution scalability, made the use of other techniques, such as those using beacons, unattractive. The prevalence of step detection within existing solutions also indicated that step detection would be a productive avenue of development.
 
-Compass readings indicate the current heading of the smartphone. Considering that the smartphone will be held by the user and face the direction of travel, this heading can also be inferred as being the direction of the user.
+The path finding and wall collision system is a unique concept not featured in any of the existing solutions that we examined. It involves the use of path finding algorithms to create routes within buildings, with wall collision used to correct erroneous user movement. In our research, we did not find any solution that packaged the components we developed, shown within the system overview, into a single, free standing application.
 
-\paragraph{Path Finding and Wall Collision:}
-This is a unique concept not featured in any of the existing solutions that we examined. It involves the use of path finding algorithms to create routes within buildings, with wall collision used to correct erroneous user movement. In our research, we did not find any solution that packaged the components we developed, shown within the system overview, into a single, free standing application.
+Our step detection algorithm, which is described in detail within subsequent sections, is also optimised specifically for smartphones held within a user's hand. Other solutions are either catered for the in pocket case, or developed for dual use.
 
 \section{System Overview}
 
@@ -382,19 +391,22 @@ Makes use of the extracted graphs to find the shortest path between a source and
 
 \subsection{User Interface}
 
-The user interfaces for the application were created separately for both iOS and android. Although each interface took design ques from their respective platforms, each followed the same information flow and had the same basic input controls and output visuals. Figure \ref{fig:uiflowdiagram} shows the basic information flow for the user interface of the project.
+%The user interfaces for the application were created separately for both iOS and android. Although each interface took design ques from their respective platforms, each followed the same information flow and had the same basic input controls and output visuals.
+Figure \ref{fig:uiflowdiagram} shows the basic information flow for the user interface of the project. This diagram shows that the UI shown on screen is an amalgamation of the following components:
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \includegraphics[width=\textwidth]{images/uiflow.png}
 \captionof{figure}{User Interface flow diagram.}
 \label{fig:uiflowdiagram}
 \end{figure}
 
-This diagram shows that the UI shown on screen is an amalgamation of the following components:
+
 
 \paragraph{Storage} This represents our storage of floor plan images, floor plan meshes and the list of rooms for each floor plan
 \paragraph{User Location} This is initially set at a default location, or by the user, and is then approximated as the user moves around the area. The location is shown as an arrow on the floor plan image showing the location of the user and direction that they are facing.
 \paragraph{Path} The path to the users destination is selected by the user, either through the room search list or by selecting a location on the map, and a path is displayed guiding the user through the floor plan.
+\paragraph{Room search} This produces a drop down menu that allows for rooms to be selected and set as start or end locations.
+\paragraph{Menu} A futher menu is also displayed after a long tap on screen, allowing the user to set start and end points on specific locations, or clear a drawn path.
 
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{images/finalsolutionscreen.png}
@@ -550,12 +562,12 @@ Steps are currently detected solely on the basis of the acceleration difference 
 
 It was noted in the previous section that the frequency of normal walking motion ranges between 0.7-3 Hz. Assuming 3 steps to be the maximum taken per second during walking means that the time interval between subsequent steps is at least approximately 330ms. Any smaller time difference suggests that the recorded motion is too quick for it to be standard walking. Thus allowing for a small margin, a minimum requirement of 300ms between consecutive steps is set in the application. If a valley is found to occur before 300ms have passed since the previous one, the step associated with it is ignored and not added to the overall count.
 
-\section{path finding Algorithm}
+\section{Path Finding Algorithm}
 
 \subsection{Practical Motivation}
-While the main aim of the application developed by this project was to actively track user movement within a building, we realized that making use of path finding will greatly benefit the project as well. This addition would result in an easier to understand interface, as well as aiding the user in the search for their destination. In order to add a path finding algorithm to our project, we decided to investigate the different available options and evaluate their performance in order to identify the optimal approach.
+While the main aim of the application developed by this project was to actively track user movement within a building, we realized that making use of will greatly benefit the project as well. This addition would result in an easier to understand interface, as well as aiding the user in the search for their destination. In order to add a path finding algorithm to our project, we decided to investigate the different available options and evaluate their performance in order to identify the optimal approach.
 
-\subsection{path finding Algorithms Considered}
+\subsection{Path Finding Algorithms Considered}
 Section~\ref{sec:floorPlans} details how we extract graph structures from the image data of each floor. This graph structure can be thought of as a mesh, representing walkable areas of the floor via vertices and edges. There are several algorithms that are capable of performing path finding on this type of data structure and we selected the most popular ones for our testing. 
 
 \subsubsection{Dijkstra's Algorithm}
@@ -1118,7 +1130,7 @@ The main map view was implemented using a UIScrollView class. This would allow u
 We decided to implement a search functionality to allow users to search for the room they are looking for. This would then allow them to select whether to set their location to that room, or to set that room as a destination for navigating to. To do this, we added 2 new components to the main view of the application; a search bar and a search results/prediction table. These components can be seen as storyboard components in image \ref{IOSRoomSearchInStoryboard}. As part of our implementation for representing the floor plan, we also had a list of all the rooms contained by the map. This was implemented using a custom controller called CustomSearchController.cs and the search bar and table view were hooked into the View Controller in the same way that the scroll view was. This class would take references to the search bar and table view components, as well as a list of the rooms obtained from the floor resources. All logic pertaining to the search functionality was then performed in this class and other classes referenced by it, this allowed us to separate out certain functionalities from the main view controller. A working version of the room search functionality can be seen in image \ref{IOSRoomSearchInApp}.
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{images-implementation/IOSRoomSearchInStoryboard.png}
+\includegraphics[width=0.4\textwidth]{images-implementation/IOSRoomSearchInStoryboard.png}
 \label{IOSRoomSearchInStoryboard}
 \captionof{figure}{Screenshot showing how the search bar and result/prediction table are shown in the main storyboard.}
 \end{center}
@@ -1127,7 +1139,7 @@ We decided to implement a search functionality to allow users to search for the 
 
 
 \begin{center}
-\includegraphics[width=0.5\textwidth]{images-implementation/IOSRoomSearchInApp.png}
+\includegraphics[width=0.4\textwidth]{images-implementation/IOSRoomSearchInApp.png}
 \label{IOSRoomSearchInApp}
 \captionof{figure}{Screenshot showing how the search bar and result/prediction table are shown in the application.}
 \end{center}
@@ -1157,10 +1169,14 @@ While this works nicely, we noticed that on many existing mapping applications s
 \captionof{figure}{Screenshots showing the corrected location arrow location when zooming the image view.}
 \end{center}
 
+\subsubsection{Getting Sensor Values}
+One of the crucial aspects required for the step detector and wall collision classes to work was various device sensor readings. These included heading information and accelerometer and gyroscope values. Since these classes were designed and written as shared code to be utilised by both iOS and Android, they could not directly access these sensor readings themselves and instead had to implement methods for receiving these from the correct native projects. As such, sensor readings were the responsibility of the native projects to collect and manipulate into the correct format required by the step detector and wall collision classes. Retrieving sensor readings in iOS is fairly simple and many similar sensor readings are nicely encapsulated into easy to understand objects. Additionally, the Xamarin iOS framework makes use of the functional paradigm support of C\# in order to simplify the process of receiving updated sensor values. C\# is able to handle functions as first order variables, and as such, they can be easily passed into functions as arguments and can be dynamically run by variable name. This allows us to pass our handler functions into the sensor managers, that is, the code that will be run whenever a new set of updated values is provided. This allows easy encapsulation and purity of the sensor managers and a relatively simple solution to retrieving updated values, an issue that could potentially require a much more complex solution with other languages. To demonstrate this, we will show how accelerometer readings, which will be crucial for step detection, are taken on an iOS device using Xamarin and C\#. The method definition for retrieving accelerometer values, \texttt{CMMotionManager.StartAccelerometerUpdates}, takes an argument of \texttt{CMAccelerometerHandler}. The CMAccelerometerHandler referenced here is a C\# delegate type. A delegate is a special keyword used by C\# to specify a method definition without actually specifying any actual body to the method. The declaration for the \texttt{CMAccelerometerHandler} delegate type states that any function created using this delegate must take a argument of type \texttt{CMAccelerometerData}. Now any event that is created with the type \texttt{CMAccelerometerHandler} will require its subscriber methods to implement the \texttt{CMAccelerometerHandler} delegate type and take \texttt{CMAccelerometerData} as an argument. This ensures that the argument can be passed into the subscriber methods when the event is called and the subscriber methods can then access the latest updated accelerometer values. 
+
+The other sensor reading that was crucial for accurate plotting and to understanding where the user was on the map, was the device’s heading. There are a few methods that can be used to generate this information on iOS and several ways to represent it. Gyroscope readings from CMMotionManager, (same manager as accelerometer values,) we can obtain the instantaneous rotational velocity in any one of the 3 axis which can be turned into a relative heading, that is, the device rotated 15\textdegree counterclockwise. This however required knowledge of the initial heading in order to be able to properly estimate the heading of the device in relation to a map. Alternatively, through the use of CLLocationManager, we can obtain an estimation of the absolute heading of the device, (North, South, East, West). This measure is predominantly taken by the magnetometer sensor but may potentially be aided by other sensors such as the gyroscope. CLLocationManager utilises events in C\# in order to provide updated values for the heading. An event in C\# follows the pub-sub design pattern where various subscriber classes can subscribe a particular method they contain onto an event defined in another class, or in itself potentially. When the event’s owner class calls the event, each of the subscribed methods will be called, with any parameters to the event being passed into them. The heading values were provided to us in degrees with 0 representing North. This was quickly converted to radians to aid with calculations further down the line, and the new updated value was fed into the wall collision class.
 
 \subsubsection{Paths}
 
-The second part that needed drawing over the main map was the actual path to the user's destination. iOS supplied a useful CGPath component that could draw a customised line between a set of points on a 2D space. However, in order to be compatible with the other UIView based components, we had to create a custom PathView.cs class that would act as a wrapper to the CGPath class. This class would be responsible for drawing the path and ensuring it remains consistent with the map image during zooming. It would also contain additional methods for encapsulating the CGPath object from the outside and for adding and getting points on the path in an abstracted way. 
+Paths to the user's destination also needed drawing over the main map. iOS supplied a useful CGPath component that could draw a customised line between a set of points on a 2D space. However, in order to be compatible with the other UIView based components, we had to create a custom PathView.cs class that would act as a wrapper to the CGPath class. This class would be responsible for drawing the path and ensuring it remains consistent with the map image during zooming. It would also contain additional methods for encapsulating the CGPath object from the outside and for adding and getting points on the path in an abstracted way. 
 
 In order to interact with the map, we implemented a gesture recogniser on the scroll view. This allows for a long tap and hold on any part of the image and would result in a popup that would allow the user to set the point as either a start or and end point for a path. Setting a start location would move the user to that particular point, while setting an end location would attempt to draw a path from the user to the destination. Creating this was fairly simple and simply required the use of the UIAlertController class which allowed us to create iOS style alerts with customisable options. An image for a preliminary options sheet is shown in Figure \ref{IOSAlertSheet}.
 
@@ -1170,12 +1186,6 @@ In order to interact with the map, we implemented a gesture recogniser on the sc
 \captionof{figure}{Screenshot showing the iOS alert sheet that would show when long pressing an area on the map.}
 \end{center}
 
-
-
-\subsubsection{Getting Sensor Values}
-One of the crucial aspects required for the step detector and wall collision classes to work was various device sensor readings. These included heading information and accelerometer and gyroscope values. Since these classes were designed and written as shared code to be utilised by both iOS and Android, they could not directly access these sensor readings themselves and instead had to implement methods for receiving these from the correct native projects. As such, sensor readings were the responsibility of the native projects to collect and manipulate into the correct format required by the step detector and wall collision classes. Retrieving sensor readings in iOS is fairly simple and many similar sensor readings are nicely encapsulated into easy to understand objects. Additionally, the Xamarin iOS framework makes use of the functional paradigm support of C\# in order to simplify the process of receiving updated sensor values. C\# is able to handle functions as first order variables, and as such, they can be easily passed into functions as arguments and can be dynamically run by variable name. This allows us to pass our handler functions into the sensor managers, that is, the code that will be run whenever a new set of updated values is provided. This allows easy encapsulation and purity of the sensor managers and a relatively simple solution to retrieving updated values, an issue that could potentially require a much more complex solution with other languages. To demonstrate this, we will show how accelerometer readings, which will be crucial for step detection, are taken on an iOS device using Xamarin and C\#. The method definition for retrieving accelerometer values, \texttt{CMMotionManager.StartAccelerometerUpdates}, takes an argument of \texttt{CMAccelerometerHandler}. The CMAccelerometerHandler referenced here is a C\# delegate type. A delegate is a special keyword used by C\# to specify a method definition without actually specifying any actual body to the method. The declaration for the \texttt{CMAccelerometerHandler} delegate type states that any function created using this delegate must take a argument of type \texttt{CMAccelerometerData}. Now any event that is created with the type \texttt{CMAccelerometerHandler} will require its subscriber methods to implement the \texttt{CMAccelerometerHandler} delegate type and take \texttt{CMAccelerometerData} as an argument. This ensures that the argument can be passed into the subscriber methods when the event is called and the subscriber methods can then access the latest updated accelerometer values. 
-
-The other sensor reading that was crucial for accurate plotting and to understanding where the user was on the map, was the device’s heading. There are a few methods that can be used to generate this information on iOS and several ways to represent it. Gyroscope readings from CMMotionManager, (same manager as accelerometer values,) we can obtain the instantaneous rotational velocity in any one of the 3 axis which can be turned into a relative heading, that is, the device rotated 15\textdegree counterclockwise. This however required knowledge of the initial heading in order to be able to properly estimate the heading of the device in relation to a map. Alternatively, through the use of CLLocationManager, we can obtain an estimation of the absolute heading of the device, (North, South, East, West). This measure is predominantly taken by the magnetometer sensor but may potentially be aided by other sensors such as the gyroscope. CLLocationManager utilises events in C\# in order to provide updated values for the heading. An event in C\# follows the pub-sub design pattern where various subscriber classes can subscribe a particular method they contain onto an event defined in another class, or in itself potentially. When the event’s owner class calls the event, each of the subscribed methods will be called, with any parameters to the event being passed into them. The heading values were provided to us in degrees with 0 representing North. This was quickly converted to radians to aid with calculations further down the line, and the new updated value was fed into the wall collision class.
 
 \subsubsection{Path Smoothing}
 
@@ -1188,10 +1198,7 @@ The paths returned by the Dijkstra algorithm implementation usually quite jagged
 \label{fig:jaggedPath}
 \end{center}
 
-
-
-
-This made use of the previously mentioned wallCheck() method, which would take a line between two points and check whether it intersects with a wall within the floor plan image. In order to smooth the path, the algorithm first sets the initial point as the start point. Subsequent points are then iterated over and marked as end points. If a line between the set start and end points is shown to pass through a wall at any point, this end point is made the new start point, and the line between the previous start and end points is added to the new smoothed path. Repeating this process until all nodes on the path have been iterated over creates a smoothed path that maximises the spaces between bends in the path. The effects of this smoothing technique are shown within figure ~\ref{fig:smoothPath}.
+This made use of the previously mentioned \texttt{wallCheck} method from the wall collision, which would take a line between two points and check whether it intersects with a wall within the floor plan image. In order to smooth the path, the algorithm first sets the initial point as the start point. Subsequent points are then iterated over and marked as end points. If a line between the set start and end points is shown to pass through a wall at any point, this end point is made the new start point, and the line between the previous start and end points is added to the new smoothed path. Repeating this process until all nodes on the path have been iterated over creates a smoothed path that maximises the spaces between bends in the path. The effects of this smoothing technique are shown within figure ~\ref{fig:smoothPath}.
 
 \begin{center}
 \includegraphics[width=0.5\textwidth]{images/smoothPath.png}
@@ -1260,6 +1267,16 @@ As with any project, contingency planning is an important component of good proj
 With this in mind, we were satisfied with the ability to transfer over to a Xamarin shared project from a Xamarin Forms project. A Xamarin shared project would use the same `shared code', that is, code related to components such as step detection and path finding while making use of native components of each platform in order to construct the user interface.
 
 Given the issues that were ultimately encountered with the Xamarin Forms project, this proved to be a shrewd piece of contingency planning, allowing the project to be realligned to a Xamarin shared project within a period of a week or two and for work to continue effectively from that point.
+
+\section{Timeline}
+We followed the timeline displayed within figure~\ref{chart}.
+
+\begin{figure}[]
+\center
+\includegraphics[trim=0 0 0 0, clip,width=\textwidth,height=\textheight,keepaspectratio]{images/chart.png}
+\caption{Gantt chart of project components.}
+\label{chart}
+\end{figure}
 
 \section{Risk Analysis}
     As with all large projects, a risk analysis was conducted. This is shown in table \ref{tab:risk}.
@@ -1363,7 +1380,7 @@ From the table above it can be see that the error remains fairly consistent acro
 Selecting between the 5th and 10th order Butterworth filters is more difficult when accounting for error rates alone, since both show similar results, although the 5th order filter is slightly superior. What works against the 10th order filter is the larger 'lag' registered with it, with the time between taking a step and the step being recorded being greater for the 10th order filter. This is shown in figure ~\ref{fig:pirate}. Given all this, as has been mentioned previously, the 5th order Butterworth filter was selected as the step detection algorithm of choice, and it is the algorithm that was used for all other tests of the application.
 
 \begin{center}
-\includegraphics[scale=0.63]{images/pirateResults.png}
+\includegraphics[width=\textwidth]{images/stepsOnGraph/Slide1.png}
 \captionof{figure}{Showing steps taken vs when acceleration peak occurs within 5th and 10th order Butterworth filters.}
 \label{fig:pirate}
 \end{center}
@@ -1503,10 +1520,22 @@ We built a step detection algorithm using the smartphone's inertial sensors. Aft
 
 Error rates increased when testing the application as a whole. Our heading system was susceptible to local variations in magnetic field, causing navigation to be problematic in certain situations. However, when magnetic interference was minimal, navigation was shown to be accurate enough to guide the user to within visual distance of their intended destination. Further work is nevertheless required with regards the heading inference system in order to limit the effect of local variations in the magnetic field.
 
-        \section{Future Work}
-            Despite the significant progress made over the course of this project, there are obviously some areas in which there is room for further research, improvement, and extension to be carried out. The most significant of these is clearly the completion of an Android version of the Navigator software that is on par with the current iOS iteration of the application. As discussed earlier in this report when comparing the two platforms, unresolvable memory issues due to how Xamarin Studio handles garbage collection for Android applications was the primary factor in preventing the completion of this version of the software. In light of this issue, future work could consist of further research into solving this specific problem, if such a solution exists. If this is not possible, then it may be prudent to consider developing an Android version of the program without the use of Xamarin Studio (a Java based Android application, for example) in order to circumvent the garbage collection problems. This is not an ideal solution, however, since Xamarin Studio facilitates cross-platform mobile development, reducing the amount of maintenance required when developing for multiple platforms.
-            
-The heading system also displayed it's fair share of problems. A heading inference system based on accelerometer and gyroscope readings is a possible avenue of future work that could reduce the error associated with fluctuatinf compass readings. The use of the gyroscope and accelerometer for heading inference was a topic that was encountered during the initial research phase of the project, but given the amount of time devoted to the creation of an accurate step detection system, the compass based system was opted for instead.
+\section{Future Work}
+
+Despite the significant progress made over the course of this project, there are areas in which there is room for further research, improvement, and extension to be carried out.
+
+\subsubsection{Heading System}
+
+As was noted in the evaluation, the heading system had problems with magnetic interference. A heading inference system based on accelerometer and gyroscope readings is a possible avenue of future work that could reduce the error associated with fluctuating compass readings. The use of the gyroscope and accelerometer for heading inference was a topic that was encountered during the initial research phase of the project, but given the amount of time devoted to the creation of an accurate step detection system, the compass based system was opted for instead.
+
+\subsubsection{Android Version}
+As discussed earlier in this report when comparing the two platforms, unresolvable memory issues due to how Xamarin Studio handles garbage collection for Android applications was the primary factor in preventing the completion of this version of the software. In light of this issue, future work would consist of further research into solving this specific problem, if such a solution exists. If this is not possible, then it may be prudent to consider developing an Android version of the program without the use of Xamarin Studio (a Java based Android application, for example) in order to circumvent the garbage collection problems. This is not an ideal solution, however, since Xamarin Studio facilitates cross-platform mobile development, reducing the amount of maintenance required when developing for multiple platforms.
+
+\subsubsection{Text Directions}
+The incorporation of text directions is also an interesting avenue of future work. Having directions that a user should follow displayed in text, whereby actions such as `walk along the corridor' would be explicitly stated, was a concept that was briefly explored. Time constraints ultimately prevented us from formally pursuing such a feature, though this would be a stimulating and useful future addition to the application.
+
+
+
 %            Another potential extension to the application is the usage of the WiFi system present in most modern smartphones in order to make use
 %            of WiFi access points to reset the error in the current location of the user. For reasons discussed previously (mostly due to unhelpful hotspot positioning within
 %            DCS), this functionality could not be included in the application as orginally planned. The addition of such a subsystem to the application has good potential to
@@ -1514,9 +1543,8 @@ The heading system also displayed it's fair share of problems. A heading inferen
 %            rigorous testing and fine-tuning in order to be accurate, which is why DCS was not a suitable trial location due to its WiFi hotspot positioning. Therefore, 
 %            any attempts to extend the application to add this functionality should be tested in an appropriate setting, to ensure acceptable progress and results.
             
-            Finally, the concept of landmarks could also be exploited in order to improve user location tracking. This
-            was not successfully implemented over the course of this work as, after investigating the associated actions (opening of doors, usage of elevators/stairs etc.) that could be prescribed as indicating landmarks,
-            the collected sensor readings did not allow the implementation of such a system in a way that matched our initial requirements as mentioned in the project specification. It is possible, however, that further research may uncover some pattern within the readings that would allow for the implementation of this subsystem as originally desired.
+\subsubsection{Landmarks}
+The concept of landmarks could also be exploited in order to improve user location tracking. This was not successfully implemented over the course of this work as, after investigating the associated actions (opening of doors, usage of elevators/stairs etc.) that could be prescribed as indicating landmarks, the collected sensor readings did not allow the implementation of such a system within our target environment. It is possible, however, that placement of our own beacons around the indoor environment could allow the creation of a custom landmark system. This could also be used in conjunction with the current dead reckoning approach to create a hybrid user tracking method, helping to improve the accuracy of the overall system. Further investigation into the barometer and the effective filtering of readings to provide accurate transitions between floors, also has potential to add to a landmark system, helping identify when a user has used stairs or an elevator to move between floors.
             
 \nocite{*}
 
