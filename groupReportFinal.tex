@@ -312,26 +312,22 @@ Another thing to note when using routers is that there are two main bands that a
 
 \chapter{Proposed Solution}
 
-\begin{figure}[h]
-\includegraphics[width=\textwidth]{images/finalsolutionscreen.png}
-\captionof{figure}{Screenshot showing the application showing the user location and showing a path to a destination along with an options page shown when selecting an area on the map.}
-\label{fig:appFlow}
-\end{figure}
-
-
-
 Considering the research conducted thus far, the existing solutions that were analysed and the objectives set at the onset of the project, we propose the following solution.
 
 \paragraph{Dead Reckoning Based On Step Detection:}
 
-We propose the use of a step detection algorithm that tracks a user's movement based on the readings of the inertial sensors of a smartphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Our desire to create an infrastructureless application made the use of other techniques unattractive, with the prevalence of step detection within existing solutions also indicating that step detection is a productive avenue of development.
+We propose the use of a step detection algorithm that tracks a user's movement based on the readings of the inertial sensors of a smartphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Our desire to create an infrastructureless application made the use of other techniques, such as those using beacons, unattractive, with the prevalence of step detection within existing solutions also indicating that step detection is a productive avenue of development.
+
+Upon considering the magnetic navigation mapping, we felt that, although exciting, a similarly styled solution would not be the most appropriate for our project. The technology is very much in its infancy and grounded as of now in the theoretical. 10 years of research has resulted in the beginnings of a system that might one day see a commercial use, with many years of hard work still required to get the technology anywhere near the level that GPS was even 15 or 20 years ago. We felt that pursuing a solution that made use of magnetic maps was too ambitious for both our level of expertise and size of group and desired to come up with an application design that lay within more well trodden ground.
+
+Likewise, our practical research determined that solutions making use of landmarks would also not be appropriate, given the lack of meaningful error correction that would result from such a system within the target indoor environment.
 
 \paragraph{Heading Based on Compass Readings:}
 
 Compass readings indicate the current heading of the smartphone. Considering that the smartphone will be held by the user and face the direction of travel, this heading can also be inferred as being the direction of the user.
 
-\paragraph{path finding and Wall Collision:}
-This is a unique concept not featured in any of the existing solutions that we examined. It involves the use of path finding algorithms to create routes within buildings, with wall collision used to correct erroneous user movement. 
+\paragraph{Path Finding and Wall Collision:}
+This is a unique concept not featured in any of the existing solutions that we examined. It involves the use of path finding algorithms to create routes within buildings, with wall collision used to correct erroneous user movement. In our research, we did not find any solution that packaged the components we developed, shown within the system overview, into a single, free standing application.
 
 \section{System Overview}
 
@@ -399,6 +395,14 @@ This diagram shows that the UI shown on screen is an amalgamation of the followi
 \paragraph{Storage} This represents our storage of floor plan images, floor plan meshes and the list of rooms for each floor plan
 \paragraph{User Location} This is initially set at a default location, or by the user, and is then approximated as the user moves around the area. The location is shown as an arrow on the floor plan image showing the location of the user and direction that they are facing.
 \paragraph{Path} The path to the users destination is selected by the user, either through the room search list or by selecting a location on the map, and a path is displayed guiding the user through the floor plan.
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{images/finalsolutionscreen.png}
+\captionof{figure}{Screenshot of the final application showing the user location and path to a destination along with the menu shown when selecting an area on the map. A minimalist design was opted for in order to utilise the entire screen of the smartphone.}
+\label{fig:appFlow}
+\end{figure}
+
+
 \chapter{Algorithm Design}
 
 This section details the design processes involved in the creation of the main algorithms used as part of the project. These are the step detection, path finding and wall collision algorithms.
