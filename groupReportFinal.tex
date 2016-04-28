@@ -1182,7 +1182,7 @@ This initial vote set a trend that continued throughout the project, with democr
 
 Considering the small team size and relative inexperience of most group members with development kit (Xamarin), target platforms (iPhone and Android) and the C\# programming language, it was decided that an iterative development model would be best.
 
-Iterative development involves initial implementations of smaller subsets of software requirements, iteratively enhancing ``the evolving versions until the complete system is developed and ready to be deployed'' ~\cite{itDev}. At each subsequent iteration after the initial software subset implementation, design modifications are made and new functionality added and refined. This is the recommended development model when a new technology is being simultaneously learnt and used by a development team, and carries with it several advantages.\\
+Iterative development involves initial implementations of smaller subsets of software requirements, iteratively enhancing ``the evolving versions until the complete system is developed and ready to be deployed'' ~\cite{itDev}. At each subsequent iteration after the initial software subset implementation, design modifications are made and new functionality added and refined. This is the recommended development model when a new technology is being simultaneously learnt and used by a development team, and carries with it several advantages.
 
 Principal amongst these is that a working model of the system is available form early on in development. This is vital when wishing to determine whether any functional or design flaws exist, allowing these to be caught early and rectified at the earliest opportunity. Indeed, as has been explained, this was the case within the project, with the iterative development process helping in identifying the problem earlier than would otherwise have been possible.
 
@@ -1209,6 +1209,30 @@ Work that needed doing would usually be distributed in accordance with these rol
 Communication with the project supervisor occured primarily via email, with face to face meetings occuring on average once every two weeks.
 
 Version control was done using Github, with all group members working on the same repository and in most cases working on the same project branch at all times.
+
+\section{Implementation Organisation}
+Before work began on the implementation of the various main components of the final indoor navigation application, time was spent early on setting up the project and finding our feet with regards to Xamarin.
+%This section will detail the process of turning our designs into a working application. It will mostly read chronologically, with tasks and components completed earlier into the project also appearing earlier within this section. This will also aid in demonstrating our thought process behind changes to the application design that arose through development, be it through complications or the realisation of superior design choices.
+
+\subsection{Implementation phases}
+
+Actual application development on this project began with the creation of a data logging application. This would be used to gather principally accelerometer data about steps during walking cycles that would form the basis of the development of the step detection algorithm.
+
+Work around this data logging and initial step detection algorithm implementation comprised phase one of our implementation, with phase two encompassing the development of our main, final application.
+
+\subsection{Obtaining Xamarin License}
+
+We initially experienced many problems obtaining a licensed version of Xamarin, even before proper work began on the actual application. All team members were required to register as a developer on the Xamarin website and request a student developer license, a convenient alternative to the costly traditional license offered to non-students. This involved a prolonged series of exchanges with the company via email, which after 2-3 weeks proved to be a futile endeavour, as we were then instructed to procure the license through alternative means via a third party distributor. Ultimately, it took a few weeks before any of the team were able to obtain a development license, during which time we were able to develop, but not deploy an application to device. 
+
+%Considering this stage of the project was mainly about gathering data through smartphones, this was a disappointing early delay for which Xamarin apologised, citing their newly formed integration with Microsoft Dreamspark as having caused the delays in license distribution.\\
+
+\section{Contingency Planning}
+
+As with any project, contingency planning is an important component of good project management. From the onset of our decision to pursue a Xamarin Forms application as a solution for our project, we knew that we required an effective contingency plan to mitigate against this option not working to our satisfaction. Attracted by the prospect of a shared interface across all iPhone and Android devices (as advertised as possible by the Xamarin website), we were nevertheless sceptical about its ability to handle the more complex user interface requirements of the final application.
+
+With this in mind, we were satisfied with the ability to transfer over to a Xamarin shared project from a Xamarin Forms project. A Xamarin shared project would use the same `shared code', that is, code related to components such as step detection and path finding while making use of native components of each platform in order to construct the user interface.
+
+Given the issues that were ultimately encountered with the Xamarin Forms project, this proved to be a shrewd piece of contingency planning, allowing the project to be realligned to a Xamarin shared project within a period of a week or two and for work to continue effectively from that point.
 
 \section{Risk Analysis}
     As with all large projects, a risk analysis was conducted. This is shown in table \ref{tab:risk}.
@@ -1258,42 +1282,6 @@ Version control was done using Github, with all group members working on the sam
             \hline 
         \end{tabularx}
     \end{table}
-
-\section{Contingency Planning}
-
-As with any project, contingency planning is an important component of good project management. From the onset of our decision to pursue a Xamarin Forms application as a solution for our project, we knew that we required an effective contingency plan to mitigate against this option not working to our satisfaction. Attracted by the prospect of a shared interface across all iPhone and Android devices (as advertised as possible by the Xamarin website), we were nevertheless sceptical about its ability to handle the more complex user interface requirements of the final application.
-
-With this in mind, we were satisfied with the ability to transfer over to a Xamarin shared project from a Xamarin Forms project. A Xamarin shared project would use the same `shared code', that is, code related to components such as step detection and path finding while making use of native components of each platform in order to construct the user interface.
-
-Given the issues that were ultimately encountered with the Xamarin Forms project, this proved to be a shrewd piece of contingency planning, allowing the project to be realligned to a Xamarin shared project within a period of a week or two and for work to continue effectively from that point.
-
-\section{Implementation Organisation}
-Before work began on the implementation of the various main components of the final indoor navigation application, time was spent early on setting up the project and finding our feet with regards to Xamarin.
-%This section will detail the process of turning our designs into a working application. It will mostly read chronologically, with tasks and components completed earlier into the project also appearing earlier within this section. This will also aid in demonstrating our thought process behind changes to the application design that arose through development, be it through complications or the realisation of superior design choices.
-
-\subsection{Implementation phases}
-
-Actual application development on this project began with the creation of a data logging application. This would be used to gather principally accelerometer data about steps during walking cycles that would form the basis of the development of the step detection algorithm.
-
-Work around this data logging and initial step detection algorithm implementation comprised phase one of our implementation, with phase two encompassing the development of our main, final application.
-
-\subsection{Obtaining Xamarin License}
-
-We initially experienced many problems obtaining a licensed version of Xamarin, even before proper work began on the actual application. All team members were required to register as a developer on the Xamarin website and request a student developer license, a convenient alternative to the costly traditional license offered to non-students. This involved a prolonged series of exchanges with the company via email, which after 2-3 weeks proved to be a futile endeavour, as we were then instructed to procure the license through alternative means via a third party distributor. Ultimately, it took a few weeks before any of the team were able to obtain a development license, during which time we were able to develop, but not deploy an application to device. 
-
-%Considering this stage of the project was mainly about gathering data through smartphones, this was a disappointing early delay for which Xamarin apologised, citing their newly formed integration with Microsoft Dreamspark as having caused the delays in license distribution.\\
-
-\subsection{Setting Up The Project}
-
-We began by setting up a Xamarin Forms project, which would enable the creation of a shared user interface across iOS and Android. Within a Xamarin Forms project, the user interface is created via scripting in Extensible Markup Language (XML), which allows for the quick creation of text based displays. Here we followed our initial designs, and established a display page that saw a compass image sit at the top of the screen, with gyroscope and accelerometer readings appearing below it. Below those readings lay buttons that allowed for the data being read to be saved to a file. Buttons were also placed so that this file could be labelled in accordance with the movement being performed, for example `Slow Walk' or `Turning a Corner Left`.  These would help identify what each file related to when it came to analysing the data. The compass image was made to rotate with changing compass readings in order to mimic a real world compass.
-
-This interface was developed within the shared code section of the Xamarin Forms project. In order for data values to be recorded, the sensors needed to be individually set up within the iOS and Android code sections. Within iOS, the sensors are accessed via the CMMotion API, whilst in Android, the SensorManager class from the Android.Hardware library is used. These values are passed to the shared code where the XML is updated in order to update the screen display.
-
-Data logging was made a threaded process for the benefit of application performance. Recorded data was placed within an text file comprising of seven columns - time and the x, y and z values from both the accelerometer and gyroscope data. In the case of iOS, accelerometer values are given in terms of units of gravity (G) rather than the rate of acceleration ($m/s^2$) given within Android. For the sake of consistency, these were then converted to values of acceleration by multiplying these values by 9.8.
-
-\subsection{Effect of Dropping Android}
-FILL THIS
-
 
 \chapter{Testing and Evaluation}
 This section contains all of the major testing conducted for individual application components, along with the overall system evaluation.
@@ -1449,21 +1437,6 @@ Despite having less electronic equipment in the area, we still noticed areas in 
 
 With consistent compass readings, the system is however shown to be relatively accurate, with all completed navigation directing users to within visual contact of their targeted destinations.
 
-\subsection{Other Considered Tests}
-
-Two other tests where considered for use, but ultimately decided against for different reasons. The first was trying to measure if each step detector method was overcounting, registering multiple steps instead when it should only register a single. This is different from what was defined as a false positive earlier where a step is counted when no movement is occuring. This was considered as an alternative to the false positive rate as it looks at the way in which a bad algorithm could have a low error rate but not count correctly. 
-
-However whilst this method could provide some analysis, it was not used for two reasons:
-
-\begin{enumerate}
-	\item All the methods being tested do not overcount often, it only really differentiates them from the basic unfiltered version.
-	\item The second test that was not used would be better at showing which algorithms are working correctly
-\end{enumerate}
-
-The second test that was excluded was aiming to see if step detectors worked effectively over a period of time. The experiment was based off the fact that a person moving at a constant speed will have a repetitive waveform as the input into the algorithms. Therefore the steps being detected should be picked up constantly and equally spaced in time. The purpose of this test is to therefore show that an algorithm is matching the constant pattern and working as intended, it will show up any method that has a low error rate but doesn't work as intended. This was considered a better way to show what the overcounting test would have provided.
-
-Whilst the method had some potential, early data recordings showed that all of the algorithms being tested had roughly the same pattern. They had the same pattern due to the need to have the timing relative to when it itself recorded the first step. Even though some methods recorded steps comparatively longer after they were actually taken, the timing results did not reflect that since the relative difference between when the steps as recorded by the algorithms themselves was similar
-
 \section{Xamarin Forms Evaluation}
 
 Our initial plan was to use the functionality of Xamarin Forms in order to create an application that can be used on both iOS and Android. The appeal of Xamarin Forms is that is provides a hardware independent framework that allows the building of application interfaces using an Extended Application Markup Language (XAML) which has similarities to HTML and other markup languages. This allows for language independent development that is well suited for graphical interface design. Xamarin Forms still requires the use of C\# shared code for most advanced features and in order to link components together. However, coupled with the application independent nature of the shared code, theoretically, one should be able to create applications completely independently of any single platform that relies on the shared C\# code for the back-end and Xamarin Forms for the interface.
@@ -1496,10 +1469,28 @@ Whilst mentioned as a positive earlier on in this section, there are also downsi
             
 Another large problem with the Android system was briefly touched on earlier in this section when discussing open source: there are many features that would be considered fundamental to smartphone usage that are simply not natively implemented for Android. The most problematic of these was the lack of default functionality to properly scroll and zoom large bitmap images (This required the development of a custom tool, discussed earlier). In contrast to this, the iOS image view available through Xamarin Studio handled this by default.    
 
-\section{Summary}
-
 \chapter{Conclusion}
+Throughout the last six months, we have worked on the development of an indoor navigation smartphone application. As part of this work, we obtained floor plans of the University of Warwick's Computer Science department building. These were hand curated so that a graph extraction algorithm could be run on these images, creating a graph that was used to create paths that would guide a user to a destination.
 
+We built a step detection algorithm using the smartphone's inertial sensors. After first analysing data, we implemented a Butterworth filter that smooths the accelerometer values obtained by the phone. Steps were then recorded by analysing the peak and valley distances and magnitudes produced in the accelerometer readings during a walking cycle. Analysis showed that we managed to obtain a relatively accurate step detector, demonstrating low overall error rates.
+
+Error rates increased when testing the application as a whole. Our heading system was susceptible to local variations in magnetic field, causing navigation to be problematic in certain situations. However, when magnetic interference was minimal, navigation was shown to be accurate enough to guide the user to within visual distance of their intended destination. Further work is nevertheless required with regards the heading inference system in order to limit the effect of local variations in the magnetic field.
+
+        \section{Future Work}
+            Despite the significant progress made over the course of this project, there are obviously some areas in which there is room for further research, improvement, and extension to be carried out. The most significant of these is clearly the completion of an Android version of the Navigator software that is on par with the current iOS iteration of the application. As discussed earlier in this report when comparing the two platforms, unresolvable memory issues due to how Xamarin Studio handles garbage collection for Android applications was the primary factor in preventing the completion of this version of the software. In light of this issue, future work could consist of further research into solving this specific problem, if such a solution exists. If this is not possible, then it may be prudent to consider developing an Android version of the program without the use of Xamarin Studio (a Java based Android application, for example) in order to circumvent the garbage collection problems. This is not an ideal solution, however, since Xamarin Studio facilitates cross-platform mobile development, reducing the amount of maintenance required when developing for multiple platforms.
+            
+The heading system also displayed it's fair share of problems. A heading inference system based on accelerometer and gyroscope readings is a possible avenue of future work that could reduce the error associated with fluctuatinf compass readings. The use of the gyroscope and accelerometer for heading inference was a topic that was encountered during the initial research phase of the project, but given the amount of time devoted to the creation of an accurate step detection system, the compass based system was opted for instead.
+%            Another potential extension to the application is the usage of the WiFi system present in most modern smartphones in order to make use
+%            of WiFi access points to reset the error in the current location of the user. For reasons discussed previously (mostly due to unhelpful hotspot positioning within
+%            DCS), this functionality could not be included in the application as orginally planned. The addition of such a subsystem to the application has good potential to
+%            improve the inference of the current location of the user of the software, assuming that their device is WiFi capable. Clearly, such a system would require
+%            rigorous testing and fine-tuning in order to be accurate, which is why DCS was not a suitable trial location due to its WiFi hotspot positioning. Therefore, 
+%            any attempts to extend the application to add this functionality should be tested in an appropriate setting, to ensure acceptable progress and results.
+            
+            Finally, the concept of landmarks could also be exploited in order to improve user location tracking. This
+            was not successfully implemented over the course of this work as, after investigating the associated actions (opening of doors, usage of elevators/stairs etc.) that could be prescribed as indicating landmarks,
+            the collected sensor readings did not allow the implementation of such a system in a way that matched our initial requirements as mentioned in the project specification. It is possible, however, that further research may uncover some pattern within the readings that would allow for the implementation of this subsystem as originally desired.
+            
 \nocite{*}
 
 \bibliographystyle{plain}
