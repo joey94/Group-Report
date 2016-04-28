@@ -25,7 +25,7 @@
 
 %\title{\bf CS409 - Group Report}
 \title{Indoor Localisation and Navigation Using Inertial Sensors on Smartphones}
-\author{Pedram Amirkhalili, Joey Benrimoj,  Dominic Brown, Varun Golani, \\Robert Hubinsky and Daniel Seabright  } 
+\author{Pedram Amirkhalili, Joseph Benrimoj,  Dominic Brown, Varun Golani, \\Robert Hubinsky and Daniel Seabright  } 
 \date{}
 \setcounter{tocdepth}{3}
 
@@ -39,7 +39,7 @@
 \pagebreak
 
 \begin{abstract}
-This report documents the work carried out in the creation of an internal navigation mobile application that makes exclusive use of a smartphone's intertial sensors, built for navigation through the University of Warwick's Computer Science Department building. This involves the use of a custom built step detector to register movement and the compass to measure a user's heading. This is followed by an analysis of its overall performance and a critique of the software development resources provided for both iPhone and Android application development, primarily through the Xamarin development kit.
+Indoor navigation is a problem that does not yet have a comprehensive solution. This paper documents the work carried out in the creation of an internal navigation mobile application that makes use of a smartphone's intertial sensors, built for navigation through the University of Warwick's Computer Science Department building. This involves the use of a custom built step detector to register movement and the compass to measure a user's heading. Despite difficulties encountered with Android development and heading inference, we found that our solution was able to navigate a user through an indoor environment to an acceptable degree of accuracy.
 \end{abstract}
 
 \chapter{Introduction}
@@ -1496,22 +1496,26 @@ While Xamarin Forms is an impressive and potentially very useful concept, it is 
 
 Given these difficulties, we shifted work over to a Xamarin shared project from the Forms project. This gave us access to native user interface components of both iOS and Android, and made the process of executing our design ideas much more straight forward, without altering any of the shared code (step detection and path finding for example).
 
-\section{Analysis of Android vs iOS}
-As the application created over the course of this project was developed for both the Android and iOS platforms, it is prudent to discuss the respective benefits and drawbacks of each system with regards to various factors.
+\section{Evaluation of Android Development}
+
+Considering the issues encountered during development of the android components of the project (issues that did not exist during development for iOS), we felt it was necessary to evaluate the android development platform.
+
+\subsection{Drawbacks of the Android Platform}
+
+One of the most frustrating and time consuming issues encountered was the lack of abstraction provided for dealing with and accessing device sensor readings. For example, obtaining a correct and usable azimuth value was an arduous task (as detailed earlier in this document), requiring the use of specialised classes and mathematics. This is in stark contrast to iOS, which simply allows these values to be accessed through the location manager system, an approach that is far cleaner and more intuitive than the Android alternative. Another issue with sensor access on Android is that the API gives the developer the ability to subscribe to the sensors without the use of a view. This causes problems when a given view is paused as you must re-subscribe to the sensors in use, which can be inconvenient at times. It also has the additional effect of requiring the developer to duplicate code in situations where data from two different views needs to be processed in the exact same manner.
+            
+Whilst mentioned as a positive earlier on in this section, there are also downsides to the ability of Android to be developed and deployed for a large variety of devices. The primary drawback here is that this means the Android operating system cannot be optimised for specific hardware (as the hardware in question cannot be known ahead  of time), meaning that there are some potential performance problems. However, iOS does not suffer from this issue due to it only being deployed on Apple devices such as the iPhone. Therefore, in terms of overall performance, it is likely that iOS has a slight advantage over the Android platform.
+            
+Another large problem with the Android system was briefly touched on earlier in this section when discussing open source: there are many features that would be considered fundamental to smartphone usage that are simply not natively implemented for Android. The most problematic of these was the lack of default functionality to properly scroll and zoom large bitmap images (This required the development of a custom tool, discussed earlier). In contrast to this, the iOS image view available through Xamarin Studio handled this by default.    
 
 \subsection{Strengths of the Android Platform}
-Whilst there were many problems encountered throughout the project with the Android version of the Navigator application, there were also several positives that were associated with developing for the Android platform.
+
+Whilst there were many problems encountered throughout the project, several positives of Android development did exist.
             
 The first of these is that the Android operating system is available for a wide range of devices, including both smartphones and tablet based devices. This allows the final application to be tested on a variety of devices, which is particularly useful to us considering that the Android sub-team all possessed differing smartphones and tablets. In the event that the application is actually released to the public, this property allows the application to cover for a huge potential user base. This is further improved by the backwards compatibility between different iterations of the Android operating system. The level of backwards compatibility is determined by the value of the minimum SDK version set in the file \texttt{AndroidManifest.xml}. In this work, the minimum SDK version and target version were both the same, namely the Ice Cream Sandwich Android release, API level 15.
             
 The other major benefit of developing for Android is the open source nature of the platform itself. In addition to the operating system, there are many well supported open source libraries/extensions available, such as the popular `Mono for Android' (sometimes referred to as monodroid by developers). This is useful as there are many situations where specific functionality is not provided by the default Android development environment. Due to the popularity of open  source, however, it is highly likely that there is a freely available implementation of the desired functionality available through services such as GitHub, reducing the complexity of the development process. This was almost the case with implementing proper image scrolling for the floor plan screen, as Mono for Android had some options available. Unfortunately, they were not used due to not fulfilling all of our requirements. We did however make use of an open source version of the Recast algorithm.
        
- \subsection{Drawbacks of the Android Platform}
-Over the course of the project we also came across several problems whilst implementing the Android version of our application. One of the most frustrating and time consuming issues encountered was the lack of abstraction provided for dealing with and accessing device sensor readings. For example, obtaining a correct and usable azimuth value was an arduous task (as detailed earlier in this document), requiring the use of specialised classes and mathematics. This is in stark contrast to iOS, which simply allows these values to be accessed through the location manager system, an approach that is far cleaner and more intuitive than the Android alternative. Another issue with sensor access on Android is that the API gives the developer the ability to subscribe to the sensors without the use of a view. This causes problems when a given view is paused as you must re-subscribe to the sensors in use, which can be inconvenient at times. It also has the additional effect of requiring the developer to duplicate code in situations where data from two different views needs to be processed in the exact same manner.
-            
-Whilst mentioned as a positive earlier on in this section, there are also downsides to the ability of Android to be developed and deployed for a large variety of devices. The primary drawback here is that this means the Android operating system cannot be optimised for specific hardware (as the hardware in question cannot be known ahead  of time), meaning that there are some potential performance problems. However, iOS does not suffer from this issue due to it only being deployed on Apple devices such as the iPhone. Therefore, in terms of overall performance, it is likely that iOS has a slight advantage over the Android platform.
-            
-Another large problem with the Android system was briefly touched on earlier in this section when discussing open source: there are many features that would be considered fundamental to smartphone usage that are simply not natively implemented for Android. The most problematic of these was the lack of default functionality to properly scroll and zoom large bitmap images (This required the development of a custom tool, discussed earlier). In contrast to this, the iOS image view available through Xamarin Studio handled this by default.    
 
 \chapter{Conclusion}
 Throughout the last six months, we have worked on the development of an indoor navigation smartphone application. As part of this work, we obtained floor plans of the University of Warwick's Computer Science department building. These were hand curated so that a graph extraction algorithm could be run on these images, creating a graph that was used to create paths that would guide a user to a destination.
