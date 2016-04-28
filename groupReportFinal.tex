@@ -312,11 +312,19 @@ Another thing to note when using routers is that there are two main bands that a
 
 \chapter{Proposed Solution}
 
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{images/finalsolutionscreen.png}
+\captionof{figure}{Screenshot showing the application showing the user location and showing a path to a destination along with an options page shown when selecting an area on the map.}
+\label{fig:appFlow}
+\end{figure}
+
+
+
 Considering the research conducted thus far, the existing solutions that were analysed and the objectives set at the onset of the project, we propose the following solution.
 
 \paragraph{Dead Reckoning Based On Step Detection:}
 
-We propose the use of a step detection algrotihm that tracks a user's movement based on the readings of the inertial sensors of a smartphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Our desire to create an infrastructureless application made the use of other techniques unattractive, with the prevalence of step detection within existing solutions also indicating that step detection is a productive avenue of development.
+We propose the use of a step detection algorithm that tracks a user's movement based on the readings of the inertial sensors of a smartphone. In a dead-reckoning system, a user's current position is determined by incrementally estimating their displacement from a previously known position. Thus if the user's starting location is known, step detection along with the user's bearing can be used to identify when they have moved and along which direction. Our desire to create an infrastructureless application made the use of other techniques unattractive, with the prevalence of step detection within existing solutions also indicating that step detection is a productive avenue of development.
 
 \paragraph{Heading Based on Compass Readings:}
 
@@ -376,6 +384,21 @@ Makes use of native Android and iOS functions in order to access the image data 
 \paragraph{Path Finding}
 Makes use of the extracted graphs to find the shortest path between a source and end node, in manhattan distance. Path finding makes use of Dijkstras algorithm, which exploits caching and allows for faster turnaround times.
 
+\subsection{User Interface}
+
+The user interfaces for the application were created separately for both iOS and android. Although each interface took design ques from their respective platforms, each followed the same information flow and had the same basic input controls and output visuals. Figure \ref{fig:uiflowdiagram} shows the basic information flow for the user interface of the project.
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{images/uiflow.png}
+\captionof{figure}{User Interface flow diagram.}
+\label{fig:uiflowdiagram}
+\end{figure}
+
+This diagram shows that the UI shown on screen is an amalgamation of the following components:
+
+\paragraph{Storage} This represents our storage of floor plan images, floor plan meshes and the list of rooms for each floor plan
+\paragraph{User Location} This is initially set at a default location, or by the user, and is then approximated as the user moves around the area. The location is shown as an arrow on the floor plan image showing the location of the user and direction that they are facing.
+\paragraph{Path} The path to the users destination is selected by the user, either through the room search list or by selecting a location on the map, and a path is displayed guiding the user through the floor plan.
 \chapter{Algorithm Design}
 
 This section details the design processes involved in the creation of the main algorithms used as part of the project. These are the step detection, path finding and wall collision algorithms.
